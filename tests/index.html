@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <!-- encoding must be set for mocha's special characters to render properly -->
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+     <!-- ES6 shim -->
+    <script type="text/javascript" src="../demo/bower_components/es6-shim/es6-shim.min.js"></script>
+    <script type="text/javascript" src="../demo/bower_components/fetch/fetch.js"></script>
+    <!-- Backbone on steroids -->
+    <script type="text/javascript" src="../demo/bower_components/exoskeleton/exoskeleton.js"></script>
+    <script type="text/javascript" src="../demo/bower_components/backbone.nativeview/backbone.nativeview.js"></script>
+    <script type="text/javascript" src="../demo/bower_components/backbone.fetch/backbone.fetch.js"></script>
+    <!-- Template engine -->
+    <script type="text/javascript" src="../demo/bower_components/mustache.js/mustache.min.js"></script>
+
+
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script  src="../node_modules/systemjs/dist/system.js"></script>
+
+    <script>
+      mocha.ui( "bdd" );
+      expect = chai.expect;
+
+      System.config({
+				packages: {
+					".": {
+						format: "cjs",
+						defaultExtension: "js"
+					}
+				}
+			});
+
+			System.import( "./build/tests/index.spec.js" )
+
+        .then(function(){
+          mocha.checkLeaks();
+          mocha.run();
+      });
+
+    </script>
+
+  </body>
+</html>

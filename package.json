@@ -1,0 +1,46 @@
+{
+  "name": "ng-backbone",
+  "title": "NG.Backbone",
+  "description": "",
+  "author": "Dmitry Sheiko",
+  "main": "./src",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "tsc --p tests",
+    "update": "bash update.sh",
+    "test": "tslint --project tsconfig.json && tsc -p tests/ && mocha-phantomjs tests/index.html",
+    "test:ts": "tsc -p tests/ && mocha-phantomjs tests/index.html"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/fawek/codepainter/raw/master/LICENSE"
+    }
+  ],
+  "keywords": [
+    "Backbone",
+    "Exoskeleton",
+    "Abstract",
+    "ES6",
+    "ES2015",
+    "TypeScript",
+    "boilerplate",
+    "form"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:dsheiko/backbone-abstract.git"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "fetch-mock": "^5.0.5",
+    "install": "^0.8.1",
+    "mocha": "^2.3.4",
+    "mocha-phantomjs": "^4.1.0",
+    "npm": "^3.10.6",
+    "sinon": "^1.17.1",
+    "systemjs": "^0.19.36",
+    "tslint": "^3.14.0",
+    "typescript": "^1.8.10"
+  }
+}

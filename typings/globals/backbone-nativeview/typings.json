@@ -1,0 +1,12 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "/home/sheiko/Sites/os/backbone-abstract/custom-typings/backbone-nativeview/typings.json",
+    "raw": "file:custom-typings/backbone-nativeview/typings.json",
+    "main": "backbone-nativeview.d.ts",
+    "version": "0.0.1",
+    "global": false,
+    "name": "backbone-nativeview",
+    "type": "typings"
+  }
+}

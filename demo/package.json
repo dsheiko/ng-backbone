@@ -1,0 +1,24 @@
+{
+  "name": "backbone-abstract-demo-ts",
+  "title": "TypeScript: Demo App",
+  "description": "A demo app built on top of Backbone.Abstract and written in TypeScript",
+  "author": "Dmitry Sheiko",
+  "main": "./index.html",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "grunt",
+    "build": "grunt build",
+    "test": "grunt test",
+    "dev": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:dsheiko/backbone-abstract.git"
+  },
+  "devDependencies": {
+    "typescript": "1.7.5"
+  },
+  "dependencies": {
+    "ng-template": "*"
+  }
+}
