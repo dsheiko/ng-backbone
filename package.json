@@ -6,7 +6,8 @@
   "main": "./src",
   "version": "0.0.1",
   "scripts": {
-    "build": "tsc --p tests",
+    "build:demo": "tsc -p demo",
+    "build": "tsc",
     "update": "bash update.sh",
     "test": "tslint --project tsconfig.json && tsc -p tests/ && mocha-phantomjs tests/index.html",
     "test:ts": "tsc -p tests/ && mocha-phantomjs tests/index.html"

@@ -6,9 +6,8 @@
   "main": "./index.html",
   "version": "0.0.1",
   "scripts": {
-    "start": "grunt",
-    "build": "grunt build",
-    "test": "grunt test",
+    "build": "tsc",
+    "build:demo": "tsc",
     "dev": "tsc --watch"
   },
   "repository": {
@@ -17,8 +16,5 @@
   },
   "devDependencies": {
     "typescript": "1.7.5"
-  },
-  "dependencies": {
-    "ng-template": "*"
   }
 }

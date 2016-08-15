@@ -83,3 +83,29 @@ export class HeroView extends FormView {
 * [Working with Views](./doc/gettingstarted/view.md)
 * [Working with Forms](./doc/gettingstarted/formview.md)
 * [Template syntax](./doc/gettingstarted/template.md)
+
+## Contributing
+
+`NgBackbone` welcomes maintainers. There is plenty of work to do. No big commitment required,
+if all you do is review a single Pull Request, you are a maintainer.
+
+
+### How to set up
+
+```
+npm install typescript -g
+npm install
+typings install
+```
+
+### How to build
+
+```
+tsc
+```
+
+### How to run tests
+
+```
+npm run test
+```
