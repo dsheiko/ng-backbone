@@ -1,0 +1,23 @@
+{
+  "name": "backbone.nativeview",
+  "version": "0.3.3",
+  "author": "Adam Krebs <amk528@cs.nyu.edu>",
+  "description": "A Backbone View powered by native DOM methods",
+  "licence": "MIT",
+  "main": "backbone.nativeview",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akre54/backbone.nativeview"
+  },
+  "devDependencies": {
+    "backbone": ">1.2.0",
+    "phantomjs": "1.9.7-8"
+  },
+  "engines": {
+    "node": "*",
+    "npm": "*"
+  },
+  "scripts": {
+    "test": "phantomjs test/vendor/runner.js test/index.html?noglobals=true"
+  }
+}

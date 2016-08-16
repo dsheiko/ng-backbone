@@ -1,0 +1,25 @@
+{
+  "name": "backbone.fetch",
+  "version": "0.2.4",
+  "author": "Adam Krebs <amk528@cs.nyu.edu>",
+  "description": "A drop-in Backbone.ajax replacement powered by window.fetch",
+  "license": "MIT",
+  "main": "backbone.fetch",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akre54/backbone.fetch"
+  },
+  "engines": {
+    "node": "*",
+    "npm": "*"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "sinon": "^1.10.3",
+    "whatwg-fetch": "^0.11.0"
+  }
+}

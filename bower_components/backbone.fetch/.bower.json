@@ -1,0 +1,26 @@
+{
+  "name": "backbone.fetch",
+  "version": "0.2.4",
+  "homepage": "https://github.com/akre54/backbone.fetch",
+  "author": "Adam Krebs <amk528@cs.nyu.edu>",
+  "description": "A drop-in Backbone.ajax replacement powered by window.fetch",
+  "main": "backbone.fetch.js",
+  "keywords": [
+    "Backbone",
+    "ajax",
+    "plugin",
+    "native",
+    "fetch",
+    "xhr"
+  ],
+  "license": "MIT",
+  "_release": "0.2.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.2.4",
+    "commit": "72b962b6ec465bb2f220295ca6967feca7dc2695"
+  },
+  "_source": "git://github.com/akre54/Backbone.Fetch.git",
+  "_target": "~0.2.4",
+  "_originalSource": "akre54/Backbone.Fetch"
+}

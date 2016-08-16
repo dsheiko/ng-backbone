@@ -1,0 +1,29 @@
+{
+  "name": "backbone.nativeview",
+  "version": "0.3.3",
+  "homepage": "https://github.com/akre54/backbone.nativeview",
+  "author": "Adam Krebs <amk528@cs.nyu.edu>",
+  "description": "A Backbone View powered by native DOM methods",
+  "main": "backbone.nativeview.js",
+  "keywords": [
+    "Backbone",
+    "view",
+    "plugin",
+    "native",
+    "DOM",
+    "change"
+  ],
+  "peerDependencies": {
+    "backbone": ">1.2.0"
+  },
+  "license": "MIT",
+  "_release": "0.3.3",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.3.3",
+    "commit": "6dbe4f4e05b4c65eb7809cbfa579af710a973c18"
+  },
+  "_source": "git://github.com/akre54/Backbone.NativeView.git",
+  "_target": "~0.3.3",
+  "_originalSource": "akre54/Backbone.NativeView"
+}
