@@ -34,8 +34,13 @@
     "url": "git@github.com:dsheiko/backbone-abstract.git"
   },
   "devDependencies": {
+    "backbone.fetch": "^0.2.4",
+    "backbone.localstorage": "github:jeromegn/Backbone.localStorage",
+    "backbone.nativeview": "^0.3.3",
     "chai": "^3.4.1",
     "cjsc": "^1.0.7",
+    "es6-shim": "github:paulmillr/es6-shim",
+    "exoskeleton": "^0.7.0",
     "fetch-mock": "^5.0.5",
     "install": "^0.8.1",
     "mocha": "^2.3.4",
@@ -44,6 +49,7 @@
     "sinon": "^1.17.1",
     "systemjs": "^0.19.36",
     "tslint": "^3.14.0",
-    "typescript": "^1.8.10"
+    "typescript": "^1.8.10",
+    "whatwg-fetch": "github:github/fetch"
   }
 }

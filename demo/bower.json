@@ -20,7 +20,6 @@
     "backbone.nativeview": "akre54/Backbone.NativeView#~0.3.3",
     "exoskeleton": "paulmillr/exoskeleton#~0.7.0",
     "fetch": "github/fetch#~1.0.0",
-    "backbone-es6-promise": "maratfakhreev/backbone-es6-promise#~0.1.0",
     "es6-shim": "paulmillr/es6-shim#~0.35.1",
     "system.js": "systemjs/systemjs#~0.19.31",
     "bootstrap": "~3.3.6",
