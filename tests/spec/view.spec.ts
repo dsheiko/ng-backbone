@@ -1,6 +1,5 @@
-import { View, Model, Collection } from "../src/core";
-import { mapFrom } from "../src/core/utils";
-const expect = chai.expect;
+import { View, Model, Collection } from "../../src/core";
+import { mapFrom } from "../../src/core/utils";
 
 
 export function ViewSpec(){
@@ -14,8 +13,8 @@ export function ViewSpec(){
           bar: new Model({ name: "bar" })
         }),
         scope = (<any>View).modelsToScope( models );
-        expect( scope["foo"].name ).to.eql( "foo" );
-        expect( scope["bar"].name ).to.eql( "bar" );
+        expect( scope["foo"].name ).toBe( "foo" );
+        expect( scope["bar"].name ).toBe( "bar" );
       });
 
       it( "converts form states into scope", function() {
@@ -24,8 +23,8 @@ export function ViewSpec(){
           "bar.baz": new Model({ name: "baz" })
         }),
         scope = (<any>View).modelsToScope( models );
-        expect( scope["foo"]["bar"].name ).to.eql( "bar" );
-        expect( scope["bar"]["baz"].name ).to.eql( "baz" );
+        expect( scope["foo"]["bar"].name ).toBe( "bar" );
+        expect( scope["bar"]["baz"].name ).toBe( "baz" );
       });
 
     });
@@ -39,8 +38,8 @@ export function ViewSpec(){
         }),
         scope = (<any>View).collectionsToScope( collections );
 
-        expect( scope["foo"][ 0 ].name ).to.eql( "foo" );
-        expect( scope["bar"][ 0 ].name ).to.eql( "bar" );
+        expect( scope["foo"][ 0 ].name ).toBe( "foo" );
+        expect( scope["bar"][ 0 ].name ).toBe( "bar" );
       });
     });
 

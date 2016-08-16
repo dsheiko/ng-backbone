@@ -5,7 +5,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var core_1 = require("../src/core");
-var expect = chai.expect;
 window.fetch = function (url, init) {
     var json = { hello: "world" };
     //      blob = new Blob([ JSON.stringify( json, null, 2 ) ], { type : 'application/json' }),
@@ -34,7 +33,7 @@ function UtilsSpec() {
                     resolve("hohop");
                 });
                 p.then(function (vv) {
-                    console.error("!!!", vv);
+                    console.log("!!!", vv);
                 });
                 //        let col = new TestCollection();
                 //        col.fetch().then(( a: any ) => {
@@ -49,6 +48,7 @@ function UtilsSpec() {
                 //            console.log( "json", json );
                 //          });
                 //expect( map.get( "foo" ) ).to.eql( 1 );
+                expect(true).toBe(true);
             });
         });
     });

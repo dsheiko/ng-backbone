@@ -1,7 +1,5 @@
-import { FormView, Model } from "../src/core";
-import { FormState } from "../src/core/formstate";
-const expect = chai.expect;
-
+import { FormView, Model } from "../../src/core";
+import { FormState } from "../../src/core/formstate";
 
 export function FormViewSpec(){
   describe("FormView", function(){
@@ -16,9 +14,9 @@ export function FormViewSpec(){
         el.innerHTML = `<div><form data-ng-group="foo"></form><form data-ng-group="bar"></form></div>`;
         let forms = (<any>view)._findGroups();
 
-        expect( Array.isArray( forms ) ).to.be.ok;
-        expect( forms[ 0 ].dataset[ "ngGroup" ] ).to.eql( "foo" );
-        expect( forms[ 1 ].dataset[ "ngGroup" ] ).to.eql( "bar" );
+        expect( Array.isArray( forms ) ).toBe( true );
+        expect( forms[ 0 ].dataset[ "ngGroup" ] ).toBe( "foo" );
+        expect( forms[ 1 ].dataset[ "ngGroup" ] ).toBe( "bar" );
       });
 
       it( "finds form on boundinx box", function() {
@@ -30,8 +28,8 @@ export function FormViewSpec(){
         el.dataset[ "ngGroup" ] = "baz"
         let forms = (<any>view)._findGroups();
         // If boundinx box not inner forms allowed
-        expect( forms.length ).to.eql( 1 );
-         expect( forms[ 0 ].dataset[ "ngGroup" ] ).to.eql( "baz" );
+        expect( forms.length ).toBe( 1 );
+        expect( forms[ 0 ].dataset[ "ngGroup" ] ).toBe( "baz" );
       });
 
     });
@@ -45,7 +43,7 @@ export function FormViewSpec(){
         el.dataset[ "ngGroup" ] = "baz";
         (<any>view)._bindGroup( el, "baz" );
         let model = view.models.get( "baz.form" );
-        expect( model ).to.be.an.instanceof( FormState );
+        expect( model instanceof FormState ).toBe( true );
       });
     });
 
@@ -66,8 +64,8 @@ export function FormViewSpec(){
 </div>`;
 
         let els = (<any>view)._findGroupElements( el );
-        expect( Array.isArray( els ) ).to.be.ok;
-        expect( els.length  ).to.eql( 4 );
+        expect( Array.isArray( els ) ).toBe( true );
+        expect( els.length  ).toBe( 4 );
 
       });
     });
@@ -79,13 +77,13 @@ export function FormViewSpec(){
             view = new FormView({
               el: el
             });
-            
+
         el.dataset[ "ngGroup" ] = "baz";
 
         (<any>view)._bindGroup( el, "foo" );
         (<any>view)._bindGroupElement( "foo", "bar" );
         let model = view.models.get( "foo.bar" );
-        expect( model ).to.be.an.instanceof( FormState );
+        expect( model instanceof FormState ).toBe( true );
       });
     });
 

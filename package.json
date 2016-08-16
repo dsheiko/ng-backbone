@@ -10,8 +10,9 @@
     "browserfy:demo": "npm run build:demo && cjsc demo/build/js/demo/src/app.js -o demo/build/js/app.bundled.js -M",
     "build": "tsc",
     "update": "bash update.sh",
-    "test": "tslint --project tsconfig.json && tsc -p tests/ && mocha-phantomjs tests/index.html",
-    "test:ts": "tsc -p tests/ && mocha-phantomjs tests/index.html"
+    "browserfy:test": "tests/build/tests/index.spec.js -o tests/build/index.bundled.js",
+    "test": "tslint --project tsconfig.json && npm run test:ts",
+    "test:ts": "tsc -p tests/ && cjsc tests/build/tests/index.spec.js -o tests/build/index.bundled.js && karma start"
   },
   "licenses": [
     {
@@ -41,8 +42,13 @@
     "cjsc": "^1.0.7",
     "es6-shim": "github:paulmillr/es6-shim",
     "exoskeleton": "^0.7.0",
-    "fetch-mock": "^5.0.5",
     "install": "^0.8.1",
+    "jasmine-core": "^2.4.1",
+    "karma": "^1.2.0",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-firefox-launcher": "^0.1.3",
+    "karma-jasmine": "^1.0.2",
+    "karma-phantomjs-launcher": "^1.0.1",
     "mocha": "^2.3.4",
     "mocha-phantomjs": "^4.1.0",
     "npm": "^3.10.6",

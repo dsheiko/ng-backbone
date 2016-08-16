@@ -1,5 +1,4 @@
-import { mapAssign, mapFrom } from "../src/core/utils";
-const expect = chai.expect;
+import { mapAssign, mapFrom } from "../../src/core/utils";
 
 export default function UtilsSpec(){
   describe("Utils", function(){
@@ -11,8 +10,8 @@ export default function UtilsSpec(){
           foo: 1,
           bar: 2
         });
-        expect( map ).to.be.instanceOf( Map );
-        expect( map.get( "foo" ) ).to.eql( 1 );
+        expect( map instanceof Map ).toBe( true );
+        expect( map.get( "foo" ) ).toBe( 1 );
       });
     });
 
@@ -25,9 +24,9 @@ export default function UtilsSpec(){
         mapAssign( map, {
           bar: 2
         });
-        expect( map ).to.be.instanceOf( Map );
-        expect( map.get( "foo" ) ).to.eql( 1 );
-        expect( map.get( "bar" ) ).to.eql( 2 );
+        expect( map instanceof Map ).toBe( true );
+        expect( map.get( "foo" ) ).toBe( 1 );
+        expect( map.get( "bar" ) ).toBe( 2 );
       });
     });
 
