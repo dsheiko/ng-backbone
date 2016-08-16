@@ -8,6 +8,7 @@
   "scripts": {
     "build": "tsc",
     "build:demo": "tsc",
+    "browserfy:demo": "npm run build:demo && cjsc build/js/demo/src/app.js -o build/js/app.bundled.js -M",
     "dev": "tsc --watch"
   },
   "repository": {
