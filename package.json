@@ -35,6 +35,7 @@
     "url": "git@github.com:dsheiko/backbone-abstract.git"
   },
   "devDependencies": {
+    "phantomjs-prebuilt": "^2.1.12",
     "backbone.fetch": "^0.2.4",
     "backbone.localstorage": "github:jeromegn/Backbone.localStorage",
     "backbone.nativeview": "^0.3.3",
