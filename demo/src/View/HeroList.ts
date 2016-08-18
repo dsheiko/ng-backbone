@@ -6,13 +6,13 @@ import { Collection, Component, View, Model } from "../../../src/core";
   events: {
     "change [data-bind=checkbox]": "syncCheckboxCounter",
     "click [data-sort]": "onClickSort",
-    "click [data-bind=remove]": "onClickRemoveGroup"
+    "click [data-bind=remove]": "onClickRemoveGroup",
+    "click [data-bind=markall]": "onClickMarkAll"
   },
   models: {
     state: new Model({
       selected: 0,
-      isOrderName: false,
-      isOrderPower: false,
+      order: ""
     })
   },
   template: `
@@ -20,8 +20,8 @@ import { Collection, Component, View, Model } from "../../../src/core";
 <table class="table">
 <tr>
   <th data-bind="markall"><i class="glyphicon glyphicon-ok"></i>&nbsp;</th>
-  <th data-sort="name">Name <i data-ng-class-list-toggle="'is-inactive', !state.isOrderName" class="glyphicon glyphicon-chevron-down pull-right is-inactive"></i></th>
-  <th data-sort="power">Power <i data-ng-class-list-toggle="'is-inactive', !state.isOrderPower" class="glyphicon glyphicon-chevron-down pull-right is-inactive"></i></th>
+  <th data-sort="name">Name <i data-ng-class-list-toggle="'is-inactive', state.order === 'name'" class="glyphicon glyphicon-chevron-down pull-right is-inactive"></i></th>
+  <th data-sort="power">Power <i data-ng-class-list-toggle="'is-inactive', state.order === 'power'" class="glyphicon glyphicon-chevron-down pull-right is-inactive"></i></th>
 </tr>
 <tr data-ng-for="let p of heroes" class="list__tool-row">
 
@@ -62,6 +62,14 @@ export class HeroListView extends View {
     model.set( "selected", selected );
   }
 
+  onClickMarkAll() {
+    let checkboxes = Array.from( this.el.querySelectorAll( "[data-bind=checkbox]" ) );
+    checkboxes.forEach(( el: HTMLInputElement ) => {
+      el.checked = true;
+    });
+    this.syncCheckboxCounter();
+  }
+
   onClickRemoveGroup( e: Event ){
     let selected = Array.from( this.el.querySelectorAll( "[data-bind=checkbox]:checked" ) ),
         collection = this.collections.get( "heroes" );
@@ -74,6 +82,8 @@ export class HeroListView extends View {
     this.syncCheckboxCounter();
   }
 
+
+
   onClickSort( e:Event ) {
     let el = <HTMLElement>e.target,
         state = this.models.get( "state" ),
@@ -82,8 +92,7 @@ export class HeroListView extends View {
 
     e.preventDefault();
 
-    state.set( "isOrderName", order === "name" );
-    state.set( "isOrderPower", order === "power" );
+    state.set( "order", order );
 
     collection.orderBy( order );
   }

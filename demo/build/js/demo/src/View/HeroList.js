@@ -27,6 +27,13 @@ var HeroListView = (function (_super) {
         var selected = this.el.querySelectorAll("[data-bind=checkbox]:checked").length, model = this.models.get("state");
         model.set("selected", selected);
     };
+    HeroListView.prototype.onClickMarkAll = function () {
+        var checkboxes = Array.from(this.el.querySelectorAll("[data-bind=checkbox]"));
+        checkboxes.forEach(function (el) {
+            el.checked = true;
+        });
+        this.syncCheckboxCounter();
+    };
     HeroListView.prototype.onClickRemoveGroup = function (e) {
         var selected = Array.from(this.el.querySelectorAll("[data-bind=checkbox]:checked")), collection = this.collections.get("heroes");
         e.preventDefault();
@@ -39,8 +46,7 @@ var HeroListView = (function (_super) {
     HeroListView.prototype.onClickSort = function (e) {
         var el = e.target, state = this.models.get("state"), collection = this.collections.get("heroes"), order = el.dataset["sort"];
         e.preventDefault();
-        state.set("isOrderName", order === "name");
-        state.set("isOrderPower", order === "power");
+        state.set("order", order);
         collection.orderBy(order);
     };
     HeroListView = __decorate([
@@ -49,16 +55,16 @@ var HeroListView = (function (_super) {
             events: {
                 "change [data-bind=checkbox]": "syncCheckboxCounter",
                 "click [data-sort]": "onClickSort",
-                "click [data-bind=remove]": "onClickRemoveGroup"
+                "click [data-bind=remove]": "onClickRemoveGroup",
+                "click [data-bind=markall]": "onClickMarkAll"
             },
             models: {
                 state: new core_1.Model({
                     selected: 0,
-                    isOrderName: false,
-                    isOrderPower: false,
+                    order: ""
                 })
             },
-            template: "\n\n<table class=\"table\">\n<tr>\n  <th data-bind=\"markall\"><i class=\"glyphicon glyphicon-ok\"></i>&nbsp;</th>\n  <th data-sort=\"name\">Name <i data-ng-class-list-toggle=\"'is-inactive', !state.isOrderName\" class=\"glyphicon glyphicon-chevron-down pull-right is-inactive\"></i></th>\n  <th data-sort=\"power\">Power <i data-ng-class-list-toggle=\"'is-inactive', !state.isOrderPower\" class=\"glyphicon glyphicon-chevron-down pull-right is-inactive\"></i></th>\n</tr>\n<tr data-ng-for=\"let p of heroes\" class=\"list__tool-row\">\n\n  <td>\n    <label>\n    <input data-bind=\"checkbox\" type=\"checkbox\" data-ng-data=\"'id', p.id\" />\n    </label>\n  </td>\n\n  <td data-ng-text=\"p.name\" ></td>\n  <td data-ng-text=\"p.power\" ></td>\n\n</tr>\n\n</table>\n\n<div class=\"row\">\n  <span><span data-ng-text=\"state.selected\">0</span> selected items</span>\n  <button data-bind=\"remove\" class=\"btn btn-danger\" data-ng-if=\"state.selected\">Remove selected</button>\n</div>\n\n"
+            template: "\n\n<table class=\"table\">\n<tr>\n  <th data-bind=\"markall\"><i class=\"glyphicon glyphicon-ok\"></i>&nbsp;</th>\n  <th data-sort=\"name\">Name <i data-ng-class-list-toggle=\"'is-inactive', state.order === 'name'\" class=\"glyphicon glyphicon-chevron-down pull-right is-inactive\"></i></th>\n  <th data-sort=\"power\">Power <i data-ng-class-list-toggle=\"'is-inactive', state.order === 'power'\" class=\"glyphicon glyphicon-chevron-down pull-right is-inactive\"></i></th>\n</tr>\n<tr data-ng-for=\"let p of heroes\" class=\"list__tool-row\">\n\n  <td>\n    <label>\n    <input data-bind=\"checkbox\" type=\"checkbox\" data-ng-data=\"'id', p.id\" />\n    </label>\n  </td>\n\n  <td data-ng-text=\"p.name\" ></td>\n  <td data-ng-text=\"p.power\" ></td>\n\n</tr>\n\n</table>\n\n<div class=\"row\">\n  <span><span data-ng-text=\"state.selected\">0</span> selected items</span>\n  <button data-bind=\"remove\" class=\"btn btn-danger\" data-ng-if=\"state.selected\">Remove selected</button>\n</div>\n\n"
         }), 
         __metadata('design:paramtypes', [])
     ], HeroListView);

@@ -374,6 +374,50 @@ exports.FormStateSpec = FormStateSpec;
   return module;
 });
 
+_require.def( "tests/build/tests/spec/view.spec.js", function( _require, exports, module, global ){
+"use strict";
+var core_1 = _require( "tests/build/src/core.js" );
+var utils_1 = _require( "tests/build/src/core/utils.js" );
+function ViewSpec() {
+    describe("View", function () {
+        describe("#modelsToScope", function () {
+            it("converts flat into scope", function () {
+                var models = utils_1.mapFrom({
+                    foo: new core_1.Model({ name: "foo" }),
+                    bar: new core_1.Model({ name: "bar" })
+                }), scope = core_1.View.modelsToScope(models);
+                expect(scope["foo"].name).toBe("foo");
+                expect(scope["bar"].name).toBe("bar");
+            });
+            it("converts form states into scope", function () {
+                var models = utils_1.mapFrom({
+                    "foo.bar": new core_1.Model({ name: "bar" }),
+                    "bar.baz": new core_1.Model({ name: "baz" })
+                }), scope = core_1.View.modelsToScope(models);
+                expect(scope["foo"]["bar"].name).toBe("bar");
+                expect(scope["bar"]["baz"].name).toBe("baz");
+            });
+        });
+        describe("#collectionsToScope", function () {
+            it("converts collections into scope", function () {
+                var collections = utils_1.mapFrom({
+                    foo: new core_1.Collection([new core_1.Model({ name: "foo" })]),
+                    bar: new core_1.Collection([new core_1.Model({ name: "bar" })])
+                }), scope = core_1.View.collectionsToScope(collections);
+                expect(scope["foo"][0].name).toBe("foo");
+                expect(scope["bar"][0].name).toBe("bar");
+            });
+        });
+    });
+}
+exports.ViewSpec = ViewSpec;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/tests/spec/formview.spec.js", function( _require, exports, module, global ){
 "use strict";
 var core_1 = _require( "tests/build/src/core.js" );
@@ -441,50 +485,6 @@ function FormViewSpec() {
     });
 }
 exports.FormViewSpec = FormViewSpec;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/tests/spec/view.spec.js", function( _require, exports, module, global ){
-"use strict";
-var core_1 = _require( "tests/build/src/core.js" );
-var utils_1 = _require( "tests/build/src/core/utils.js" );
-function ViewSpec() {
-    describe("View", function () {
-        describe("#modelsToScope", function () {
-            it("converts flat into scope", function () {
-                var models = utils_1.mapFrom({
-                    foo: new core_1.Model({ name: "foo" }),
-                    bar: new core_1.Model({ name: "bar" })
-                }), scope = core_1.View.modelsToScope(models);
-                expect(scope["foo"].name).toBe("foo");
-                expect(scope["bar"].name).toBe("bar");
-            });
-            it("converts form states into scope", function () {
-                var models = utils_1.mapFrom({
-                    "foo.bar": new core_1.Model({ name: "bar" }),
-                    "bar.baz": new core_1.Model({ name: "baz" })
-                }), scope = core_1.View.modelsToScope(models);
-                expect(scope["foo"]["bar"].name).toBe("bar");
-                expect(scope["bar"]["baz"].name).toBe("baz");
-            });
-        });
-        describe("#collectionsToScope", function () {
-            it("converts collections into scope", function () {
-                var collections = utils_1.mapFrom({
-                    foo: new core_1.Collection([new core_1.Model({ name: "foo" })]),
-                    bar: new core_1.Collection([new core_1.Model({ name: "bar" })])
-                }), scope = core_1.View.collectionsToScope(collections);
-                expect(scope["foo"][0].name).toBe("foo");
-                expect(scope["bar"][0].name).toBe("bar");
-            });
-        });
-    });
-}
-exports.ViewSpec = ViewSpec;
 
   module.exports = exports;
 
@@ -869,23 +869,38 @@ exports.ControlState = ControlState;
   return module;
 });
 
-_require.def( "tests/build/src/core.js", function( _require, exports, module, global ){
-/// <reference path="../node_modules/typescript/lib/lib.d.ts" />
-/// <reference path="./core.d.ts" />
+_require.def( "tests/build/src/core/formvalidators.js", function( _require, exports, module, global ){
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-/**
- * Facade
- */
-__export(_require( "tests/build/src/core/exception.js" ));
-__export(_require( "tests/build/src/core/component.js" ));
-__export(_require( "tests/build/src/core/utils.js" ));
-__export(_require( "tests/build/src/core/view.js" ));
-__export(_require( "tests/build/src/core/formview.js" ));
-__export(_require( "tests/build/src/core/model.js" ));
-__export(_require( "tests/build/src/core/collection.js" ));
+var FormValidators = (function () {
+    function FormValidators() {
+    }
+    FormValidators.prototype.email = function (value) {
+        var pattern = /^[a-zA-Z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~\.]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,4}$/g;
+        if (pattern.test(value)) {
+            return Promise.resolve();
+        }
+        return Promise.reject("Please enter a valid email address");
+    };
+    FormValidators.prototype.tel = function (value) {
+        var pattern = /^\+(?:[0-9] ?){6,14}[0-9]$/;
+        if (pattern.test(value)) {
+            return Promise.resolve();
+        }
+        return Promise.reject("Please enter a valid tel. number +1 11 11 11");
+    };
+    FormValidators.prototype.url = function (value) {
+        var pattern = new RegExp("^(https?:\\/\\/)?((([a-z\\d]([a-z\\d\\-]*[a-z\\d])*)\\.)" +
+            "+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[\\-a-z\\d%_.~+]*)" +
+            "*(\\?[;&a-z\\d%_.~+=\\-]*)?(\\#[\\-a-z\\d_]*)?$", "i");
+        if (pattern.test(value)) {
+            return Promise.resolve();
+        }
+        return Promise.reject("Please enter a valid URL");
+    };
+    return FormValidators;
+}());
+exports.FormValidators = FormValidators;
+;
 
   module.exports = exports;
 
@@ -966,38 +981,23 @@ exports.promisify = promisify;
   return module;
 });
 
-_require.def( "tests/build/src/core/formvalidators.js", function( _require, exports, module, global ){
+_require.def( "tests/build/src/core.js", function( _require, exports, module, global ){
+/// <reference path="../node_modules/typescript/lib/lib.d.ts" />
+/// <reference path="./core.d.ts" />
 "use strict";
-var FormValidators = (function () {
-    function FormValidators() {
-    }
-    FormValidators.prototype.email = function (value) {
-        var pattern = /^[a-zA-Z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~\.]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,4}$/g;
-        if (pattern.test(value)) {
-            return Promise.resolve();
-        }
-        return Promise.reject("Please enter a valid email address");
-    };
-    FormValidators.prototype.tel = function (value) {
-        var pattern = /^\+(?:[0-9] ?){6,14}[0-9]$/;
-        if (pattern.test(value)) {
-            return Promise.resolve();
-        }
-        return Promise.reject("Please enter a valid tel. number +1 11 11 11");
-    };
-    FormValidators.prototype.url = function (value) {
-        var pattern = new RegExp("^(https?:\\/\\/)?((([a-z\\d]([a-z\\d\\-]*[a-z\\d])*)\\.)" +
-            "+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[\\-a-z\\d%_.~+]*)" +
-            "*(\\?[;&a-z\\d%_.~+=\\-]*)?(\\#[\\-a-z\\d_]*)?$", "i");
-        if (pattern.test(value)) {
-            return Promise.resolve();
-        }
-        return Promise.reject("Please enter a valid URL");
-    };
-    return FormValidators;
-}());
-exports.FormValidators = FormValidators;
-;
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+/**
+ * Facade
+ */
+__export(_require( "tests/build/src/core/exception.js" ));
+__export(_require( "tests/build/src/core/component.js" ));
+__export(_require( "tests/build/src/core/utils.js" ));
+__export(_require( "tests/build/src/core/view.js" ));
+__export(_require( "tests/build/src/core/formview.js" ));
+__export(_require( "tests/build/src/core/model.js" ));
+__export(_require( "tests/build/src/core/collection.js" ));
 
   module.exports = exports;
 
@@ -1704,6 +1704,47 @@ exports.NgEl = NgEl;
   return module;
 });
 
+_require.def( "tests/build/src/ng-template/ngtext.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
+/**
+ * <span data-ng-text="foo">...</span>
+ */
+var NgText = (function (_super) {
+    __extends(NgText, _super);
+    function NgText(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-text", function (node, expr, compile, cache) {
+            return {
+                el: node,
+                exp: compile(expr, "String", reporter),
+                cache: cache
+            };
+        });
+    }
+    NgText.prototype.sync = function (data) {
+        var _this = this;
+        this.nodes.forEach(function (node) {
+            node.cache.evaluate(node.exp.call(node.el, data), function (val) {
+                _this.setText(node.el, val);
+            });
+        });
+    };
+    return NgText;
+}(abstract_directive_1.AbstractDirective));
+exports.NgText = NgText;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/src/ng-template/ngfor.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1823,47 +1864,6 @@ var NgFor = (function (_super) {
     return NgFor;
 }(abstract_directive_1.AbstractDirective));
 exports.NgFor = NgFor;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ng-template/ngtext.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
-/**
- * <span data-ng-text="foo">...</span>
- */
-var NgText = (function (_super) {
-    __extends(NgText, _super);
-    function NgText(el, reporter) {
-        _super.call(this, el, reporter);
-        this.nodes = this.initNodes(el, "ng-text", function (node, expr, compile, cache) {
-            return {
-                el: node,
-                exp: compile(expr, "String", reporter),
-                cache: cache
-            };
-        });
-    }
-    NgText.prototype.sync = function (data) {
-        var _this = this;
-        this.nodes.forEach(function (node) {
-            node.cache.evaluate(node.exp.call(node.el, data), function (val) {
-                _this.setText(node.el, val);
-            });
-        });
-    };
-    return NgText;
-}(abstract_directive_1.AbstractDirective));
-exports.NgText = NgText;
 
   module.exports = exports;
 
@@ -1999,6 +1999,46 @@ exports.NgSwitchCaseDefault = NgSwitchCaseDefault;
   return module;
 });
 
+_require.def( "tests/build/src/ng-template/ngclass.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
+/**
+ * <i data-ng-class="'is-hidden', isHidden"></i>
+ */
+var NgClass = (function (_super) {
+    __extends(NgClass, _super);
+    function NgClass(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-class", function (node, expr, compile, cache) {
+            return {
+                el: node,
+                exp: compile(expr, "__toArray", reporter),
+                cache: cache
+            };
+        });
+    }
+    NgClass.prototype.sync = function (data) {
+        this.nodes.forEach(function (node) {
+            node.cache.evaluate(node.exp.call(node.el, data), function (args) {
+                node.el.classList.toggle(args[0], args[1]);
+            });
+        });
+    };
+    return NgClass;
+}(abstract_directive_1.AbstractDirective));
+exports.NgClass = NgClass;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/src/ng-template/ngprop.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -2033,46 +2073,6 @@ var NgProp = (function (_super) {
     return NgProp;
 }(abstract_directive_1.AbstractDirective));
 exports.NgProp = NgProp;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ng-template/ngclass.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
-/**
- * <i data-ng-class="'is-hidden', isHidden"></i>
- */
-var NgClass = (function (_super) {
-    __extends(NgClass, _super);
-    function NgClass(el, reporter) {
-        _super.call(this, el, reporter);
-        this.nodes = this.initNodes(el, "ng-class", function (node, expr, compile, cache) {
-            return {
-                el: node,
-                exp: compile(expr, "__toArray", reporter),
-                cache: cache
-            };
-        });
-    }
-    NgClass.prototype.sync = function (data) {
-        this.nodes.forEach(function (node) {
-            node.cache.evaluate(node.exp.call(node.el, data), function (args) {
-                node.el.classList.toggle(args[0], args[1]);
-            });
-        });
-    };
-    return NgClass;
-}(abstract_directive_1.AbstractDirective));
-exports.NgClass = NgClass;
 
   module.exports = exports;
 
@@ -2239,6 +2239,35 @@ exports.AbstractDirective = AbstractDirective;
   return module;
 });
 
+_require.def( "tests/build/src/ng-template/cache.js", function( _require, exports, module, global ){
+"use strict";
+var Cache = (function () {
+    function Cache() {
+    }
+    Cache.prototype.match = function (exVal) {
+        if (exVal === this.cache) {
+            return true;
+        }
+        this.cache = exVal;
+        return false;
+    };
+    Cache.prototype.evaluate = function (exVal, cb) {
+        if (this.match(exVal)) {
+            return;
+        }
+        cb(exVal);
+    };
+    return Cache;
+}());
+exports.Cache = Cache;
+;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/src/ng-template/expression.js", function( _require, exports, module, global ){
 "use strict";
 var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
@@ -2393,35 +2422,6 @@ function compile(expr, wrapper, reporter) {
     return fallbackStrategy.call(this, expr, wrapper, reporter);
 }
 exports.compile = compile;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ng-template/cache.js", function( _require, exports, module, global ){
-"use strict";
-var Cache = (function () {
-    function Cache() {
-    }
-    Cache.prototype.match = function (exVal) {
-        if (exVal === this.cache) {
-            return true;
-        }
-        this.cache = exVal;
-        return false;
-    };
-    Cache.prototype.evaluate = function (exVal, cb) {
-        if (this.match(exVal)) {
-            return;
-        }
-        cb(exVal);
-    };
-    return Cache;
-}());
-exports.Cache = Cache;
-;
 
   module.exports = exports;
 
