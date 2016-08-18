@@ -4,15 +4,17 @@ import { AbstractDirective } from "./abstract-directive";
  */
 export class NgSwitchCaseDefault extends AbstractDirective implements NgTemplate.Directive {
   nodes: NgTemplate.DirectiveNode[];
+  private el: HTMLElement;
 
-  constructor( public el: HTMLElement ){
-    super();
+  constructor( el: HTMLElement, reporter: NgTemplate.Reporter ){
+    super( el, reporter );
+    this.el = el;
     this.nodes =  this.initNodes( el, "ng-switch-case-default",
-      ( node: HTMLElement, expr: string, evaluate: Function ) => {
+      ( node: HTMLElement, expr: string, compile: Function ) => {
       return {
         el: node,
         outerHTML: node.outerHTML,
-        exp: evaluate( expr )
+        exp: compile( expr, "", reporter )
       };
     });
   }

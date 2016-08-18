@@ -5,13 +5,13 @@ import { AbstractDirective } from "./abstract-directive";
 export class NgProp extends AbstractDirective implements NgTemplate.Directive {
   nodes: NgTemplate.DirectiveNode[];
 
-  constructor( el: HTMLElement ){
-    super();
+  constructor( el: HTMLElement, reporter: NgTemplate.Reporter ){
+    super( el, reporter );
     this.nodes =  this.initNodes( el, "ng-prop",
-      ( node: HTMLElement, expr: string, evaluate: Function, cache: NgTemplate.Cache ) => {
+      ( node: HTMLElement, expr: string, compile: Function, cache: NgTemplate.Cache ) => {
       return {
         el: node,
-        exp: evaluate( expr, "__toArray" ),
+        exp: compile( expr, "__toArray", reporter ),
         cache: cache
       };
     });

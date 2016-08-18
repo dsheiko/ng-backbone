@@ -10,14 +10,14 @@ var abstract_directive_1 = require("./abstract-directive");
  */
 var NgSwitchCase = (function (_super) {
     __extends(NgSwitchCase, _super);
-    function NgSwitchCase(el) {
-        _super.call(this);
+    function NgSwitchCase(el, reporter) {
+        _super.call(this, el, reporter);
         this.el = el;
-        this.nodes = this.initNodes(el, "ng-switch-case", function (node, expr, evaluate) {
+        this.nodes = this.initNodes(el, "ng-switch-case", function (node, expr, compile) {
             return {
                 el: node,
                 outerHTML: node.outerHTML,
-                exp: evaluate(expr)
+                exp: compile(expr, "", reporter)
             };
         });
     }

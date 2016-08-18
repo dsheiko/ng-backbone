@@ -2,14 +2,14 @@
 var expression_1 = require("./expression");
 var cache_1 = require("./cache");
 var AbstractDirective = (function () {
-    function AbstractDirective() {
+    function AbstractDirective(el, reporter) {
     }
     AbstractDirective.prototype.initNodes = function (el, identifier, cb) {
         var datakey = this.getDataKey(identifier), selector = this.getSelector(identifier);
         return Array.from(el.querySelectorAll(selector)).map(function (el) {
             var expr = el.dataset[datakey];
             delete el.dataset[datakey];
-            return cb(el, expr, expression_1.evaluate, new cache_1.Cache());
+            return cb(el, expr, expression_1.compile, new cache_1.Cache());
         });
     };
     /**

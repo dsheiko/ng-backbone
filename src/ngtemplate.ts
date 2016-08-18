@@ -6,28 +6,21 @@ import { NgFor } from "./ng-template/ngfor";
 import { NgSwitch } from "./ng-template/ngswitch";
 import { NgSwitchCase } from "./ng-template/ngswitchcase";
 import { NgSwitchCaseDefault } from "./ng-template/ngswitchcasedefault";
-import { NgClassListToggle } from "./ng-template/ngclasslisttoggle";
+import { NgClass } from "./ng-template/ngclass";
 import { NgProp } from "./ng-template/ngprop";
 import { NgData } from "./ng-template/ngdata";
 import { Exception } from "./ng-template/exception";
-import { mediator  } from "./ng-template/mediator";
+import { Reporter } from "./ng-template/reporter";
 
 let DIRECTIVES = [ NgFor, NgSwitch, NgSwitchCase, NgSwitchCaseDefault, NgIf,
-      NgClassListToggle, NgData, NgProp, NgEl, NgText ];
+      NgClass, NgData, NgProp, NgEl, NgText ];
 
 export class NgTemplate {
   private directives: NgTemplate.Directive[] = [];
+  private reporter: Reporter;
 
   static factory( el: HTMLElement, template?: string ): NgTemplate {
     return new NgTemplate( el, template || null );
-  }
-
-  /**
-   * Subscribe for NgTemplate events
-   */
-  on( ev: string, cb: Function, context?: Object ): NgTemplate {
-    mediator.on( ev, cb, context );
-    return this;
   }
 
   /**
@@ -39,13 +32,18 @@ export class NgTemplate {
     if ( !this.el ) {
       throw new Exception( "(NgTemplate) Invalid first parameter: must be an existing DOM node" );
     }
+    this.reporter = new Reporter();
     this.template || this.init( DIRECTIVES );
   }
 
   private init( directives: Function[] ){
     directives.forEach(( Directive: any ) => {
-      this.directives.push( new Directive( this.el ) );
+      this.directives.push( new Directive( this.el, this.reporter ) );
     });
+  }
+
+  report(): any {
+    return this.reporter.get();
   }
 
   sync( data: NgTemplate.DataMap ): NgTemplate {
@@ -62,7 +60,7 @@ export class NgTemplate {
   }
 
   pipe( cb: Function, context: Object = this ): NgTemplate {
-    cb.call( context, this.el );
+    cb.call( context, this.el, this.reporter );
     return this;
   }
 }

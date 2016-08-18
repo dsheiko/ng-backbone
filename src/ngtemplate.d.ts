@@ -1,5 +1,23 @@
 declare namespace NgTemplate {
 
+  interface Report extends DataMap {
+    errors: string[];
+    tokens: DataMap[];
+  }
+
+  interface Reporter {
+    get( key?: string ): NgTemplate.Report;
+    addError( msg: string ): void;
+    addTokens( tokens: NgTemplate.Token[] ): void;
+    isParsed(): boolean;
+  }
+
+  interface Token {
+    name: string;
+    resolveValue( data: any ): any;
+    toJSON(): NgTemplate.DataMap;
+  }
+
   interface DataMap { [s: string]: any; }
 
   interface DirectiveNode {
@@ -44,7 +62,9 @@ declare namespace NgTemplate {
     new( el:Element, template?:string ): NgTemplate;
   }
 
+
   interface NgTemplate {
+    report(): Report;
     sync( data:Object ):NgTemplate;
     pipe( cb:Function, context:Object ):NgTemplate;
   }

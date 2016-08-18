@@ -11,9 +11,6 @@ var Collection = (function (_super) {
         _super.call(this, models, options);
         this.options = options || {};
     }
-    Collection.validateOptions = function (options) {
-        if (options === void 0) { options = {}; }
-    };
     /**
      * Shortcut for sorting
      */

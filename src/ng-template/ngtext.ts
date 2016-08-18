@@ -5,13 +5,13 @@ import { AbstractDirective } from "./abstract-directive";
 export class NgText extends AbstractDirective implements NgTemplate.Directive {
   nodes: NgTemplate.DirectiveNode[];
 
-  constructor( el: HTMLElement ){
-    super();
+  constructor( el: HTMLElement, reporter: NgTemplate.Reporter ){
+    super( el, reporter );
     this.nodes =  this.initNodes( el, "ng-text",
-      ( node: HTMLElement, expr: string, evaluate: Function, cache: NgTemplate.Cache ) => {
+      ( node: HTMLElement, expr: string, compile: Function, cache: NgTemplate.Cache ) => {
       return {
         el: node,
-        exp: evaluate( expr, "String" ),
+        exp: compile( expr, "String", reporter ),
         cache: cache
       };
     });

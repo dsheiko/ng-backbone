@@ -374,6 +374,80 @@ exports.FormStateSpec = FormStateSpec;
   return module;
 });
 
+_require.def( "tests/build/tests/spec/formview.spec.js", function( _require, exports, module, global ){
+"use strict";
+var core_1 = _require( "tests/build/src/core.js" );
+var formstate_1 = _require( "tests/build/src/core/formstate.js" );
+function FormViewSpec() {
+    describe("FormView", function () {
+        describe("#_findGroups", function () {
+            it("finds forms within boundinx box", function () {
+                var el = document.createElement("div"), view = new core_1.FormView({
+                    el: el
+                });
+                el.innerHTML = "<div><form data-ng-group=\"foo\"></form><form data-ng-group=\"bar\"></form></div>";
+                var forms = view._findGroups();
+                expect(Array.isArray(forms)).toBe(true);
+                expect(forms[0].dataset["ngGroup"]).toBe("foo");
+                expect(forms[1].dataset["ngGroup"]).toBe("bar");
+            });
+            it("finds form on boundinx box", function () {
+                var el = document.createElement("form"), view = new core_1.FormView({
+                    el: el
+                });
+                el.innerHTML = "<div><form data-ng-group=\"foo\"></form><form data-ng-group=\"bar\"></form></div>";
+                el.dataset["ngGroup"] = "baz";
+                var forms = view._findGroups();
+                // If boundinx box not inner forms allowed
+                expect(forms.length).toBe(1);
+                expect(forms[0].dataset["ngGroup"]).toBe("baz");
+            });
+        });
+        describe("#_bindGroup", function () {
+            it("sets a model to  this.models.FormName.form", function () {
+                var el = document.createElement("form"), view = new core_1.FormView({
+                    el: el
+                });
+                el.dataset["ngGroup"] = "baz";
+                view._bindGroup(el, "baz");
+                var model = view.models.get("baz.form");
+                expect(model instanceof formstate_1.FormState).toBe(true);
+            });
+        });
+        describe("#_findGroupElements", function () {
+            it("finds all form inputs", function () {
+                var el = document.createElement("form"), next, view = new core_1.FormView({
+                    el: el
+                });
+                el.dataset["ngGroup"] = "baz";
+                el.innerHTML = "<div>\n<input name=\"inputText\" />\n<input name=\"inputCheckbox\" type=\"checkbox\" />\n<input name=\"inputEmail\" type=\"email\" />\n<select name=\"select\"></select>\n<custom name=\"quiz\"></custom>\n</div>";
+                var els = view._findGroupElements(el);
+                expect(Array.isArray(els)).toBe(true);
+                expect(els.length).toBe(4);
+            });
+        });
+        describe("#_bindGroupElement", function () {
+            it("finds all form elements", function () {
+                var el = document.createElement("form"), next, view = new core_1.FormView({
+                    el: el
+                });
+                el.dataset["ngGroup"] = "baz";
+                view._bindGroup(el, "foo");
+                view._bindGroupElement("foo", "bar");
+                var model = view.models.get("foo.bar");
+                expect(model instanceof formstate_1.FormState).toBe(true);
+            });
+        });
+    });
+}
+exports.FormViewSpec = FormViewSpec;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/tests/spec/view.spec.js", function( _require, exports, module, global ){
 "use strict";
 var core_1 = _require( "tests/build/src/core.js" );
@@ -449,80 +523,6 @@ function UtilsSpec() {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = UtilsSpec;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/tests/spec/formview.spec.js", function( _require, exports, module, global ){
-"use strict";
-var core_1 = _require( "tests/build/src/core.js" );
-var formstate_1 = _require( "tests/build/src/core/formstate.js" );
-function FormViewSpec() {
-    describe("FormView", function () {
-        describe("#_findGroups", function () {
-            it("finds forms within boundinx box", function () {
-                var el = document.createElement("div"), view = new core_1.FormView({
-                    el: el
-                });
-                el.innerHTML = "<div><form data-ng-group=\"foo\"></form><form data-ng-group=\"bar\"></form></div>";
-                var forms = view._findGroups();
-                expect(Array.isArray(forms)).toBe(true);
-                expect(forms[0].dataset["ngGroup"]).toBe("foo");
-                expect(forms[1].dataset["ngGroup"]).toBe("bar");
-            });
-            it("finds form on boundinx box", function () {
-                var el = document.createElement("form"), view = new core_1.FormView({
-                    el: el
-                });
-                el.innerHTML = "<div><form data-ng-group=\"foo\"></form><form data-ng-group=\"bar\"></form></div>";
-                el.dataset["ngGroup"] = "baz";
-                var forms = view._findGroups();
-                // If boundinx box not inner forms allowed
-                expect(forms.length).toBe(1);
-                expect(forms[0].dataset["ngGroup"]).toBe("baz");
-            });
-        });
-        describe("#_bindGroup", function () {
-            it("sets a model to  this.models.FormName.form", function () {
-                var el = document.createElement("form"), view = new core_1.FormView({
-                    el: el
-                });
-                el.dataset["ngGroup"] = "baz";
-                view._bindGroup(el, "baz");
-                var model = view.models.get("baz.form");
-                expect(model instanceof formstate_1.FormState).toBe(true);
-            });
-        });
-        describe("#_findGroupElements", function () {
-            it("finds all form inputs", function () {
-                var el = document.createElement("form"), next, view = new core_1.FormView({
-                    el: el
-                });
-                el.dataset["ngGroup"] = "baz";
-                el.innerHTML = "<div>\n<input name=\"inputText\" />\n<input name=\"inputCheckbox\" type=\"checkbox\" />\n<input name=\"inputEmail\" type=\"email\" />\n<select name=\"select\"></select>\n<custom name=\"quiz\"></custom>\n</div>";
-                var els = view._findGroupElements(el);
-                expect(Array.isArray(els)).toBe(true);
-                expect(els.length).toBe(4);
-            });
-        });
-        describe("#_bindGroupElement", function () {
-            it("finds all form elements", function () {
-                var el = document.createElement("form"), next, view = new core_1.FormView({
-                    el: el
-                });
-                el.dataset["ngGroup"] = "baz";
-                view._bindGroup(el, "foo");
-                view._bindGroupElement("foo", "bar");
-                var model = view.models.get("foo.bar");
-                expect(model instanceof formstate_1.FormState).toBe(true);
-            });
-        });
-    });
-}
-exports.FormViewSpec = FormViewSpec;
 
   module.exports = exports;
 
@@ -869,38 +869,23 @@ exports.ControlState = ControlState;
   return module;
 });
 
-_require.def( "tests/build/src/core/formvalidators.js", function( _require, exports, module, global ){
+_require.def( "tests/build/src/core.js", function( _require, exports, module, global ){
+/// <reference path="../node_modules/typescript/lib/lib.d.ts" />
+/// <reference path="./core.d.ts" />
 "use strict";
-var FormValidators = (function () {
-    function FormValidators() {
-    }
-    FormValidators.prototype.email = function (value) {
-        var pattern = /^[a-zA-Z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~\.]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,4}$/g;
-        if (pattern.test(value)) {
-            return Promise.resolve();
-        }
-        return Promise.reject("Please enter a valid email address");
-    };
-    FormValidators.prototype.tel = function (value) {
-        var pattern = /^\+(?:[0-9] ?){6,14}[0-9]$/;
-        if (pattern.test(value)) {
-            return Promise.resolve();
-        }
-        return Promise.reject("Please enter a valid tel. number +1 11 11 11");
-    };
-    FormValidators.prototype.url = function (value) {
-        var pattern = new RegExp("^(https?:\\/\\/)?((([a-z\\d]([a-z\\d\\-]*[a-z\\d])*)\\.)" +
-            "+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[\\-a-z\\d%_.~+]*)" +
-            "*(\\?[;&a-z\\d%_.~+=\\-]*)?(\\#[\\-a-z\\d_]*)?$", "i");
-        if (pattern.test(value)) {
-            return Promise.resolve();
-        }
-        return Promise.reject("Please enter a valid URL");
-    };
-    return FormValidators;
-}());
-exports.FormValidators = FormValidators;
-;
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+/**
+ * Facade
+ */
+__export(_require( "tests/build/src/core/exception.js" ));
+__export(_require( "tests/build/src/core/component.js" ));
+__export(_require( "tests/build/src/core/utils.js" ));
+__export(_require( "tests/build/src/core/view.js" ));
+__export(_require( "tests/build/src/core/formview.js" ));
+__export(_require( "tests/build/src/core/model.js" ));
+__export(_require( "tests/build/src/core/collection.js" ));
 
   module.exports = exports;
 
@@ -981,23 +966,38 @@ exports.promisify = promisify;
   return module;
 });
 
-_require.def( "tests/build/src/core.js", function( _require, exports, module, global ){
-/// <reference path="../node_modules/typescript/lib/lib.d.ts" />
-/// <reference path="./core.d.ts" />
+_require.def( "tests/build/src/core/formvalidators.js", function( _require, exports, module, global ){
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-/**
- * Facade
- */
-__export(_require( "tests/build/src/core/exception.js" ));
-__export(_require( "tests/build/src/core/component.js" ));
-__export(_require( "tests/build/src/core/utils.js" ));
-__export(_require( "tests/build/src/core/view.js" ));
-__export(_require( "tests/build/src/core/formview.js" ));
-__export(_require( "tests/build/src/core/model.js" ));
-__export(_require( "tests/build/src/core/collection.js" ));
+var FormValidators = (function () {
+    function FormValidators() {
+    }
+    FormValidators.prototype.email = function (value) {
+        var pattern = /^[a-zA-Z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~\.]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,4}$/g;
+        if (pattern.test(value)) {
+            return Promise.resolve();
+        }
+        return Promise.reject("Please enter a valid email address");
+    };
+    FormValidators.prototype.tel = function (value) {
+        var pattern = /^\+(?:[0-9] ?){6,14}[0-9]$/;
+        if (pattern.test(value)) {
+            return Promise.resolve();
+        }
+        return Promise.reject("Please enter a valid tel. number +1 11 11 11");
+    };
+    FormValidators.prototype.url = function (value) {
+        var pattern = new RegExp("^(https?:\\/\\/)?((([a-z\\d]([a-z\\d\\-]*[a-z\\d])*)\\.)" +
+            "+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[\\-a-z\\d%_.~+]*)" +
+            "*(\\?[;&a-z\\d%_.~+=\\-]*)?(\\#[\\-a-z\\d_]*)?$", "i");
+        if (pattern.test(value)) {
+            return Promise.resolve();
+        }
+        return Promise.reject("Please enter a valid URL");
+    };
+    return FormValidators;
+}());
+exports.FormValidators = FormValidators;
+;
 
   module.exports = exports;
 
@@ -1497,9 +1497,6 @@ var Collection = (function (_super) {
         _super.call(this, models, options);
         this.options = options || {};
     }
-    Collection.validateOptions = function (options) {
-        if (options === void 0) { options = {}; }
-    };
     /**
      * Shortcut for sorting
      */
@@ -1549,13 +1546,13 @@ var ngfor_1 = _require( "tests/build/src/ng-template/ngfor.js" );
 var ngswitch_1 = _require( "tests/build/src/ng-template/ngswitch.js" );
 var ngswitchcase_1 = _require( "tests/build/src/ng-template/ngswitchcase.js" );
 var ngswitchcasedefault_1 = _require( "tests/build/src/ng-template/ngswitchcasedefault.js" );
-var ngclasslisttoggle_1 = _require( "tests/build/src/ng-template/ngclasslisttoggle.js" );
+var ngclass_1 = _require( "tests/build/src/ng-template/ngclass.js" );
 var ngprop_1 = _require( "tests/build/src/ng-template/ngprop.js" );
 var ngdata_1 = _require( "tests/build/src/ng-template/ngdata.js" );
 var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
-var mediator_1 = _require( "tests/build/src/ng-template/mediator.js" );
+var reporter_1 = _require( "tests/build/src/ng-template/reporter.js" );
 var DIRECTIVES = [ngfor_1.NgFor, ngswitch_1.NgSwitch, ngswitchcase_1.NgSwitchCase, ngswitchcasedefault_1.NgSwitchCaseDefault, ngif_1.NgIf,
-    ngclasslisttoggle_1.NgClassListToggle, ngdata_1.NgData, ngprop_1.NgProp, ngel_1.NgEl, ngtext_1.NgText];
+    ngclass_1.NgClass, ngdata_1.NgData, ngprop_1.NgProp, ngel_1.NgEl, ngtext_1.NgText];
 var NgTemplate = (function () {
     /**
      * Initialize template for a given Element
@@ -1568,23 +1565,20 @@ var NgTemplate = (function () {
         if (!this.el) {
             throw new exception_1.Exception("(NgTemplate) Invalid first parameter: must be an existing DOM node");
         }
+        this.reporter = new reporter_1.Reporter();
         this.template || this.init(DIRECTIVES);
     }
     NgTemplate.factory = function (el, template) {
         return new NgTemplate(el, template || null);
     };
-    /**
-     * Subscribe for NgTemplate events
-     */
-    NgTemplate.prototype.on = function (ev, cb, context) {
-        mediator_1.mediator.on(ev, cb, context);
-        return this;
-    };
     NgTemplate.prototype.init = function (directives) {
         var _this = this;
         directives.forEach(function (Directive) {
-            _this.directives.push(new Directive(_this.el));
+            _this.directives.push(new Directive(_this.el, _this.reporter));
         });
+    };
+    NgTemplate.prototype.report = function () {
+        return this.reporter.get();
     };
     NgTemplate.prototype.sync = function (data) {
         // Late initialization: renders from a given template on first sync
@@ -1600,7 +1594,7 @@ var NgTemplate = (function () {
     };
     NgTemplate.prototype.pipe = function (cb, context) {
         if (context === void 0) { context = this; }
-        cb.call(context, this.el);
+        cb.call(context, this.el, this.reporter);
         return this;
     };
     return NgTemplate;
@@ -1626,13 +1620,13 @@ var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-direc
  */
 var NgIf = (function (_super) {
     __extends(NgIf, _super);
-    function NgIf(el) {
-        _super.call(this);
-        this.nodes = this.initNodes(el, "ng-if", function (node, expr, evaluate, cache) {
+    function NgIf(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-if", function (node, expr, compile, cache) {
             return {
                 el: node,
                 anchor: document.createElement("ng"),
-                exp: evaluate(expr, "Boolean"),
+                exp: compile(expr, "Boolean", reporter),
                 cache: cache
             };
         });
@@ -1686,12 +1680,12 @@ var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-direc
  */
 var NgEl = (function (_super) {
     __extends(NgEl, _super);
-    function NgEl(el) {
-        _super.call(this);
-        this.nodes = this.initNodes(el, "ng-el", function (node, expr, evaluate) {
+    function NgEl(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-el", function (node, expr, compile) {
             return {
                 el: node,
-                exp: evaluate(expr)
+                exp: compile(expr, "", reporter)
             };
         });
     }
@@ -1703,47 +1697,6 @@ var NgEl = (function (_super) {
     return NgEl;
 }(abstract_directive_1.AbstractDirective));
 exports.NgEl = NgEl;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ng-template/ngtext.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
-/**
- * <span data-ng-text="foo">...</span>
- */
-var NgText = (function (_super) {
-    __extends(NgText, _super);
-    function NgText(el) {
-        _super.call(this);
-        this.nodes = this.initNodes(el, "ng-text", function (node, expr, evaluate, cache) {
-            return {
-                el: node,
-                exp: evaluate(expr, "String"),
-                cache: cache
-            };
-        });
-    }
-    NgText.prototype.sync = function (data) {
-        var _this = this;
-        this.nodes.forEach(function (node) {
-            node.cache.evaluate(node.exp.call(node.el, data), function (val) {
-                _this.setText(node.el, val);
-            });
-        });
-    };
-    return NgText;
-}(abstract_directive_1.AbstractDirective));
-exports.NgText = NgText;
 
   module.exports = exports;
 
@@ -1764,17 +1717,19 @@ var counter = 0;
 // <div data-ng:for="let hero of data.heroes" data-ng:text="hero" ></div>
 var NgFor = (function (_super) {
     __extends(NgFor, _super);
-    function NgFor(el) {
+    function NgFor(el, reporter) {
         var _this = this;
-        _super.call(this);
-        this.nodes = this.initNodes(el, "ng-for", function (node, expr, evaluate, cache) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-for", function (node, expr, compile, cache) {
             var parsed = _this.parseExpr(expr), outerHTML, id = "id" + (++counter);
             node.dataset["ngNodeId"] = id;
             outerHTML = node.outerHTML;
             // Do not process directives on the first level as all of them about elements generated by ngFor
             ["ngSwitch", "ngSwitchCase", "ngSwitchCaseDefault", "ngIf",
                 "ngClassListToggle", "ngData", "ngProp", "ngEl", "ngText"].forEach(function (key) {
-                delete node.dataset[key];
+                if (node.dataset[key]) {
+                    delete node.dataset[key];
+                }
             });
             return {
                 el: node,
@@ -1875,6 +1830,47 @@ exports.NgFor = NgFor;
   return module;
 });
 
+_require.def( "tests/build/src/ng-template/ngtext.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
+/**
+ * <span data-ng-text="foo">...</span>
+ */
+var NgText = (function (_super) {
+    __extends(NgText, _super);
+    function NgText(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-text", function (node, expr, compile, cache) {
+            return {
+                el: node,
+                exp: compile(expr, "String", reporter),
+                cache: cache
+            };
+        });
+    }
+    NgText.prototype.sync = function (data) {
+        var _this = this;
+        this.nodes.forEach(function (node) {
+            node.cache.evaluate(node.exp.call(node.el, data), function (val) {
+                _this.setText(node.el, val);
+            });
+        });
+    };
+    return NgText;
+}(abstract_directive_1.AbstractDirective));
+exports.NgText = NgText;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/src/ng-template/ngswitch.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1888,12 +1884,12 @@ var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-direc
  */
 var NgSwitch = (function (_super) {
     __extends(NgSwitch, _super);
-    function NgSwitch(el) {
-        _super.call(this);
-        this.nodes = this.initNodes(el, "ng-switch", function (node, expr, evaluate, cache) {
+    function NgSwitch(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-switch", function (node, expr, compile, cache) {
             return {
                 el: node,
-                exp: evaluate(expr),
+                exp: compile(expr, "", reporter),
                 cache: cache
             };
         });
@@ -1930,14 +1926,14 @@ var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-direc
  */
 var NgSwitchCase = (function (_super) {
     __extends(NgSwitchCase, _super);
-    function NgSwitchCase(el) {
-        _super.call(this);
+    function NgSwitchCase(el, reporter) {
+        _super.call(this, el, reporter);
         this.el = el;
-        this.nodes = this.initNodes(el, "ng-switch-case", function (node, expr, evaluate) {
+        this.nodes = this.initNodes(el, "ng-switch-case", function (node, expr, compile) {
             return {
                 el: node,
                 outerHTML: node.outerHTML,
-                exp: evaluate(expr)
+                exp: compile(expr, "", reporter)
             };
         });
     }
@@ -1973,14 +1969,14 @@ var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-direc
  */
 var NgSwitchCaseDefault = (function (_super) {
     __extends(NgSwitchCaseDefault, _super);
-    function NgSwitchCaseDefault(el) {
-        _super.call(this);
+    function NgSwitchCaseDefault(el, reporter) {
+        _super.call(this, el, reporter);
         this.el = el;
-        this.nodes = this.initNodes(el, "ng-switch-case-default", function (node, expr, evaluate) {
+        this.nodes = this.initNodes(el, "ng-switch-case-default", function (node, expr, compile) {
             return {
                 el: node,
                 outerHTML: node.outerHTML,
-                exp: evaluate(expr)
+                exp: compile(expr, "", reporter)
             };
         });
     }
@@ -2003,46 +1999,6 @@ exports.NgSwitchCaseDefault = NgSwitchCaseDefault;
   return module;
 });
 
-_require.def( "tests/build/src/ng-template/ngclasslisttoggle.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
-/**
- * <i data-ng-class-list-toggle="'is-hidden', isHidden"></i>
- */
-var NgClassListToggle = (function (_super) {
-    __extends(NgClassListToggle, _super);
-    function NgClassListToggle(el) {
-        _super.call(this);
-        this.nodes = this.initNodes(el, "ng-class-list-toggle", function (node, expr, evaluate, cache) {
-            return {
-                el: node,
-                exp: evaluate(expr, "__toArray"),
-                cache: cache
-            };
-        });
-    }
-    NgClassListToggle.prototype.sync = function (data) {
-        this.nodes.forEach(function (node) {
-            node.cache.evaluate(node.exp.call(node.el, data), function (args) {
-                node.el.classList.toggle(args[0], args[1]);
-            });
-        });
-    };
-    return NgClassListToggle;
-}(abstract_directive_1.AbstractDirective));
-exports.NgClassListToggle = NgClassListToggle;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/ng-template/ngprop.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -2056,12 +2012,12 @@ var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-direc
  */
 var NgProp = (function (_super) {
     __extends(NgProp, _super);
-    function NgProp(el) {
-        _super.call(this);
-        this.nodes = this.initNodes(el, "ng-prop", function (node, expr, evaluate, cache) {
+    function NgProp(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-prop", function (node, expr, compile, cache) {
             return {
                 el: node,
-                exp: evaluate(expr, "__toArray"),
+                exp: compile(expr, "__toArray", reporter),
                 cache: cache
             };
         });
@@ -2084,6 +2040,46 @@ exports.NgProp = NgProp;
   return module;
 });
 
+_require.def( "tests/build/src/ng-template/ngclass.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
+/**
+ * <i data-ng-class="'is-hidden', isHidden"></i>
+ */
+var NgClass = (function (_super) {
+    __extends(NgClass, _super);
+    function NgClass(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-class", function (node, expr, compile, cache) {
+            return {
+                el: node,
+                exp: compile(expr, "__toArray", reporter),
+                cache: cache
+            };
+        });
+    }
+    NgClass.prototype.sync = function (data) {
+        this.nodes.forEach(function (node) {
+            node.cache.evaluate(node.exp.call(node.el, data), function (args) {
+                node.el.classList.toggle(args[0], args[1]);
+            });
+        });
+    };
+    return NgClass;
+}(abstract_directive_1.AbstractDirective));
+exports.NgClass = NgClass;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/src/ng-template/ngdata.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -2097,12 +2093,12 @@ var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-direc
  */
 var NgData = (function (_super) {
     __extends(NgData, _super);
-    function NgData(el) {
-        _super.call(this);
-        this.nodes = this.initNodes(el, "ng-data", function (node, expr, evaluate, cache) {
+    function NgData(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-data", function (node, expr, compile, cache) {
             return {
                 el: node,
-                exp: evaluate(expr, "__toArray"),
+                exp: compile(expr, "__toArray", reporter),
                 cache: cache
             };
         });
@@ -2153,10 +2149,31 @@ exports.Exception = Exception;
   return module;
 });
 
-_require.def( "tests/build/src/ng-template/mediator.js", function( _require, exports, module, global ){
+_require.def( "tests/build/src/ng-template/reporter.js", function( _require, exports, module, global ){
 "use strict";
-var eventemitter_1 = _require( "tests/build/src/ng-template/eventemitter.js" );
-exports.mediator = new eventemitter_1.EventEmitter();
+var Reporter = (function () {
+    function Reporter() {
+        this.data = {
+            errors: [],
+            tokens: []
+        };
+    }
+    Reporter.prototype.addError = function (msg) {
+        this.data.errors.push(msg);
+    };
+    Reporter.prototype.addTokens = function (tokens) {
+        var merge = tokens.map(function (token) { return token.toJSON(); });
+        this.data.tokens = this.data.tokens.concat(merge);
+    };
+    Reporter.prototype.get = function (key) {
+        return key ? this.data[key] : this.data;
+    };
+    Reporter.prototype.isParsed = function () {
+        return this.data.tokens.length > 0;
+    };
+    return Reporter;
+}());
+exports.Reporter = Reporter;
 
   module.exports = exports;
 
@@ -2169,14 +2186,14 @@ _require.def( "tests/build/src/ng-template/abstract-directive.js", function( _re
 var expression_1 = _require( "tests/build/src/ng-template/expression.js" );
 var cache_1 = _require( "tests/build/src/ng-template/cache.js" );
 var AbstractDirective = (function () {
-    function AbstractDirective() {
+    function AbstractDirective(el, reporter) {
     }
     AbstractDirective.prototype.initNodes = function (el, identifier, cb) {
         var datakey = this.getDataKey(identifier), selector = this.getSelector(identifier);
         return Array.from(el.querySelectorAll(selector)).map(function (el) {
             var expr = el.dataset[datakey];
             delete el.dataset[datakey];
-            return cb(el, expr, expression_1.evaluate, new cache_1.Cache());
+            return cb(el, expr, expression_1.compile, new cache_1.Cache());
         });
     };
     /**
@@ -2222,251 +2239,160 @@ exports.AbstractDirective = AbstractDirective;
   return module;
 });
 
-_require.def( "tests/build/src/ng-template/eventemitter.js", function( _require, exports, module, global ){
-"use strict";
-var EventEmitter = (function () {
-    function EventEmitter() {
-        this.eventQueue = [];
-    }
-    /**
-     * Trigger callbacks for the given event
-     * @example
-     * this.trigger( "myevent", 1, 2, 3 );
-     */
-    EventEmitter.prototype.trigger = function (event) {
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
-        this.eventQueue.forEach(function (dto) {
-            if (dto.event !== event) {
-                return;
-            }
-            dto.callback.apply(dto.context, args);
-        }, this);
-    };
-    /**
-     * Just like on, but causes the bound callback to fire only once before being removed.
-     */
-    EventEmitter.prototype.once = function (ev, cb, context) {
-        this.off(ev, cb);
-        this.on(ev, cb, context);
-        return this;
-    };
-    /**
-     * Subscribe a cb hundler for a given event in the object scope
-     */
-    EventEmitter.prototype.on = function (ev, cb, context) {
-        this.eventQueue.push({
-            event: ev,
-            callback: cb,
-            context: context || { event: ev }
-        });
-        return this;
-    };
-    /**
-     * Unsubscribe a cb hundler
-     *
-     */
-    EventEmitter.prototype.off = function (ev, target) {
-        this.eventQueue = this.eventQueue.filter(function (task) {
-            return task.event !== ev || task.callback.toString() !== target.toString();
-        });
-        return this;
-    };
-    return EventEmitter;
-}());
-exports.EventEmitter = EventEmitter;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/ng-template/expression.js", function( _require, exports, module, global ){
 "use strict";
 var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
-var mediator_1 = _require( "tests/build/src/ng-template/mediator.js" );
-function toArray() {
-    return [].slice.call(arguments);
-}
-;
-function isNumber(expr) {
-    var re = /^\d+$/;
-    return re.test(expr);
-}
-exports.isNumber = isNumber;
-function isBool(expr) {
-    var re = /^(true|false)$/i;
-    return re.test(expr);
-}
-exports.isBool = isBool;
-function isString(expr) {
-    var single = /^\'[^\']+\'$/i, double = /^\"[^\"]+\"$/i;
-    return single.test(expr) || double.test(expr);
-}
-exports.isString = isString;
+var parser_1 = _require( "tests/build/src/ng-template/expression/parser.js" );
+var tokenizer_1 = _require( "tests/build/src/ng-template/expression/tokenizer.js" );
 /**
- * Removes leading negotiation
+ * Calc value in a composite xpression such as `foo + bb`
  */
-function removeNegotiation(expr) {
-    var re = /^\!\s*/;
-    return expr.replace(re, "");
-}
-exports.removeNegotiation = removeNegotiation;
-/**
- * Return true of expression can be used as a path e.g. foo.bar.baz.quiz
- */
-function isParsableExpr(expr) {
-    var re = /^[a-zA-Z_\$][a-zA-Z0-9\._\$]+$/;
-    return expr.substr(0, 5) !== "this." && re.test(expr);
-}
-exports.isParsableExpr = isParsableExpr;
-/**
- * Find value in nested object by a specified path e.g. foo.bar.baz.quiz
- */
-function findValue(path, data) {
-    var value = data;
-    path.split("\.").forEach(function (key) {
-        if (typeof value !== "object") {
-            throw new exception_1.Exception("'" + path + "' is undefined");
-        }
-        if (!(key in value)) {
-            throw new exception_1.Exception("'" + path + "' is undefined");
-        }
-        value = value[key];
-    });
-    return value;
-}
-exports.findValue = findValue;
-function getWrapperFunction(fnName) {
-    return window[fnName];
-}
-exports.getWrapperFunction = getWrapperFunction;
-function strategyReference(expr, wrapper) {
-    if (wrapper === void 0) { wrapper = ""; }
-    var positiveExpr = removeNegotiation(expr);
-    return function (data) {
-        try {
-            var exprVal = findValue(positiveExpr, data), val = positiveExpr === expr ? exprVal : !exprVal;
-            if (!wrapper) {
-                return val;
-            }
-            var wrapFn = getWrapperFunction(wrapper);
-            return wrapFn(val);
-        }
-        catch (err) {
-            if (err instanceof exception_1.Exception) {
-                mediator_1.mediator.trigger("error", err.message);
-                return "";
-            }
-            throw new SyntaxError("Invalid ng* expression " + expr);
-        }
-    };
-}
-function strategyString(expr) {
-    return function () {
-        // strip quotes
-        return expr.substr(1, expr.length - 2);
-    };
-}
-function strategyBool(expr) {
-    return function () {
-        return expr.toUpperCase() === "TRUE";
-    };
-}
-function strategyNumber(expr) {
-    return function () {
-        return Number(expr);
-    };
-}
-function strategyNull() {
-    return function () {
-        return "";
-    };
-}
-function propValueReference(propRaw, expr) {
-    var prop = propRaw.substr(1, propRaw.length - 2), positiveExpr = removeNegotiation(expr);
-    return function (data) {
-        try {
-            var exprVal = findValue(positiveExpr, data), val = positiveExpr === expr ? exprVal : !exprVal;
-            return [prop, val];
-        }
-        catch (err) {
-            if (err instanceof exception_1.Exception) {
-                mediator_1.mediator.trigger("error", err.message);
-                return [prop, ""];
-            }
-            throw new SyntaxError("Invalid ng* expression " + expr);
-        }
-    };
-}
-exports.propValueReference = propValueReference;
-function evaluate(exprRaw, wrapper) {
-    if (wrapper === void 0) { wrapper = ""; }
-    var func, expr = exprRaw.trim(), positiveExpr = removeNegotiation(expr), 
-    // make available in the closure
-    __toArray = toArray, 
-    // when e.g. ('propName', value)
-    exprArgs;
-    try {
-        if (wrapper === "__toArray") {
-            exprArgs = expr.split(",");
-            if (exprArgs.length !== 2) {
-                throw new exception_1.Exception("Invalid group expression " + expr + " - must be \"expr, expr\"");
-            }
-            exprArgs = exprArgs.map(function (i) { return i.trim(); });
-            // case: 'propName', some.value
-            if (isString(exprArgs[0])
-                && !isNumber(exprArgs[1])
-                && !isBool(exprArgs[1])
-                && !isString(exprArgs[1])
-                && isParsableExpr(exprArgs[1])) {
-                return propValueReference(exprArgs[0], exprArgs[1]);
-            }
-        }
-        if (!expr.length) {
-            return strategyNull();
-        }
-        if (isNumber(expr)) {
-            return strategyNumber(expr);
-        }
-        if (isBool(expr)) {
-            return strategyBool(expr);
-        }
-        if (isString(expr)) {
-            return strategyString(expr);
-        }
-        if (isParsableExpr(positiveExpr)) {
-            return strategyReference(expr, wrapper);
-        }
-        // Standard strategy
-        func = function (data) {
-            var cb, code, keys = Object.keys(data), vals = keys.map(function (key) {
-                return data[key];
-            });
-            try {
-                code = "cb = function(" + keys.join(",") + ("){ return " + wrapper + "(" + expr + "); };");
-                eval(code);
-                return cb.apply(this, vals);
-            }
-            catch (err) {
-                mediator_1.mediator.trigger("Could not evaluate " + code);
-            }
-        };
+function reduceComposite(tokens, data) {
+    if (tokens.length === 1) {
+        var token = tokens[0];
+        return token.resolveValue(data);
     }
-    catch (err) {
-        if (err instanceof exception_1.Exception) {
-            mediator_1.mediator.trigger("error", err.message);
-            return strategyNull();
-        }
+    var left = tokens[0], leftVal = left.resolveValue(data), operator = tokens[1], right = tokens[2], rightVal = right.resolveValue(data);
+    if (!(operator instanceof tokenizer_1.OperatorToken)) {
+        throw new SyntaxError("Invalid operator " + operator.value + " in ng* expression");
+    }
+    switch (operator.value) {
+        case "+":
+            return leftVal + rightVal;
+        case "-":
+            return leftVal - rightVal;
+        case "<":
+            return leftVal < rightVal;
+        case ">":
+            return leftVal > rightVal;
+        case "===":
+            return leftVal === rightVal;
+        case "==":
+            return leftVal === rightVal;
+        case "!==":
+            return leftVal !== rightVal;
+        case "!=":
+            return leftVal !== rightVal;
+        case "&&":
+            return leftVal && rightVal;
+        case "||":
+            return leftVal || rightVal;
+    }
+}
+/**
+ * Wrap as requested by the consumer object
+ */
+function wrap(value, wrapper) {
+    switch (wrapper) {
+        case "String":
+            return String(value);
+        case "Boolean":
+            return Boolean(value);
+        default:
+            return value;
+    }
+}
+/**
+ * Throw an error or silently report the exception
+ */
+function treatException(err, expr, reporter) {
+    if (!(err instanceof exception_1.Exception)) {
+        console.log(err);
         throw new SyntaxError("Invalid ng* expression " + expr);
     }
+    reporter.addError(err.message);
+}
+/**
+ * Create evaluation function for expressions like "prop, value"
+ */
+function tryGroupStrategy(expr, reporter) {
+    var leftExpr, rightExpr;
+    _a = expr.split(","), leftExpr = _a[0], rightExpr = _a[1];
+    var leftTokens = parser_1.Parser.parse(leftExpr), rightTokens = parser_1.Parser.parse(rightExpr);
+    if (!leftTokens.length) {
+        throw new parser_1.ParserException("Cannot parse expression " + leftExpr);
+    }
+    if (!rightTokens.length) {
+        throw new parser_1.ParserException("Cannot parse expression " + rightExpr);
+    }
+    reporter.addTokens(leftTokens);
+    reporter.addTokens(rightTokens);
+    return function (data) {
+        try {
+            return [reduceComposite(leftTokens, data), reduceComposite(rightTokens, data)];
+        }
+        catch (err) {
+            treatException(err, expr, reporter);
+            return ["", ""];
+        }
+    };
+    var _a;
+}
+exports.tryGroupStrategy = tryGroupStrategy;
+/**
+ * Create evaluation function for expressions like "value" or "value + value"
+ */
+function tryOptimalStrategy(expr, wrapper, reporter) {
+    if (wrapper === void 0) { wrapper = ""; }
+    var tokens = parser_1.Parser.parse(expr);
+    if (!tokens.length) {
+        throw new parser_1.ParserException("Cannot parse expression " + expr);
+    }
+    reporter.addTokens(tokens);
+    return function (data) {
+        // Here we do not need to keep the el context - whenver this. encountered it jumps to fallback strategy
+        try {
+            return wrap(reduceComposite(tokens, data), wrapper);
+        }
+        catch (err) {
+            treatException(err, expr, reporter);
+            return "";
+        }
+    };
+}
+exports.tryOptimalStrategy = tryOptimalStrategy;
+/**
+ * Create evaluation function for any expression by using eval
+ */
+function fallbackStrategy(expr, wrapper, reporter) {
+    if (wrapper === void 0) { wrapper = ""; }
+    // make available in the closure
+    var __toArray = function () {
+        return [].slice.call(arguments);
+    }, 
+    // Standard strategy
+    func = function (data) {
+        var cb, code, keys = Object.keys(data), vals = keys.map(function (key) {
+            return data[key];
+        });
+        try {
+            code = "cb = function(" + keys.join(",") + ("){ return " + wrapper + "(" + expr + "); };");
+            eval(code);
+            return cb.apply(this, vals);
+        }
+        catch (err) {
+            reporter.addError("Could not evaluate " + code);
+        }
+    };
     return func;
 }
-exports.evaluate = evaluate;
-;
+exports.fallbackStrategy = fallbackStrategy;
+function compile(expr, wrapper, reporter) {
+    if (wrapper === void 0) { wrapper = ""; }
+    try {
+        if (wrapper === "__toArray") {
+            return tryGroupStrategy(expr, reporter);
+        }
+        return tryOptimalStrategy(expr, wrapper, reporter);
+    }
+    catch (err) {
+        if (!(err instanceof parser_1.ParserException)) {
+            throw SyntaxError(err.message);
+        }
+    }
+    return fallbackStrategy.call(this, expr, wrapper, reporter);
+}
+exports.compile = compile;
 
   module.exports = exports;
 
@@ -2496,6 +2422,225 @@ var Cache = (function () {
 }());
 exports.Cache = Cache;
 ;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/expression/parser.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var tokenizer_1 = _require( "tests/build/src/ng-template/expression/tokenizer.js" );
+var ParserException = (function (_super) {
+    __extends(ParserException, _super);
+    function ParserException(message) {
+        _super.call(this, message);
+        this.name = "NgTemplateParserException",
+            this.message = message;
+    }
+    return ParserException;
+}(Error));
+exports.ParserException = ParserException;
+var Parser = (function () {
+    function Parser() {
+    }
+    Parser.split = function (expr) {
+        var re = /(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)/;
+        return expr
+            .split(re)
+            .map(function (i) { return i.trim(); })
+            .filter(function (i) { return Boolean(i); });
+    };
+    Parser.parse = function (expr) {
+        // if the whole expr is a string
+        if (tokenizer_1.StringToken.valid(expr)) {
+            var token = tokenizer_1.tokenizer(expr.trim());
+            return [token];
+        }
+        var com = Parser.split(expr);
+        // case 3: foo + bar
+        // case 1: foo (no operators found)
+        if (com.length !== 3 && com.length !== 1) {
+            return [];
+        }
+        var tokens = com.map(function (i) { return tokenizer_1.tokenizer(i); });
+        // any of tokens is invalid
+        if (tokens.find(function (i) { return i instanceof tokenizer_1.InvalidToken; })) {
+            return [];
+        }
+        return tokens;
+    };
+    return Parser;
+}());
+exports.Parser = Parser;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/expression/tokenizer.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
+var Token = (function () {
+    function Token(value, negation) {
+        if (negation === void 0) { negation = false; }
+        this.value = value;
+        this.negation = negation;
+        this.name = "Token";
+    }
+    Token.prototype.resolveValue = function (data) {
+    };
+    Token.prototype.toJSON = function () {
+        return {
+            "type": this.name,
+            "value": this.value,
+            "negation": this.negation
+        };
+    };
+    return Token;
+}());
+exports.Token = Token;
+var InvalidToken = (function (_super) {
+    __extends(InvalidToken, _super);
+    function InvalidToken() {
+        _super.apply(this, arguments);
+        this.name = "InvalidToken";
+    }
+    return InvalidToken;
+}(Token));
+exports.InvalidToken = InvalidToken;
+var OperatorToken = (function (_super) {
+    __extends(OperatorToken, _super);
+    function OperatorToken() {
+        _super.apply(this, arguments);
+        this.name = "OperatorToken";
+    }
+    OperatorToken.valid = function (value) {
+        var re = /^(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)$/;
+        return re.test(value);
+    };
+    return OperatorToken;
+}(Token));
+exports.OperatorToken = OperatorToken;
+var StringToken = (function (_super) {
+    __extends(StringToken, _super);
+    function StringToken() {
+        _super.apply(this, arguments);
+        this.name = "StringToken";
+    }
+    StringToken.valid = function (value) {
+        var single = /^\'[^\']+\'$/i, double = /^\"[^\"]+\"$/i;
+        return single.test(value) || double.test(value);
+    };
+    StringToken.prototype.resolveValue = function (data) {
+        var val = this.value;
+        return val.substr(1, val.length - 2);
+    };
+    return StringToken;
+}(Token));
+exports.StringToken = StringToken;
+var NumberToken = (function (_super) {
+    __extends(NumberToken, _super);
+    function NumberToken() {
+        _super.apply(this, arguments);
+        this.name = "NumberToken";
+    }
+    NumberToken.valid = function (value) {
+        var re = /^\d+$/;
+        return re.test(value);
+    };
+    NumberToken.prototype.resolveValue = function (data) {
+        var val = Number(this.value);
+        return this.negation ? !val : val;
+    };
+    return NumberToken;
+}(Token));
+exports.NumberToken = NumberToken;
+var BooleanToken = (function (_super) {
+    __extends(BooleanToken, _super);
+    function BooleanToken() {
+        _super.apply(this, arguments);
+        this.name = "BooleanToken";
+    }
+    BooleanToken.valid = function (value) {
+        var re = /^(true|false)$/i;
+        return re.test(value);
+    };
+    BooleanToken.prototype.resolveValue = function (data) {
+        var val = this.value.toUpperCase() === "TRUE";
+        return this.negation ? !val : val;
+    };
+    return BooleanToken;
+}(Token));
+exports.BooleanToken = BooleanToken;
+var ReferenceToken = (function (_super) {
+    __extends(ReferenceToken, _super);
+    function ReferenceToken() {
+        _super.apply(this, arguments);
+        this.name = "ReferenceToken";
+    }
+    ReferenceToken.valid = function (value) {
+        var re = /^[a-zA-Z_\$][a-zA-Z0-9\._\$]+$/;
+        return value.substr(0, 5) !== "this." && re.test(value);
+    };
+    ReferenceToken.findValue = function (path, data) {
+        var value = data;
+        path.split("\.").forEach(function (key) {
+            if (typeof value !== "object") {
+                throw new exception_1.Exception("'" + path + "' is undefined");
+            }
+            if (!(key in value)) {
+                throw new exception_1.Exception("'" + path + "' is undefined");
+            }
+            value = value[key];
+        });
+        return value;
+    };
+    ReferenceToken.prototype.resolveValue = function (data) {
+        var val = ReferenceToken.findValue(this.value, data);
+        return this.negation ? !val : val;
+    };
+    return ReferenceToken;
+}(Token));
+exports.ReferenceToken = ReferenceToken;
+/**
+ * Removes leading negotiation
+ */
+function removeNegotiation(value) {
+    var re = /^\!\s*/;
+    return value.replace(re, "");
+}
+function tokenizer(rawValue) {
+    var value = removeNegotiation(rawValue), negation = rawValue !== value;
+    switch (true) {
+        case OperatorToken.valid(rawValue):
+            return new OperatorToken(rawValue, false);
+        case StringToken.valid(value):
+            return new StringToken(value, negation);
+        case NumberToken.valid(value):
+            return new NumberToken(value, negation);
+        case BooleanToken.valid(value):
+            return new BooleanToken(value, negation);
+        case ReferenceToken.valid(value):
+            return new ReferenceToken(value, negation);
+        default:
+            return new InvalidToken(value, negation);
+    }
+}
+exports.tokenizer = tokenizer;
 
   module.exports = exports;
 

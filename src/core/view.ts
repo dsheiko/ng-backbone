@@ -1,5 +1,4 @@
 import { NgTemplate } from "../ngtemplate";
-import { Pointcut } from "../aspect";
 import { mapAssign, Debounce } from "./utils";
 
 export class View extends Backbone.NativeView<Backbone.Model> {

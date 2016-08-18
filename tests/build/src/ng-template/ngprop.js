@@ -10,12 +10,12 @@ var abstract_directive_1 = require("./abstract-directive");
  */
 var NgProp = (function (_super) {
     __extends(NgProp, _super);
-    function NgProp(el) {
-        _super.call(this);
-        this.nodes = this.initNodes(el, "ng-prop", function (node, expr, evaluate, cache) {
+    function NgProp(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-prop", function (node, expr, compile, cache) {
             return {
                 el: node,
-                exp: evaluate(expr, "__toArray"),
+                exp: compile(expr, "__toArray", reporter),
                 cache: cache
             };
         });

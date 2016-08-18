@@ -10,12 +10,12 @@ var abstract_directive_1 = require("./abstract-directive");
  */
 var NgData = (function (_super) {
     __extends(NgData, _super);
-    function NgData(el) {
-        _super.call(this);
-        this.nodes = this.initNodes(el, "ng-data", function (node, expr, evaluate, cache) {
+    function NgData(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-data", function (node, expr, compile, cache) {
             return {
                 el: node,
-                exp: evaluate(expr, "__toArray"),
+                exp: compile(expr, "__toArray", reporter),
                 cache: cache
             };
         });
