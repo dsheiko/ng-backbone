@@ -7,10 +7,6 @@ export class Collection extends Backbone.Collection<Backbone.Model> {
     this.options = options || {};
   }
 
-  static validateOptions( options: Backbone.ModelFetchOptions = {} ) {
-
-  }
-
   /**
    * Shortcut for sorting
    */

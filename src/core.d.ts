@@ -38,7 +38,7 @@ declare namespace NgBackbone {
     models?: Models | {};
     collections?: Collections | {};
     formValidators?: { [key: string]: Function; };
-    logger?: LoggerCb
+    logger?: LoggerCb;
   }
 
 

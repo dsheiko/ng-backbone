@@ -1,6 +1,8 @@
-# Getting Started With NG.Backbone
+# Getting Started With NgBackbone
 
-* [Working with Views](./gettingstarted/view.md)
-* [Working with Forms](./gettingstarted/formview.md)
 * [Template syntax](./gettingstarted/template.md)
+* [View](./gettingstarted/view.md)
+* [FormView](./gettingstarted/formview.md)
+* [Model](./gettingstarted/model.md)
+* [Collection](./gettingstarted/collection.md)
 

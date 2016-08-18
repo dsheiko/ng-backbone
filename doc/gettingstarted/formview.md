@@ -1,4 +1,4 @@
-# Getting started with FormView
+# FormView
 
 `FormView` looks for the groups marked in the template as `data-ng-group="groupName"`.
 within every found group it collects all the available controls (`input[name], textarea[name], select[name]`) and
@@ -10,7 +10,7 @@ binds it to state models respectively. For example for this template:
 ```
 we can access the state of the input as `foo.bar` and the state of the group as `foo.form`.
 
-## FormView
+## FormView 
 
 ```javascript
 interface FormView extends View {
@@ -196,4 +196,4 @@ class CustomValidators extends FormValidators {
 ```
 
 The validator is called with every input event that is by default debounced 100ms. For validation via XHR request
-you may need greater debounce. We use `@Debounce()` validator to set it 
+you may need greater debounce. We use `@Debounce()` validator to set it

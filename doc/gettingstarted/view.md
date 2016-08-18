@@ -1,4 +1,4 @@
-# Getting started with View
+# View
 
 `View` is meant to be used in conjuction with `@Component` decorator (very like in Angular 2). `@Component` overtakes the
 declarative part of the view.
@@ -26,13 +26,15 @@ declarative part of the view.
 `@Component` injects the specified properties into the `View.prototype`. It initializes the template by the specified string and
 initializes the maps of models and collections that we want to bind to the template.
 
-## @Component
+## @View
 
 ```javascript
 interface View extends Backbone.NativeView {
+  constructor(options?: NgBackbone.ViewOptions);
   render(): View;
   listenToMap( eventEmitter: Backbone.Events, event: NgBackbone.DataMap ): View;
 }
+
 ```
 
 `View`  binds models/collections of the specified maps to the template. E.g. models: `{ foo: new Model() }` gets
@@ -75,7 +77,18 @@ export class HeroView extends FormView {
 
 ```
 
-It also possible to have shared models and collections across the views meaning when such model or collection changes
+## @ViewOptions
+
+```javascript
+interface NgBackbone.ViewOptions extends Backbone.ViewOptions<Backbone.Model> {
+  models?: Models | {}; // injected shared model map
+  collections?: Collections | {}; // injected shared collection map
+  formValidators?: { [key: string]: Function; }; // form validator map
+  logger?: LoggerCb; // a handler for logging events
+}
+```
+
+As you see it is possible to have shared models and collections across the views meaning when such model or collection changes
 all the related views synchronize the templates. So you can first create model/collection and then pass the reference to multiple views:
 
 ```
