@@ -9,6 +9,9 @@ declare namespace NgBackbone {
     [key: string]: V;
   }
 
+  interface Model extends Backbone.Model {
+
+  }
   interface Collection extends Backbone.Collection<Backbone.Model> {
     orderBy( key: string ): Collection;
   }
@@ -26,11 +29,16 @@ declare namespace NgBackbone {
     [key: string]: Backbone.Collection<Backbone.Model>;
   }
 
+  interface LoggerCb {
+     ( msg: string, ...args: any[] ): void;
+  }
+
   interface ViewOptions extends Backbone.ViewOptions<Backbone.Model>{
     [key: string]: any;
     models?: Models | {};
     collections?: Collections | {};
     formValidators?: { [key: string]: Function; };
+    logger?: LoggerCb
   }
 
 

@@ -1,9 +1,16 @@
+import { promisify } from "./utils";
+
 export class Collection extends Backbone.Collection<Backbone.Model> {
   private options: NgBackbone.DataMap<any>;
   constructor( models?: Backbone.Model[], options?: NgBackbone.DataMap<any>) {
     super( models, options );
     this.options = options || {};
   }
+
+  static validateOptions( options: Backbone.ModelFetchOptions = {} ) {
+
+  }
+
   /**
    * Shortcut for sorting
    */
@@ -13,17 +20,21 @@ export class Collection extends Backbone.Collection<Backbone.Model> {
     this.trigger( "change" );
     return this;
   }
-
+  /**
+   * Promisable fetch
+   */
   fetch( options: Backbone.ModelFetchOptions = {} ): Promise<any> {
-    return new Promise(( resolve: Function, reject: Function ) => {
-      options.success = function(){
-        return resolve.apply( this, arguments );
-      };
-      options.error = function(){
-        return reject.apply( this, arguments );
-      };
+    return promisify(() => {
       Backbone.Collection.prototype.fetch.call( this, options );
-    });
+    }, options );
+  }
+  /**
+   * Promisable create
+   */
+  create( attributes: any, options: Backbone.ModelSaveOptions = {} ): Promise<any> {
+    return promisify(() => {
+      Backbone.Collection.prototype.create.call( this, attributes, options );
+    }, options );
   }
 }
 

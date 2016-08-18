@@ -81,11 +81,13 @@ var view_spec_1 = _require( "tests/build/tests/spec/view.spec.js" );
 var formview_spec_1 = _require( "tests/build/tests/spec/formview.spec.js" );
 var utils_spec_1 = _require( "tests/build/tests/spec/utils.spec.js" );
 var collection_spec_1 = _require( "tests/build/tests/spec/collection.spec.js" );
+var model_spec_1 = _require( "tests/build/tests/spec/model.spec.js" );
 utils_spec_1.default();
 formstate_spec_1.FormStateSpec();
 view_spec_1.ViewSpec();
 formview_spec_1.FormViewSpec();
 collection_spec_1.default();
+model_spec_1.default();
 
 
   return module;
@@ -372,6 +374,88 @@ exports.FormStateSpec = FormStateSpec;
   return module;
 });
 
+_require.def( "tests/build/tests/spec/view.spec.js", function( _require, exports, module, global ){
+"use strict";
+var core_1 = _require( "tests/build/src/core.js" );
+var utils_1 = _require( "tests/build/src/core/utils.js" );
+function ViewSpec() {
+    describe("View", function () {
+        describe("#modelsToScope", function () {
+            it("converts flat into scope", function () {
+                var models = utils_1.mapFrom({
+                    foo: new core_1.Model({ name: "foo" }),
+                    bar: new core_1.Model({ name: "bar" })
+                }), scope = core_1.View.modelsToScope(models);
+                expect(scope["foo"].name).toBe("foo");
+                expect(scope["bar"].name).toBe("bar");
+            });
+            it("converts form states into scope", function () {
+                var models = utils_1.mapFrom({
+                    "foo.bar": new core_1.Model({ name: "bar" }),
+                    "bar.baz": new core_1.Model({ name: "baz" })
+                }), scope = core_1.View.modelsToScope(models);
+                expect(scope["foo"]["bar"].name).toBe("bar");
+                expect(scope["bar"]["baz"].name).toBe("baz");
+            });
+        });
+        describe("#collectionsToScope", function () {
+            it("converts collections into scope", function () {
+                var collections = utils_1.mapFrom({
+                    foo: new core_1.Collection([new core_1.Model({ name: "foo" })]),
+                    bar: new core_1.Collection([new core_1.Model({ name: "bar" })])
+                }), scope = core_1.View.collectionsToScope(collections);
+                expect(scope["foo"][0].name).toBe("foo");
+                expect(scope["bar"][0].name).toBe("bar");
+            });
+        });
+    });
+}
+exports.ViewSpec = ViewSpec;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/tests/spec/utils.spec.js", function( _require, exports, module, global ){
+"use strict";
+var utils_1 = _require( "tests/build/src/core/utils.js" );
+function UtilsSpec() {
+    describe("Utils", function () {
+        describe("#mapFrom", function () {
+            it("converts object literal for map ", function () {
+                var map = utils_1.mapFrom({
+                    foo: 1,
+                    bar: 2
+                });
+                expect(map instanceof Map).toBe(true);
+                expect(map.get("foo")).toBe(1);
+            });
+        });
+        describe("#mapAssign", function () {
+            it("mixes in object literal into map ", function () {
+                var map = new Map();
+                map.set("foo", 1);
+                utils_1.mapAssign(map, {
+                    bar: 2
+                });
+                expect(map instanceof Map).toBe(true);
+                expect(map.get("foo")).toBe(1);
+                expect(map.get("bar")).toBe(2);
+            });
+        });
+    });
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = UtilsSpec;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/tests/spec/formview.spec.js", function( _require, exports, module, global ){
 "use strict";
 var core_1 = _require( "tests/build/src/core.js" );
@@ -446,88 +530,6 @@ exports.FormViewSpec = FormViewSpec;
   return module;
 });
 
-_require.def( "tests/build/tests/spec/utils.spec.js", function( _require, exports, module, global ){
-"use strict";
-var utils_1 = _require( "tests/build/src/core/utils.js" );
-function UtilsSpec() {
-    describe("Utils", function () {
-        describe("#mapFrom", function () {
-            it("converts object literal for map ", function () {
-                var map = utils_1.mapFrom({
-                    foo: 1,
-                    bar: 2
-                });
-                expect(map instanceof Map).toBe(true);
-                expect(map.get("foo")).toBe(1);
-            });
-        });
-        describe("#mapAssign", function () {
-            it("mixes in object literal into map ", function () {
-                var map = new Map();
-                map.set("foo", 1);
-                utils_1.mapAssign(map, {
-                    bar: 2
-                });
-                expect(map instanceof Map).toBe(true);
-                expect(map.get("foo")).toBe(1);
-                expect(map.get("bar")).toBe(2);
-            });
-        });
-    });
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = UtilsSpec;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/tests/spec/view.spec.js", function( _require, exports, module, global ){
-"use strict";
-var core_1 = _require( "tests/build/src/core.js" );
-var utils_1 = _require( "tests/build/src/core/utils.js" );
-function ViewSpec() {
-    describe("View", function () {
-        describe("#modelsToScope", function () {
-            it("converts flat into scope", function () {
-                var models = utils_1.mapFrom({
-                    foo: new core_1.Model({ name: "foo" }),
-                    bar: new core_1.Model({ name: "bar" })
-                }), scope = core_1.View.modelsToScope(models);
-                expect(scope["foo"].name).toBe("foo");
-                expect(scope["bar"].name).toBe("bar");
-            });
-            it("converts form states into scope", function () {
-                var models = utils_1.mapFrom({
-                    "foo.bar": new core_1.Model({ name: "bar" }),
-                    "bar.baz": new core_1.Model({ name: "baz" })
-                }), scope = core_1.View.modelsToScope(models);
-                expect(scope["foo"]["bar"].name).toBe("bar");
-                expect(scope["bar"]["baz"].name).toBe("baz");
-            });
-        });
-        describe("#collectionsToScope", function () {
-            it("converts collections into scope", function () {
-                var collections = utils_1.mapFrom({
-                    foo: new core_1.Collection([new core_1.Model({ name: "foo" })]),
-                    bar: new core_1.Collection([new core_1.Model({ name: "bar" })])
-                }), scope = core_1.View.collectionsToScope(collections);
-                expect(scope["foo"][0].name).toBe("foo");
-                expect(scope["bar"][0].name).toBe("bar");
-            });
-        });
-    });
-}
-exports.ViewSpec = ViewSpec;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/tests/spec/collection.spec.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -549,12 +551,106 @@ function UtilsSpec() {
     describe("Collection", function () {
         describe("#fetch", function () {
             it("returns a resolvable Promise", function (done) {
-                utils_1.utils.mockFetch({ foo: "foo" });
+                var mock = new utils_1.MockFetch({ foo: "foo" });
                 var col = new TestCollection();
                 col.fetch().then(function (collection) {
                     var model = collection.shift();
                     expect(model.get("foo")).toBe("foo");
-                    utils_1.utils.restoreFetch();
+                    mock.restore();
+                    done();
+                });
+            });
+            it("does not fall on rejection", function (done) {
+                var mock = new utils_1.MockFetch({ foo: "foo" }, new Error("Read error"));
+                var col = new TestCollection();
+                col.fetch()
+                    .catch(function (err) {
+                    expect(err.message.length > 0).toBe(true);
+                    mock.restore();
+                    done();
+                });
+            });
+        });
+        describe("#create", function () {
+            it("returns a resolvable Promise", function (done) {
+                var mock = new utils_1.MockFetch();
+                var col = new TestCollection();
+                col.create({ foo: "bar" }).then(function (model) {
+                    expect(model.get("foo")).toBe("bar");
+                    mock.restore();
+                    done();
+                });
+            });
+        });
+    });
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = UtilsSpec;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/tests/spec/model.spec.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var core_1 = _require( "tests/build/src/core.js" );
+var utils_1 = _require( "tests/build/tests/utils.js" );
+var TestModel = (function (_super) {
+    __extends(TestModel, _super);
+    function TestModel() {
+        _super.apply(this, arguments);
+        this.url = "./mock";
+    }
+    return TestModel;
+}(core_1.Model));
+function UtilsSpec() {
+    describe("Model", function () {
+        describe("#fetch", function () {
+            it("returns a resolvable Promise", function (done) {
+                var mock = new utils_1.MockFetch({ foo: "foo" });
+                var test = new TestModel();
+                test.fetch().then(function (model) {
+                    expect(model.get("foo")).toBe("foo");
+                    mock.restore();
+                    done();
+                });
+            });
+            it("does not fall on rejection", function (done) {
+                var mock = new utils_1.MockFetch({ foo: "foo" }, new Error("Read error"));
+                var test = new TestModel();
+                test.fetch()
+                    .catch(function (err) {
+                    expect(err.message.length > 0).toBe(true);
+                    mock.restore();
+                    done();
+                });
+            });
+        });
+        describe("#save", function () {
+            it("returns a resolvable Promise", function (done) {
+                var mock = new utils_1.MockFetch();
+                var test = new TestModel();
+                test.save({ foo: "bar" }).then(function (model) {
+                    expect(model.get("foo")).toBe("bar");
+                    mock.restore();
+                    done();
+                });
+            });
+        });
+        describe("#destroy", function () {
+            it("returns a resolvable Promise", function (done) {
+                var mock = new utils_1.MockFetch();
+                var test = new TestModel({ foo: "bar" });
+                test.destroy().then(function (model) {
+                    expect(model.get("foo")).toBe("bar");
+                    mock.restore();
                     done();
                 });
             });
@@ -859,6 +955,25 @@ function mapAssign(map, mixin) {
     });
 }
 exports.mapAssign = mapAssign;
+/**
+ * make promisable methods of model/collection
+ */
+function promisify(callback, options) {
+    return new Promise(function (resolve, reject) {
+        if (options.success || options.error) {
+            throw new SyntaxError("The method returns a Promise. " +
+                "Please use syntax like collection.fetch().then( success ).catch( error );");
+        }
+        options.success = function () {
+            return resolve.apply(this, arguments);
+        };
+        options.error = function () {
+            return reject.apply(this, arguments);
+        };
+        callback();
+    });
+}
+exports.promisify = promisify;
 
   module.exports = exports;
 
@@ -893,21 +1008,26 @@ __export(_require( "tests/build/src/core/collection.js" ));
 _require.def( "tests/build/tests/utils.js", function( _require, exports, module, global ){
 "use strict";
 var fetchOrigin = window.fetch;
-var utils = (function () {
-    function utils() {
-    }
-    utils.mockFetch = function (json) {
+var MockFetch = (function () {
+    function MockFetch(stored, err) {
+        var that = this;
         window.fetch = function (url, init) {
-            var blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' }), rsp = new Response(blob, { "status": 200 });
+            if (err) {
+                throw err;
+            }
+            var jsonStr = stored ? JSON.stringify(stored, null, 2) : init.body;
+            var blob = new Blob([jsonStr], { type: 'application/json' }), rsp = new Response(blob, { "status": 200 });
+            that.url = url;
+            that.init = init;
             return Promise.resolve(rsp);
         };
-    };
-    utils.restoreFetch = function () {
+    }
+    MockFetch.prototype.restore = function () {
         window.fetch = fetchOrigin;
     };
-    return utils;
+    return MockFetch;
 }());
-exports.utils = utils;
+exports.MockFetch = MockFetch;
 
   module.exports = exports;
 
@@ -922,15 +1042,74 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var utils_1 = _require( "tests/build/src/core/utils.js" );
 var Model = (function (_super) {
     __extends(Model, _super);
     function Model(attributes, options) {
         _super.call(this, attributes, options);
         this.options = options || {};
     }
+    /**
+     * Promisable destroy
+     */
+    Model.prototype.destroy = function (options) {
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        return utils_1.promisify(function () {
+            Backbone.Model.prototype.destroy.call(_this, options);
+        }, options);
+    };
+    /**
+     * Promisable save
+     */
+    Model.prototype.save = function (attributes, options) {
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        return utils_1.promisify(function () {
+            Backbone.Model.prototype.save.call(_this, attributes, options);
+        }, options);
+    };
+    /**
+     * Promisable fetch
+     */
+    Model.prototype.fetch = function (options) {
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        return utils_1.promisify(function () {
+            Backbone.Model.prototype.fetch.call(_this, options);
+        }, options);
+    };
     return Model;
 }(Backbone.Model));
 exports.Model = Model;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core/exception.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/**
+ * Custom exception extending Error
+ * @param {string} message
+ */
+var Exception = (function (_super) {
+    __extends(Exception, _super);
+    function Exception(message) {
+        _super.call(this, message);
+        this.name = "NgBackboneError",
+            this.message = message;
+    }
+    return Exception;
+}(Error));
+exports.Exception = Exception;
 
   module.exports = exports;
 
@@ -976,34 +1155,6 @@ exports.Component = Component;
   return module;
 });
 
-_require.def( "tests/build/src/core/exception.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-/**
- * Custom exception extending Error
- * @param {string} message
- */
-var Exception = (function (_super) {
-    __extends(Exception, _super);
-    function Exception(message) {
-        _super.call(this, message);
-        this.name = "NgBackboneError",
-            this.message = message;
-    }
-    return Exception;
-}(Error));
-exports.Exception = Exception;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/core/view.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1018,6 +1169,9 @@ var View = (function (_super) {
         if (options === void 0) { options = {}; }
         _super.call(this, options);
         this.options = options;
+        // If want to listen to log events
+        options.logger &&
+            this.listenTo(this, "log", options.logger);
         this.initializeOptions(options);
         this.models.size && this._bindModels();
         this.collections && this._bindCollections();
@@ -1028,6 +1182,7 @@ var View = (function (_super) {
         var _this = this;
         this.models.forEach(function (model) {
             _this.stopListening(model);
+            _this.trigger("log", "subscribes for `change`", model);
             _this.listenTo(model, "change", _this.render);
         });
     };
@@ -1035,18 +1190,16 @@ var View = (function (_super) {
         var _this = this;
         this.collections.forEach(function (collection) {
             _this.stopListening(collection);
-            //      this.listenTo( collection, "all", ( ...args: any[]) => {
-            //        console.info( "collection all", args );
-            //      });
+            _this.trigger("log", "subscribes for `change destroy sync`", collection);
             _this.listenTo(collection, "change destroy sync", _this._onCollectionChange);
         });
     };
     /**
      * When any of this.collections updates we re-subscribe all itts models and fire render
      */
-    View.prototype._onCollectionChange = function () {
+    View.prototype._onCollectionChange = function (collection) {
         // @TODO control change of collection models
-        this.render();
+        this.render(collection);
     };
     /**
      * collections/models passed in options, take them
@@ -1100,14 +1253,17 @@ var View = (function (_super) {
         });
         return scope;
     };
-    View.prototype.render = function () {
+    /**
+     * Render first and then sync the template
+     */
+    View.prototype.render = function (source) {
         var ms = performance.now();
         var scope = {};
         this.models && Object.assign(scope, View.modelsToScope(this.models));
         this.collections && Object.assign(scope, View.collectionsToScope(this.collections));
-        // console.log( "#RENDER: templating ", performance.now() - ms, " ms", scope, this );
         try {
             this.template.sync(scope);
+            this.trigger("log", "synced template in " + (performance.now() - ms) + " ms", scope, source);
         }
         catch (err) {
             console.error(err.message);
@@ -1219,6 +1375,7 @@ var FormView = (function (_super) {
         var model = new formstate_1.GroupState({ formValidators: this.formValidators });
         this.models.set(FormView.getKey(groupName, "form"), model);
         this.stopListening(model);
+        this.trigger("log", "subscribes for `change`", model);
         this.listenTo(model, "change", this.render);
     };
     FormView.getKey = function (groupName, controlName) {
@@ -1236,6 +1393,7 @@ var FormView = (function (_super) {
         var model = new formstate_1.ControlState({ formValidators: this.formValidators });
         this.models.set(key, model);
         this.stopListening(model);
+        this.trigger("log", "subscribes for `change`", model);
         this.listenTo(model, "change", function () {
             _this._onFromControlModelChange(groupName);
         });
@@ -1332,12 +1490,16 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var utils_1 = _require( "tests/build/src/core/utils.js" );
 var Collection = (function (_super) {
     __extends(Collection, _super);
     function Collection(models, options) {
         _super.call(this, models, options);
         this.options = options || {};
     }
+    Collection.validateOptions = function (options) {
+        if (options === void 0) { options = {}; }
+    };
     /**
      * Shortcut for sorting
      */
@@ -1347,18 +1509,25 @@ var Collection = (function (_super) {
         this.trigger("change");
         return this;
     };
+    /**
+     * Promisable fetch
+     */
     Collection.prototype.fetch = function (options) {
         var _this = this;
         if (options === void 0) { options = {}; }
-        return new Promise(function (resolve, reject) {
-            options.success = function () {
-                return resolve.apply(this, arguments);
-            };
-            options.error = function () {
-                return reject.apply(this, arguments);
-            };
+        return utils_1.promisify(function () {
             Backbone.Collection.prototype.fetch.call(_this, options);
-        });
+        }, options);
+    };
+    /**
+     * Promisable create
+     */
+    Collection.prototype.create = function (attributes, options) {
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        return utils_1.promisify(function () {
+            Backbone.Collection.prototype.create.call(_this, attributes, options);
+        }, options);
     };
     return Collection;
 }(Backbone.Collection));
@@ -1541,6 +1710,47 @@ exports.NgEl = NgEl;
   return module;
 });
 
+_require.def( "tests/build/src/ng-template/ngtext.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
+/**
+ * <span data-ng-text="foo">...</span>
+ */
+var NgText = (function (_super) {
+    __extends(NgText, _super);
+    function NgText(el) {
+        _super.call(this);
+        this.nodes = this.initNodes(el, "ng-text", function (node, expr, evaluate, cache) {
+            return {
+                el: node,
+                exp: evaluate(expr, "String"),
+                cache: cache
+            };
+        });
+    }
+    NgText.prototype.sync = function (data) {
+        var _this = this;
+        this.nodes.forEach(function (node) {
+            node.cache.evaluate(node.exp.call(node.el, data), function (val) {
+                _this.setText(node.el, val);
+            });
+        });
+    };
+    return NgText;
+}(abstract_directive_1.AbstractDirective));
+exports.NgText = NgText;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/src/ng-template/ngfor.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1665,7 +1875,7 @@ exports.NgFor = NgFor;
   return module;
 });
 
-_require.def( "tests/build/src/ng-template/ngtext.js", function( _require, exports, module, global ){
+_require.def( "tests/build/src/ng-template/ngswitch.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -1674,31 +1884,32 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
 /**
- * <span data-ng-text="foo">...</span>
+ * <span data-ng-switch="exp"></span>
  */
-var NgText = (function (_super) {
-    __extends(NgText, _super);
-    function NgText(el) {
+var NgSwitch = (function (_super) {
+    __extends(NgSwitch, _super);
+    function NgSwitch(el) {
         _super.call(this);
-        this.nodes = this.initNodes(el, "ng-text", function (node, expr, evaluate, cache) {
+        this.nodes = this.initNodes(el, "ng-switch", function (node, expr, evaluate, cache) {
             return {
                 el: node,
-                exp: evaluate(expr, "String"),
+                exp: evaluate(expr),
                 cache: cache
             };
         });
     }
-    NgText.prototype.sync = function (data) {
-        var _this = this;
+    NgSwitch.prototype.sync = function (data, Ctor) {
         this.nodes.forEach(function (node) {
+            var tpl = new Ctor(node.el, node.outerHTML);
             node.cache.evaluate(node.exp.call(node.el, data), function (val) {
-                _this.setText(node.el, val);
+                data["$"] = val;
+                tpl.sync(data);
             });
         });
     };
-    return NgText;
+    return NgSwitch;
 }(abstract_directive_1.AbstractDirective));
-exports.NgText = NgText;
+exports.NgSwitch = NgSwitch;
 
   module.exports = exports;
 
@@ -1742,48 +1953,6 @@ var NgSwitchCase = (function (_super) {
     return NgSwitchCase;
 }(abstract_directive_1.AbstractDirective));
 exports.NgSwitchCase = NgSwitchCase;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ng-template/ngswitch.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
-/**
- * <span data-ng-switch="exp"></span>
- */
-var NgSwitch = (function (_super) {
-    __extends(NgSwitch, _super);
-    function NgSwitch(el) {
-        _super.call(this);
-        this.nodes = this.initNodes(el, "ng-switch", function (node, expr, evaluate, cache) {
-            return {
-                el: node,
-                exp: evaluate(expr),
-                cache: cache
-            };
-        });
-    }
-    NgSwitch.prototype.sync = function (data, Ctor) {
-        this.nodes.forEach(function (node) {
-            var tpl = new Ctor(node.el, node.outerHTML);
-            node.cache.evaluate(node.exp.call(node.el, data), function (val) {
-                data["$"] = val;
-                tpl.sync(data);
-            });
-        });
-    };
-    return NgSwitch;
-}(abstract_directive_1.AbstractDirective));
-exports.NgSwitch = NgSwitch;
 
   module.exports = exports;
 

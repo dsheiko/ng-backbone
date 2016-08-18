@@ -27,8 +27,10 @@ var HeroView = (function (_super) {
         this.render();
     };
     HeroView.prototype.onSubmitForm = function (e) {
+        var el = e.target;
         e.preventDefault();
         var collection = this.collections.get("heroes"), data = this.getData("hero");
+        el.reset();
         if (data["name"]) {
             collection.create(data, {
                 error: console.error

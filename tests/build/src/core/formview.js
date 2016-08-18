@@ -74,6 +74,7 @@ var FormView = (function (_super) {
         var model = new formstate_1.GroupState({ formValidators: this.formValidators });
         this.models.set(FormView.getKey(groupName, "form"), model);
         this.stopListening(model);
+        this.trigger("log", "subscribes for `change`", model);
         this.listenTo(model, "change", this.render);
     };
     FormView.getKey = function (groupName, controlName) {
@@ -91,6 +92,7 @@ var FormView = (function (_super) {
         var model = new formstate_1.ControlState({ formValidators: this.formValidators });
         this.models.set(key, model);
         this.stopListening(model);
+        this.trigger("log", "subscribes for `change`", model);
         this.listenTo(model, "change", function () {
             _this._onFromControlModelChange(groupName);
         });

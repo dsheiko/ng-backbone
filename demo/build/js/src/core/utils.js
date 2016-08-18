@@ -44,4 +44,23 @@ function mapAssign(map, mixin) {
     });
 }
 exports.mapAssign = mapAssign;
+/**
+ * make promisable methods of model/collection
+ */
+function promisify(callback, options) {
+    return new Promise(function (resolve, reject) {
+        if (options.success || options.error) {
+            throw new SyntaxError("The method returns a Promise. " +
+                "Please use syntax like collection.fetch().then( success ).catch( error );");
+        }
+        options.success = function () {
+            return resolve.apply(this, arguments);
+        };
+        options.error = function () {
+            return reject.apply(this, arguments);
+        };
+        callback();
+    });
+}
+exports.promisify = promisify;
 //# sourceMappingURL=utils.js.map

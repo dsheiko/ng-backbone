@@ -52,8 +52,7 @@ export class HeroListView extends View {
   collections: NgBackbone.CollectionMap;
 
   initialize() {
-    console.info(this.collections.get( "heroes" ).fetch);
-    let a = this.collections.get( "heroes" ).fetch();
+    this.collections.get( "heroes" ).fetch();
     this.render();
   }
 

@@ -4,12 +4,16 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var utils_1 = require("./utils");
 var Collection = (function (_super) {
     __extends(Collection, _super);
     function Collection(models, options) {
         _super.call(this, models, options);
         this.options = options || {};
     }
+    Collection.validateOptions = function (options) {
+        if (options === void 0) { options = {}; }
+    };
     /**
      * Shortcut for sorting
      */
@@ -19,18 +23,25 @@ var Collection = (function (_super) {
         this.trigger("change");
         return this;
     };
+    /**
+     * Promisable fetch
+     */
     Collection.prototype.fetch = function (options) {
         var _this = this;
         if (options === void 0) { options = {}; }
-        return new Promise(function (resolve, reject) {
-            options.success = function () {
-                return resolve.apply(this, arguments);
-            };
-            options.error = function () {
-                return reject.apply(this, arguments);
-            };
+        return utils_1.promisify(function () {
             Backbone.Collection.prototype.fetch.call(_this, options);
-        });
+        }, options);
+    };
+    /**
+     * Promisable create
+     */
+    Collection.prototype.create = function (attributes, options) {
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        return utils_1.promisify(function () {
+            Backbone.Collection.prototype.create.call(_this, attributes, options);
+        }, options);
     };
     return Collection;
 }(Backbone.Collection));

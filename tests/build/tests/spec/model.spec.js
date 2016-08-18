@@ -6,22 +6,21 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var core_1 = require("../../src/core");
 var utils_1 = require("../utils");
-var TestCollection = (function (_super) {
-    __extends(TestCollection, _super);
-    function TestCollection() {
+var TestModel = (function (_super) {
+    __extends(TestModel, _super);
+    function TestModel() {
         _super.apply(this, arguments);
         this.url = "./mock";
     }
-    return TestCollection;
-}(core_1.Collection));
+    return TestModel;
+}(core_1.Model));
 function UtilsSpec() {
-    describe("Collection", function () {
+    describe("Model", function () {
         describe("#fetch", function () {
             it("returns a resolvable Promise", function (done) {
                 var mock = new utils_1.MockFetch({ foo: "foo" });
-                var col = new TestCollection();
-                col.fetch().then(function (collection) {
-                    var model = collection.shift();
+                var test = new TestModel();
+                test.fetch().then(function (model) {
                     expect(model.get("foo")).toBe("foo");
                     mock.restore();
                     done();
@@ -29,8 +28,8 @@ function UtilsSpec() {
             });
             it("does not fall on rejection", function (done) {
                 var mock = new utils_1.MockFetch({ foo: "foo" }, new Error("Read error"));
-                var col = new TestCollection();
-                col.fetch()
+                var test = new TestModel();
+                test.fetch()
                     .catch(function (err) {
                     expect(err.message.length > 0).toBe(true);
                     mock.restore();
@@ -38,11 +37,22 @@ function UtilsSpec() {
                 });
             });
         });
-        describe("#create", function () {
+        describe("#save", function () {
             it("returns a resolvable Promise", function (done) {
                 var mock = new utils_1.MockFetch();
-                var col = new TestCollection();
-                col.create({ foo: "bar" }).then(function (model) {
+                var test = new TestModel();
+                test.save({ foo: "bar" }).then(function (model) {
+                    expect(model.get("foo")).toBe("bar");
+                    mock.restore();
+                    done();
+                });
+            });
+        });
+        describe("#destroy", function () {
+            it("returns a resolvable Promise", function (done) {
+                var mock = new utils_1.MockFetch();
+                var test = new TestModel({ foo: "bar" });
+                test.destroy().then(function (model) {
                     expect(model.get("foo")).toBe("bar");
                     mock.restore();
                     done();

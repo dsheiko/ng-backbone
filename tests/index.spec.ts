@@ -4,10 +4,11 @@ import { ViewSpec } from "./spec/view.spec";
 import { FormViewSpec } from "./spec/formview.spec";
 import UtilsSpec from "./spec/utils.spec";
 import CollectionSpec from "./spec/collection.spec";
+import ModelSpec from "./spec/model.spec";
 
 UtilsSpec();
 FormStateSpec();
 ViewSpec();
 FormViewSpec();
-
 CollectionSpec();
+ModelSpec();

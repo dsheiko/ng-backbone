@@ -14,6 +14,9 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   constructor( options: NgBackbone.ViewOptions = {} ) {
     super( options );
     this.options = options;
+    // If want to listen to log events
+    options.logger &&
+      this.listenTo( this, "log", options.logger );
     this.initializeOptions( options );
     this.models.size && this._bindModels();
     this.collections && this._bindCollections();
@@ -25,6 +28,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   private _bindModels(){
       this.models.forEach(( model: Backbone.Model ): void => {
         this.stopListening( model );
+        this.trigger( "log", "subscribes for `change`", model );
         this.listenTo( model, "change", this.render );
       });
   }
@@ -32,9 +36,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   private _bindCollections(){
     this.collections.forEach(( collection: Backbone.Collection<Backbone.Model> ) => {
       this.stopListening( collection );
-//      this.listenTo( collection, "all", ( ...args: any[]) => {
-//        console.info( "collection all", args );
-//      });
+      this.trigger( "log", "subscribes for `change destroy sync`", collection );
       this.listenTo( collection, "change destroy sync", this._onCollectionChange );
     });
   }
@@ -42,9 +44,9 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   /**
    * When any of this.collections updates we re-subscribe all itts models and fire render
    */
-  private _onCollectionChange(){
+  private _onCollectionChange( collection: NgBackbone.Collection ){
     // @TODO control change of collection models
-    this.render();
+    this.render( collection );
   }
 
   /**
@@ -101,15 +103,17 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     });
     return scope;
   }
-
-  render(){
+  /**
+   * Render first and then sync the template
+   */
+  render( source?: NgBackbone.Model | NgBackbone.Collection ){
     let ms =  performance.now();
     let scope: NgBackbone.DataMap<any> = {};
     this.models && Object.assign( scope, View.modelsToScope( this.models ) );
     this.collections && Object.assign( scope, View.collectionsToScope( this.collections ) );
-    // console.log( "#RENDER: templating ", performance.now() - ms, " ms", scope, this );
     try {
       this.template.sync( scope );
+      this.trigger( "log", "synced template in " + ( performance.now() - ms ) + " ms", scope, source );
     } catch ( err ) {
       console.error( (<Error>err).message );
     }

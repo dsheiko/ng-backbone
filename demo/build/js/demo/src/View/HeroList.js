@@ -20,8 +20,7 @@ var HeroListView = (function (_super) {
         _super.apply(this, arguments);
     }
     HeroListView.prototype.initialize = function () {
-        console.info(this.collections.get("heroes").fetch);
-        var a = this.collections.get("heroes").fetch();
+        this.collections.get("heroes").fetch();
         this.render();
     };
     HeroListView.prototype.syncCheckboxCounter = function () {

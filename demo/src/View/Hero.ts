@@ -55,10 +55,12 @@ export class HeroView extends FormView {
   }
 
   onSubmitForm( e:Event ){
+    let el = <HTMLFormElement> e.target;
     e.preventDefault();
     let collection = this.collections.get( "heroes" ),
         data = this.getData( "hero" );
-
+        
+    el.reset();
     if ( data[ "name" ] ) {
       collection.create( data, {
         error: console.error

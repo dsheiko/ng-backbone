@@ -6,51 +6,26 @@
 
 ## Template expressions
 
-Template expressions are being evaluated in the given `scope`. So we can reference scope variables:
-```
-data-ng-if="foo"
-```
-it can bind to the following scope
-```
-{ foo: true }
+Template expressions are being evaluated in the given `scope`. So we can reference scope variables within template e.g.
+`data-ng-if="foo"` refers to `foo` variable of the scope and therefore:
+
+```javascript
+template.sync({ foo: true }); // show element
+template.sync({ foo: false }); // hide element
 ```
 
-That includes structures:
-```
-data-ng-if="foo.bar"
-```
-it can bind to the following scope
-```
-{
-  foo: {
-    bar: true
-  }
-}
+We access scope objects the same way we do it in JavaScript e.g. `data-ng-if="foo.bar"` refers to `foo.bar` and can be toggled like this:
+```javascript
+template.sync({ foo: { bar: true } }); // show element
 ```
 
-We can refer multiple scope variables:
+Expressions may have mixed scope variables and primitives:
 ```
-data-ng-if="(foo && bar)"
-```
-it can bind to the following scope
-```
-{ foo: true, bar: true }
+data-ng-if="foo && bar.baz || false"
+data-ng-if="foo + 10  > 20"
 ```
 
-Expressions are also evaluated in the context of the target element, so we can access the element with `this`:
-```
-data-ng-if="(foo && this.checked)"
-```
-it can bind to the following scope
-```
-{ foo: true }
-```
-
-We can pass rendering helpers (e.g. transformers) with the scope:
-```
-data-ng-if="decorator(foo)"
-```
-it can bind to the following scope
+We can pass rendering helpers (e.g. transformers) with the scope. For example we pass `decorator` to the directive `data-ng-if="decorator(foo)"` this way:
 ```
 {
   foo: "foo",
@@ -60,11 +35,16 @@ it can bind to the following scope
 }
 ```
 
-> :exclamation: NOTE: In order to gain better performance keep to primitive expressions especially in cyclic directives e.g. `data-ng-text="foo.bar.baz"`,
-> `data-ng-text="!foo.bar.baz"`, `data-ng-text="'string here'"`, `data-ng-text="foo.bar.baz"`, `data-ng-text="1000"`
-> `data-ng-if="true"`, `data-ng-prop="'disabled', false"`, `data-ng-data="'someCustomKey', bar.baz"`
-> Such expressions are being evaluated without use of `eval()` and therefore the process takes much less time and resources
+Expressions are evaluated in the context of the target element, so we can access the element with `this`:
+```
+data-ng-if="foo && this.checked"
+```
 
+> :exclamation: NOTE: In order to gain better performance keep to primitive expressions especially in cyclic directives e.g. `data-ng-text="foo.bar.baz"`,
+> `data-ng-text="!foo.bar.baz"`, `data-ng-text="'string here'"`, `data-ng-if="foo.bar > baz.quiz"`, `data-ng-text="foo + 10`,
+> `data-ng-if="true"`, `data-ng-prop="'disabled', true || false"`, `data-ng-data="foo || bar, baz"`.
+> Such expressions are being evaluated without use of `eval()` and therefore the process takes much less time and resources.
+> You can check how the parser treats your expressions by studying content of `template.report().tokens` array
 
 
 ## Directives
@@ -120,20 +100,20 @@ We use `NgData` to modify element's dataset
 ```
 
 
-### NgClassListToggle
+### NgClass
 
-We use `NgClassListToggle` to modify element's `classList`
+We use `NgClass` to modify element's `classList`
 
 #### Syntax
 
 ```
-<el data-ng-class-list-toggle="expression => className:string, expression => toggle:boolean" />
+<el data-ng-class="expression => className:string, expression => toggle:boolean" />
 ```
 
 #### Examples
 
 ```html
-<i data-ng-class-list-toggle="'is-hidden', isHidden"></i>
+<i data-ng-class="'is-hidden', isHidden"></i>
 ```
 
 

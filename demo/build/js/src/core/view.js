@@ -11,6 +11,9 @@ var View = (function (_super) {
         if (options === void 0) { options = {}; }
         _super.call(this, options);
         this.options = options;
+        // If want to listen to log events
+        options.logger &&
+            this.listenTo(this, "log", options.logger);
         this.initializeOptions(options);
         this.models.size && this._bindModels();
         this.collections && this._bindCollections();
@@ -21,6 +24,7 @@ var View = (function (_super) {
         var _this = this;
         this.models.forEach(function (model) {
             _this.stopListening(model);
+            _this.trigger("log", "subscribes for `change`", model);
             _this.listenTo(model, "change", _this.render);
         });
     };
@@ -28,18 +32,16 @@ var View = (function (_super) {
         var _this = this;
         this.collections.forEach(function (collection) {
             _this.stopListening(collection);
-            //      this.listenTo( collection, "all", ( ...args: any[]) => {
-            //        console.info( "collection all", args );
-            //      });
+            _this.trigger("log", "subscribes for `change destroy sync`", collection);
             _this.listenTo(collection, "change destroy sync", _this._onCollectionChange);
         });
     };
     /**
      * When any of this.collections updates we re-subscribe all itts models and fire render
      */
-    View.prototype._onCollectionChange = function () {
+    View.prototype._onCollectionChange = function (collection) {
         // @TODO control change of collection models
-        this.render();
+        this.render(collection);
     };
     /**
      * collections/models passed in options, take them
@@ -93,14 +95,17 @@ var View = (function (_super) {
         });
         return scope;
     };
-    View.prototype.render = function () {
+    /**
+     * Render first and then sync the template
+     */
+    View.prototype.render = function (source) {
         var ms = performance.now();
         var scope = {};
         this.models && Object.assign(scope, View.modelsToScope(this.models));
         this.collections && Object.assign(scope, View.collectionsToScope(this.collections));
-        // console.log( "#RENDER: templating ", performance.now() - ms, " ms", scope, this );
         try {
             this.template.sync(scope);
+            this.trigger("log", "synced template in " + (performance.now() - ms) + " ms", scope, source);
         }
         catch (err) {
             console.error(err.message);

@@ -4,7 +4,7 @@
 
 [![Build Status](https://travis-ci.org/dsheiko/ng-backbone.png)](https://travis-ci.org/dsheiko/ng-backbone)
 
-`NgBackbone` is a slim superset over Backbone that makes your code concise, clean and testable
+`NgBackbone` is a small extension of [Backbone.js](http://backbonejs.org/) that unlocks Angular-like programming experience
 
 Well, I love old good Backbone for its simlicity and flexibility. However after working with such frameworks as Angular and React, I see that Backbone app requires much more code. Yet I don't want to ditch Backbone and deal with some 200K LOC framework codebase. I just want a minimal modular extension to improve my programming experience and maintenability of my code.
 And that is how I came up with `NgBackbone`

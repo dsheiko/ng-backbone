@@ -1,7 +1,7 @@
 {
   "name": "ng-backbone",
   "title": "NG.Backbone",
-  "description": "",
+  "description": "A small extension of Backbone.js that unlocks Angular-like programming experience",
   "author": "Dmitry Sheiko",
   "main": "./src",
   "version": "0.0.1",
@@ -10,7 +10,6 @@
     "browserfy:demo": "npm run build:demo && cjsc demo/build/js/demo/src/app.js -o demo/build/js/app.bundled.js -M",
     "build": "tsc",
     "update": "bash update.sh",
-    "browserfy:test": "tests/build/tests/index.spec.js -o tests/build/index.bundled.js",
     "test": "tslint --project tsconfig.json && npm run test:ts",
     "test:ts": "tsc -p tests/ && cjsc tests/build/tests/index.spec.js -o tests/build/index.bundled.js && karma start"
   },
@@ -22,12 +21,8 @@
   ],
   "keywords": [
     "Backbone",
-    "Exoskeleton",
-    "Abstract",
-    "ES6",
-    "ES2015",
+    "Angular",
     "TypeScript",
-    "boilerplate",
     "form"
   ],
   "repository": {
@@ -50,10 +45,6 @@
     "karma-firefox-launcher": "^0.1.3",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
-    "mocha": "^2.3.4",
-    "mocha-phantomjs": "^4.1.0",
-    "npm": "^3.10.6",
-    "sinon": "^1.17.1",
     "systemjs": "^0.19.36",
     "tslint": "^3.14.0",
     "typescript": "^1.8.10",
