@@ -8,7 +8,7 @@ var logger = function (msg) {
     for (var _i = 1; _i < arguments.length; _i++) {
         args[_i - 1] = arguments[_i];
     }
-    msg.startsWith("synced") && console.log("LOG(" + this.cid + "):", msg, args);
+    // msg.startsWith( "synced" ) && console.log( `LOG(${this.cid}):`, msg, args );
 };
 new Hero_1.HeroView({ collections: { heroes: heroes }, logger: logger });
 new HeroList_1.HeroListView({ collections: { heroes: heroes }, logger: logger });
