@@ -29,6 +29,18 @@ declare namespace NgBackbone {
     [key: string]: Backbone.Collection<Backbone.Model>;
   }
 
+  interface ViewConstructors {
+    [index: number]: Function | ViewOptions;
+  }
+
+  interface Views {
+    [index: number]: Function | ViewConstructors;
+    forEach( callback?: Function, thisArg?: Object ): void;
+    find( callback?: Function, thisArg?: Object ): void;
+    map( callback?: Function, thisArg?: Object ): any[];
+    push( ...args: any[] ): number;
+    length: number;
+  }
 
   interface LoggerHandler {
      ( msg: string, ...args: any[] ): void
@@ -39,8 +51,9 @@ declare namespace NgBackbone {
 
   interface ViewOptions extends Backbone.ViewOptions<Backbone.Model>{
     [key: string]: any;
-    models?: Models | {};
-    collections?: Collections | {};
+    models?: Models;
+    collections?: Collections;
+    views?: Views;
     formValidators?: { [key: string]: Function; };
     logger?: LoggerOption;
     template?: string;
@@ -50,13 +63,14 @@ declare namespace NgBackbone {
     models: NgBackbone.ModelMap;
     collections: NgBackbone.CollectionMap;
     template: string;
+    views?: Views;
   }
-
 
   interface ComponentOptions {
     template: string;
-    models?: Models | {};
-    collections?: Collections | {};
+    models?: Models;
+    collections?: Collections;
+    views?: Views;
     el?: any;
     events?: Backbone.EventsHash;
     id?: string;

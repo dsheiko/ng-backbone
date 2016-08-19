@@ -1,5 +1,6 @@
 "use strict";
 var core_1 = require("../../src/core");
+var helper_1 = require("../../src/core/view/helper");
 var utils_1 = require("../../src/core/utils");
 function ViewInternalSpec() {
     describe("View (internal)", function () {
@@ -8,7 +9,7 @@ function ViewInternalSpec() {
                 var models = utils_1.mapFrom({
                     foo: new core_1.Model({ name: "foo" }),
                     bar: new core_1.Model({ name: "bar" })
-                }), scope = core_1.View.modelsToScope(models);
+                }), scope = helper_1.ViewHelper.modelsToScope(models);
                 expect(scope["foo"].name).toBe("foo");
                 expect(scope["bar"].name).toBe("bar");
             });
@@ -16,7 +17,7 @@ function ViewInternalSpec() {
                 var models = utils_1.mapFrom({
                     "foo.bar": new core_1.Model({ name: "bar" }),
                     "bar.baz": new core_1.Model({ name: "baz" })
-                }), scope = core_1.View.modelsToScope(models);
+                }), scope = helper_1.ViewHelper.modelsToScope(models);
                 expect(scope["foo"]["bar"].name).toBe("bar");
                 expect(scope["bar"]["baz"].name).toBe("baz");
             });
@@ -26,7 +27,7 @@ function ViewInternalSpec() {
                 var collections = utils_1.mapFrom({
                     foo: new core_1.Collection([new core_1.Model({ name: "foo" })]),
                     bar: new core_1.Collection([new core_1.Model({ name: "bar" })])
-                }), scope = core_1.View.collectionsToScope(collections);
+                }), scope = helper_1.ViewHelper.collectionsToScope(collections);
                 expect(scope["foo"][0].name).toBe("foo");
                 expect(scope["bar"][0].name).toBe("bar");
             });

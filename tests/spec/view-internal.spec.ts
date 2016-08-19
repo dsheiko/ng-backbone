@@ -1,4 +1,5 @@
-import { Component, View, Model, Collection } from "../../src/core";
+import { View, Model, Collection } from "../../src/core";
+import { ViewHelper } from "../../src/core/view/helper";
 import { mapFrom } from "../../src/core/utils";
 
 
@@ -12,7 +13,7 @@ export default function ViewInternalSpec(){
           foo: new Model({ name: "foo" }),
           bar: new Model({ name: "bar" })
         }),
-        scope = (<any>View).modelsToScope( models );
+        scope = ViewHelper.modelsToScope( models );
         expect( scope["foo"].name ).toBe( "foo" );
         expect( scope["bar"].name ).toBe( "bar" );
       });
@@ -22,7 +23,7 @@ export default function ViewInternalSpec(){
           "foo.bar": new Model({ name: "bar" }),
           "bar.baz": new Model({ name: "baz" })
         }),
-        scope = (<any>View).modelsToScope( models );
+        scope = ViewHelper.modelsToScope( models );
         expect( scope["foo"]["bar"].name ).toBe( "bar" );
         expect( scope["bar"]["baz"].name ).toBe( "baz" );
       });
@@ -36,7 +37,7 @@ export default function ViewInternalSpec(){
           foo: new Collection([ new Model({ name: "foo" }) ]),
           bar: new Collection([ new Model({ name: "bar" }) ])
         }),
-        scope = (<any>View).collectionsToScope( collections );
+        scope = ViewHelper.collectionsToScope( collections );
 
         expect( scope["foo"][ 0 ].name ).toBe( "foo" );
         expect( scope["bar"][ 0 ].name ).toBe( "bar" );

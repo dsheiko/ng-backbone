@@ -5,6 +5,7 @@ function Component(options) {
         _component: {
             models: utils_1.mapFrom(options.models),
             collections: utils_1.mapFrom(options.collections),
+            views: options.views || [],
             template: options.template,
         },
         el: options.el || null,
