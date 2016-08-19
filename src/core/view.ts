@@ -30,6 +30,10 @@ export class View extends Backbone.NativeView<Backbone.Model> {
    */
   initializeOptions( options: NgBackbone.ViewOptions ) {
     let template = "_component" in this ? this._component.template : null;
+    // shared template
+    if ( "template" in options && this.options.template ) {
+      template = this.options.template;
+    }
     // process Component's payload
     this.template = new NgTemplate( this.el, template ),
 
