@@ -19,7 +19,7 @@ export class NgTemplate {
   private directives: NgTemplate.Directive[] = [];
   private reporter: Reporter;
 
-  static factory( el:Element, template?: string ): NgTemplate {
+  static factory( el: Element, template?: string ): NgTemplate {
     return new NgTemplate( el, template || null );
   }
 

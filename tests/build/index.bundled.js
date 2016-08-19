@@ -376,52 +376,6 @@ exports.FormStateSpec = FormStateSpec;
   return module;
 });
 
-_require.def( "tests/build/tests/spec/view-internal.spec.js", function( _require, exports, module, global ){
-"use strict";
-var core_1 = _require( "tests/build/src/core.js" );
-var helper_1 = _require( "tests/build/src/core/view/helper.js" );
-var utils_1 = _require( "tests/build/src/core/utils.js" );
-function ViewInternalSpec() {
-    describe("View (internal)", function () {
-        describe("#modelsToScope", function () {
-            it("converts flat into scope", function () {
-                var models = utils_1.mapFrom({
-                    foo: new core_1.Model({ name: "foo" }),
-                    bar: new core_1.Model({ name: "bar" })
-                }), scope = helper_1.ViewHelper.modelsToScope(models);
-                expect(scope["foo"].name).toBe("foo");
-                expect(scope["bar"].name).toBe("bar");
-            });
-            it("converts form states into scope", function () {
-                var models = utils_1.mapFrom({
-                    "foo.bar": new core_1.Model({ name: "bar" }),
-                    "bar.baz": new core_1.Model({ name: "baz" })
-                }), scope = helper_1.ViewHelper.modelsToScope(models);
-                expect(scope["foo"]["bar"].name).toBe("bar");
-                expect(scope["bar"]["baz"].name).toBe("baz");
-            });
-        });
-        describe("#collectionsToScope", function () {
-            it("converts collections into scope", function () {
-                var collections = utils_1.mapFrom({
-                    foo: new core_1.Collection([new core_1.Model({ name: "foo" })]),
-                    bar: new core_1.Collection([new core_1.Model({ name: "bar" })])
-                }), scope = helper_1.ViewHelper.collectionsToScope(collections);
-                expect(scope["foo"][0].name).toBe("foo");
-                expect(scope["bar"][0].name).toBe("bar");
-            });
-        });
-    });
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ViewInternalSpec;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/tests/spec/view.spec.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -735,6 +689,52 @@ function FormViewSpec() {
     });
 }
 exports.FormViewSpec = FormViewSpec;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/tests/spec/view-internal.spec.js", function( _require, exports, module, global ){
+"use strict";
+var core_1 = _require( "tests/build/src/core.js" );
+var helper_1 = _require( "tests/build/src/core/view/helper.js" );
+var utils_1 = _require( "tests/build/src/core/utils.js" );
+function ViewInternalSpec() {
+    describe("View (internal)", function () {
+        describe("#modelsToScope", function () {
+            it("converts flat into scope", function () {
+                var models = utils_1.mapFrom({
+                    foo: new core_1.Model({ name: "foo" }),
+                    bar: new core_1.Model({ name: "bar" })
+                }), scope = helper_1.ViewHelper.modelsToScope(models);
+                expect(scope["foo"].name).toBe("foo");
+                expect(scope["bar"].name).toBe("bar");
+            });
+            it("converts form states into scope", function () {
+                var models = utils_1.mapFrom({
+                    "foo.bar": new core_1.Model({ name: "bar" }),
+                    "bar.baz": new core_1.Model({ name: "baz" })
+                }), scope = helper_1.ViewHelper.modelsToScope(models);
+                expect(scope["foo"]["bar"].name).toBe("bar");
+                expect(scope["bar"]["baz"].name).toBe("baz");
+            });
+        });
+        describe("#collectionsToScope", function () {
+            it("converts collections into scope", function () {
+                var collections = utils_1.mapFrom({
+                    foo: new core_1.Collection([new core_1.Model({ name: "foo" })]),
+                    bar: new core_1.Collection([new core_1.Model({ name: "bar" })])
+                }), scope = helper_1.ViewHelper.collectionsToScope(collections);
+                expect(scope["foo"][0].name).toBe("foo");
+                expect(scope["bar"][0].name).toBe("bar");
+            });
+        });
+    });
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = ViewInternalSpec;
 
   module.exports = exports;
 
@@ -1375,11 +1375,17 @@ var ViewHelper = (function () {
             return ViewHelper.createSubView(view, dto[0], dto[1]);
         });
     };
+    /**
+     * Factory: create a subview
+     */
     ViewHelper.createSubView = function (view, ViewCtor, options) {
         if (options === void 0) { options = {}; }
         var el = ViewHelper.findSubViewEl(view, ViewCtor.prototype["el"]);
         return new ViewCtor(Object.assign(options, { el: el }));
     };
+    /**
+     * Find inner el
+     */
     ViewHelper.findSubViewEl = function (view, selector) {
         if (typeof selector !== "string") {
             throw new SyntaxError("Invalid options.el type, must be a string");
@@ -1419,34 +1425,6 @@ var MockFetch = (function () {
     return MockFetch;
 }());
 exports.MockFetch = MockFetch;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/core/exception.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-/**
- * Custom exception extending Error
- * @param {string} message
- */
-var Exception = (function (_super) {
-    __extends(Exception, _super);
-    function Exception(message) {
-        _super.call(this, message);
-        this.name = "NgBackboneError",
-            this.message = message;
-    }
-    return Exception;
-}(Error));
-exports.Exception = Exception;
 
   module.exports = exports;
 
@@ -1501,6 +1479,34 @@ var Model = (function (_super) {
     return Model;
 }(Backbone.Model));
 exports.Model = Model;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core/exception.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/**
+ * Custom exception extending Error
+ * @param {string} message
+ */
+var Exception = (function (_super) {
+    __extends(Exception, _super);
+    function Exception(message) {
+        _super.call(this, message);
+        this.name = "NgBackboneError",
+            this.message = message;
+    }
+    return Exception;
+}(Error));
+exports.Exception = Exception;
 
   module.exports = exports;
 
@@ -2462,34 +2468,6 @@ exports.NgData = NgData;
   return module;
 });
 
-_require.def( "tests/build/src/ng-template/exception.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-/**
- * Custom exception extending Error
- * @param {string} message
- */
-var Exception = (function (_super) {
-    __extends(Exception, _super);
-    function Exception(message) {
-        _super.call(this, message);
-        this.name = "NgTemplateError",
-            this.message = message;
-    }
-    return Exception;
-}(Error));
-exports.Exception = Exception;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/ng-template/reporter.js", function( _require, exports, module, global ){
 "use strict";
 var Reporter = (function () {
@@ -2515,6 +2493,34 @@ var Reporter = (function () {
     return Reporter;
 }());
 exports.Reporter = Reporter;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/exception.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/**
+ * Custom exception extending Error
+ * @param {string} message
+ */
+var Exception = (function (_super) {
+    __extends(Exception, _super);
+    function Exception(message) {
+        _super.call(this, message);
+        this.name = "NgTemplateError",
+            this.message = message;
+    }
+    return Exception;
+}(Error));
+exports.Exception = Exception;
 
   module.exports = exports;
 
@@ -2790,6 +2796,73 @@ exports.ERROR_CODES = {
   return module;
 });
 
+_require.def( "tests/build/src/ng-template/expression/exception.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
+var ExpressionException = (function (_super) {
+    __extends(ExpressionException, _super);
+    function ExpressionException(message) {
+        _super.call(this, message);
+        this.name = "NgTemplateExpressionException",
+            this.message = message;
+    }
+    return ExpressionException;
+}(exception_1.Exception));
+exports.ExpressionException = ExpressionException;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/expression/parser.js", function( _require, exports, module, global ){
+"use strict";
+var tokenizer_1 = _require( "tests/build/src/ng-template/expression/tokenizer.js" );
+var Parser = (function () {
+    function Parser() {
+    }
+    Parser.split = function (expr) {
+        var re = /(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)/;
+        return expr
+            .split(re)
+            .map(function (i) { return i.trim(); })
+            .filter(function (i) { return Boolean(i); });
+    };
+    Parser.parse = function (expr) {
+        // if the whole expr is a string
+        if (tokenizer_1.StringToken.valid(expr)) {
+            var token = tokenizer_1.tokenizer(expr.trim());
+            return [token];
+        }
+        var com = Parser.split(expr);
+        // case 3: foo + bar
+        // case 1: foo (no operators found)
+        if (com.length !== 3 && com.length !== 1) {
+            return [];
+        }
+        var tokens = com.map(function (i) { return tokenizer_1.tokenizer(i); });
+        // any of tokens is invalid
+        if (tokens.find(function (i) { return i instanceof tokenizer_1.InvalidToken; })) {
+            return [];
+        }
+        return tokens;
+    };
+    return Parser;
+}());
+exports.Parser = Parser;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/src/ng-template/expression/tokenizer.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -2945,73 +3018,6 @@ function tokenizer(rawValue) {
     }
 }
 exports.tokenizer = tokenizer;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ng-template/expression/exception.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
-var ExpressionException = (function (_super) {
-    __extends(ExpressionException, _super);
-    function ExpressionException(message) {
-        _super.call(this, message);
-        this.name = "NgTemplateExpressionException",
-            this.message = message;
-    }
-    return ExpressionException;
-}(exception_1.Exception));
-exports.ExpressionException = ExpressionException;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ng-template/expression/parser.js", function( _require, exports, module, global ){
-"use strict";
-var tokenizer_1 = _require( "tests/build/src/ng-template/expression/tokenizer.js" );
-var Parser = (function () {
-    function Parser() {
-    }
-    Parser.split = function (expr) {
-        var re = /(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)/;
-        return expr
-            .split(re)
-            .map(function (i) { return i.trim(); })
-            .filter(function (i) { return Boolean(i); });
-    };
-    Parser.parse = function (expr) {
-        // if the whole expr is a string
-        if (tokenizer_1.StringToken.valid(expr)) {
-            var token = tokenizer_1.tokenizer(expr.trim());
-            return [token];
-        }
-        var com = Parser.split(expr);
-        // case 3: foo + bar
-        // case 1: foo (no operators found)
-        if (com.length !== 3 && com.length !== 1) {
-            return [];
-        }
-        var tokens = com.map(function (i) { return tokenizer_1.tokenizer(i); });
-        // any of tokens is invalid
-        if (tokens.find(function (i) { return i instanceof tokenizer_1.InvalidToken; })) {
-            return [];
-        }
-        return tokens;
-    };
-    return Parser;
-}());
-exports.Parser = Parser;
 
   module.exports = exports;
 

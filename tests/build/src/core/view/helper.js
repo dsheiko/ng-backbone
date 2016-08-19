@@ -117,11 +117,17 @@ var ViewHelper = (function () {
             return ViewHelper.createSubView(view, dto[0], dto[1]);
         });
     };
+    /**
+     * Factory: create a subview
+     */
     ViewHelper.createSubView = function (view, ViewCtor, options) {
         if (options === void 0) { options = {}; }
         var el = ViewHelper.findSubViewEl(view, ViewCtor.prototype["el"]);
         return new ViewCtor(Object.assign(options, { el: el }));
     };
+    /**
+     * Find inner el
+     */
     ViewHelper.findSubViewEl = function (view, selector) {
         if (typeof selector !== "string") {
             throw new SyntaxError("Invalid options.el type, must be a string");
