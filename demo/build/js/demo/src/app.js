@@ -4,7 +4,7 @@ var HeroList_1 = require("./View/HeroList");
 var Hero_2 = require("./Collection/Hero");
 var heroes = new Hero_2.HeroCollection();
 var logger = {
-    "log:sync log:template": function (msg) {
+    "log:sync": function (msg) {
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
@@ -13,5 +13,5 @@ var logger = {
     }
 };
 new Hero_1.HeroView({ collections: { heroes: heroes }, logger: logger });
-new HeroList_1.HeroListView({ collections: { heroes: heroes }, logger: logger });
+console.log(new HeroList_1.HeroListView({ collections: { heroes: heroes }, logger: logger }));
 //# sourceMappingURL=app.js.map

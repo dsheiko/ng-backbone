@@ -127,12 +127,16 @@ export class ViewHelper {
       return ViewHelper.createSubView( view, <ViewConstructor>dto[ 0 ], <NgBackbone.ViewOptions>dto[ 1 ] );
     });
   }
-
+  /**
+   * Factory: create a subview
+   */
   private static createSubView( view: View, ViewCtor: ViewConstructor, options: NgBackbone.ViewOptions = {}): View {
     let el = ViewHelper.findSubViewEl( view, ViewCtor.prototype[ "el" ] );
     return new ViewCtor( Object.assign( options, { el: el }) );
   }
-
+  /**
+   * Find inner el
+   */
   private static findSubViewEl( view: View, selector: string ){
     if ( typeof selector !== "string" ) {
       throw new SyntaxError( "Invalid options.el type, must be a string" );

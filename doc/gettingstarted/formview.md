@@ -1,16 +1,20 @@
 # FormView
 
-`FormView` looks for the groups marked in the template as `data-ng-group="groupName"`.
-within every found group it collects all the available controls (`input[name], textarea[name], select[name]`) and
-binds it to state models respectively. For example for this template:
+This module is developed to simplify working forms. What do we usually do with Backbone? We subscribe for control change events and write view methods that update view as its state changes. `FormView` does it for us. It extracts the groups marked in the template with `data-ng-group="groupName"`.
+Within every found group it collects all the available controls `input[name], textarea[name], select[name]` and binds it to state models respectively. So when state of a control/group changes (e.g. validation fails) that gets available within the template immediately.
+
+For example we have a template:
 ```html
 <form data-ng-group="foo">
-  <input name="bar" />
+  <input name="bar" type="email" required />
+  <div data-ng-if="!foo.bar.valid">
+    Invalid value
+  </div>
 </form>
 ```
-we can access the state of the input as `foo.bar` and the state of the group as `foo.form`.
+Until anything typed in to the input, it's invalid according to `required` restrictor. Thus template variable `foo.bar.valid` is `false` and the template shows container with error message. If we typed in a wrong value for email address `foo.bar.valid` again has 'false' and we can see the message. We can also access the sate of the group as `foo.form`. See below Control/Group State Model Interface for available properties.
 
-## FormView 
+## FormView Interface
 
 ```javascript
 interface FormView extends View {
@@ -18,14 +22,13 @@ interface FormView extends View {
 }
 ```
 
-
-## State Model
+## State Model Interface
 ```javascript
 interface State extends Backbone.Model {
 }
 ```
 
-## Control State Model
+## Control State Model Interface
 ```javascript
 interface ControlState extends State {
   value:    string,
@@ -41,7 +44,7 @@ interface ControlState extends State {
 }
 ```
 
-## Group State Model
+## Group State Model Interface
 ```javascript
 interface GroupState extends State {
   valid:    boolean,  // Control's value is valid
@@ -51,11 +54,9 @@ interface GroupState extends State {
 
 ## Form Validation
 
-`FormView` subscribes for "input", "change" and "focus" events on the found controls. Whenever an event is fired
-it updates the `ControlState`. If the state model reports that `valid` or `touched` property was changed, `FormView`
-updates the `GroupState`.
+`FormView` subscribes for "input", "change" and "focus" events on the found controls. Whenever an event fires it updates the `ControlState`. If the state model reports that `valid` or `touched` property changed, `FormView` updates the `GroupState`.
 
-`FormView` has following built-in validators:
+`FormView` contains following built-in validators:
 
 * `valueMissing` - if the control has `required` attribute and an empty value, `ControlState.valueMissing` is set `false`
 * `patternMismatch` - if the control has `pattern` attribute and a value that does not match the specified pattern, `ControlState.patternMismatch` is set `false`
@@ -135,9 +136,7 @@ export class HeroView extends FormView {
 
 ```
 
-
-
-## Custom Type Validators
+## Custom Type Validation
 
 You can set up your own custom type validators like that:
 
@@ -163,13 +162,12 @@ You can set up your own custom type validators like that:
 
 ```
 
-Every validator is callback that returns a Promise. If validation passes the Promised resolves, otherwise it
-rejects with error message passed as an argument
+Every validator is a callback that returns a Promise. If validation passes the Promised resolves. Otherwise it rejects with error message passed as an argument
 
 
-## Remote Type Validators
+## Remote Type Validation
 
-You can also implement validation that happens on the server.
+You can also have a validation that happens on the server.
 
 ```javascript
 
@@ -195,5 +193,4 @@ class CustomValidators extends FormValidators {
 
 ```
 
-The validator is called with every input event that is by default debounced 100ms. For validation via XHR request
-you may need greater debounce. We use `@Debounce()` validator to set it
+`FormView` class the validator with every input event that is by default debounced 100ms. For validation via XHR request you may need greater debounce. We use `@Debounce()` validator to set it.

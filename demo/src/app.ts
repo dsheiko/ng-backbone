@@ -5,9 +5,9 @@ import { HeroCollection } from "./Collection/Hero";
 let heroes = new HeroCollection();
 
 let logger = {
-  "log:sync": function( msg: string, ...args: any[] ): void {
-      console.log( `LOG(${this.cid}):`, msg, args );
-   }
+//  "log:sync": function( msg: string, ...args: any[] ): void {
+//      console.log( `LOG(${this.cid}):`, msg, args );
+//   }
 };
 
 new HeroView({ collections: { heroes: heroes }, logger: logger });
