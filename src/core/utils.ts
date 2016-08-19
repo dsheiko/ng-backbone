@@ -48,10 +48,10 @@ export function mapAssign( map: Map<any, any>, mixin: NgBackbone.DataMap<any> = 
 export function promisify( callback: Function,
   options: Backbone.ModelFetchOptions | Backbone.CollectionFetchOptions ) {
   return new Promise(( resolve: Function, reject: Function ) => {
-    if ( options.success || options.error ){
-      throw new SyntaxError( "The method returns a Promise. " +
-        "Please use syntax like collection.fetch().then( success ).catch( error );" );
-    }
+//    if ( options.success || options.error ){
+//      throw new SyntaxError( "The method returns a Promise. " +
+//        "Please use syntax like collection.fetch().then( success ).catch( error );" );
+//    }
     options.success = function(){
       return resolve.apply( this, arguments );
     };

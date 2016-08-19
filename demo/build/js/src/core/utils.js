@@ -49,10 +49,10 @@ exports.mapAssign = mapAssign;
  */
 function promisify(callback, options) {
     return new Promise(function (resolve, reject) {
-        if (options.success || options.error) {
-            throw new SyntaxError("The method returns a Promise. " +
-                "Please use syntax like collection.fetch().then( success ).catch( error );");
-        }
+        //    if ( options.success || options.error ){
+        //      throw new SyntaxError( "The method returns a Promise. " +
+        //        "Please use syntax like collection.fetch().then( success ).catch( error );" );
+        //    }
         options.success = function () {
             return resolve.apply(this, arguments);
         };

@@ -128,7 +128,7 @@ declare namespace Backbone {
         initialize(attributes?: any, options?: any): void;
 
         //fetch(options?: ModelFetchOptions): JQueryXHR;
-        fetch(options?: ModelFetchOptions): JQueryXHR | Promise<any>;
+        fetch(options?: ModelFetchOptions): Promise<any>;
 
         /**
         * For strongly-typed access to attributes, use the `get` method only privately in public getter properties.
@@ -154,7 +154,7 @@ declare namespace Backbone {
         clone(): Model;
 
         //destroy(options?: ModelDestroyOptions): any;
-        destroy(options?: ModelDestroyOptions): any;
+        destroy(options?: ModelDestroyOptions): Promise<any>;
 
         escape(attribute: string): string;
         has(attribute: string): boolean;
@@ -164,7 +164,7 @@ declare namespace Backbone {
         previous(attribute: string): any;
         previousAttributes(): any[];
 
-        save(attributes?: any, options?: ModelSaveOptions): any;
+        save(attributes?: any, options?: ModelSaveOptions): Promise<any>;
 
         unset(attribute: string, options?: Silenceable): Model;
         validate(attributes: any, options?: any): any;
@@ -199,7 +199,7 @@ declare namespace Backbone {
         constructor(models?: TModel[] | Object[], options?: any);
         initialize(models?: TModel[] | Object[], options?: any): void;
 
-        fetch(options?: CollectionFetchOptions): JQueryXHR | Promise<any>;
+        fetch(options?: CollectionFetchOptions): Promise<any>;
 
         /**
          * Specify a model attribute name (string) or function that will be used to sort the collection.
@@ -213,7 +213,7 @@ declare namespace Backbone {
          * Get a model from a collection, specified by an id, a cid, or by passing in a model.
          **/
         get(id: number|string|Model): TModel;
-        create(attributes: any, options?: ModelSaveOptions): TModel | Promise<any>;
+        create(attributes: any, options?: ModelSaveOptions): Promise<any>;
         pluck(attribute: string): any[];
         push(model: TModel, options?: AddOptions): TModel;
         pop(options?: Silenceable): TModel;

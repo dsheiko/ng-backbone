@@ -44,7 +44,7 @@ var NgTemplate = (function () {
     NgTemplate.prototype.sync = function (data) {
         // Late initialization: renders from a given template on first sync
         if (this.template) {
-            this.el.innerHTML = this.template;
+            this.el.innerHTML = this.template + "";
             this.init(DIRECTIVES);
             this.template = null;
         }
