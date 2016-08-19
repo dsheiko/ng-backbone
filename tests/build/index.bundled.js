@@ -75,14 +75,348 @@ if ( typeof require === "undefined" ) {
 }
 _require.def( "tests/build/tests/index.spec.js", function( _require, exports, module, global ){
 "use strict";
+/// <reference path="../src/core.d.ts" />
+var formstate_spec_1 = _require( "tests/build/tests/spec/formstate.spec.js" );
+var view_internal_spec_1 = _require( "tests/build/tests/spec/view-internal.spec.js" );
 var view_spec_1 = _require( "tests/build/tests/spec/view.spec.js" );
-//UtilsSpec();
-//FormStateSpec();
-//ViewInternalSpec();
+var formview_spec_1 = _require( "tests/build/tests/spec/formview.spec.js" );
+var utils_spec_1 = _require( "tests/build/tests/spec/utils.spec.js" );
+var collection_spec_1 = _require( "tests/build/tests/spec/collection.spec.js" );
+var model_spec_1 = _require( "tests/build/tests/spec/model.spec.js" );
+utils_spec_1.default();
+formstate_spec_1.FormStateSpec();
+view_internal_spec_1.default();
 view_spec_1.default();
-//FormViewSpec();
-//CollectionSpec();
-//ModelSpec(); 
+formview_spec_1.FormViewSpec();
+collection_spec_1.default();
+model_spec_1.default();
+
+
+  return module;
+});
+
+_require.def( "tests/build/tests/spec/formstate.spec.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var formstate_1 = _require( "tests/build/src/core/formstate.js" );
+var formvalidators_1 = _require( "tests/build/src/core/formvalidators.js" );
+var utils_1 = _require( "tests/build/src/core/utils.js" );
+function FormStateSpec() {
+    describe("FormState", function () {
+        beforeEach(function () {
+            this.boundingBox = document.createElement("div");
+        });
+        describe("#isCheckboxRadio", function () {
+            beforeEach(function () {
+                this.input = document.createElement("input");
+            });
+            it("returns true for checkbox", function () {
+                this.input.type = "checkbox";
+                expect(formstate_1.FormState.prototype.isCheckboxRadio(this.input)).toBe(true);
+            });
+            it("returns true for radio", function () {
+                this.input.type = "radio";
+                expect(formstate_1.FormState.prototype.isCheckboxRadio(this.input)).toBe(true);
+            });
+            it("returns true for text", function () {
+                this.input.type = "text";
+                expect(formstate_1.FormState.prototype.isCheckboxRadio(this.input)).toBe(false);
+            });
+        });
+        describe("#validateRequired", function () {
+            beforeEach(function () {
+                this.input = document.createElement("input");
+                this.state = new formstate_1.FormState();
+            });
+            it("sets valueMissing true for empty required", function () {
+                this.input.value = "";
+                this.input.setAttribute("required", true);
+                this.state.validateRequired(this.input);
+                expect(this.state.get("valueMissing")).toBe(true);
+            });
+            it("sets valueMissing false for empty not-required", function () {
+                this.input.value = "";
+                this.state.validateRequired(this.input);
+                expect(this.state.get("valueMissing")).toBe(false);
+            });
+            it("sets valueMissing false for not-empty required", function () {
+                this.input.value = "not-empty";
+                this.input.setAttribute("required", true);
+                this.state.validateRequired(this.input);
+                expect(this.state.get("valueMissing")).toBe(false);
+            });
+            it("fires change event", function (done) {
+                this.input.value = "";
+                this.input.setAttribute("required", true);
+                this.state.on("change", function (state) {
+                    expect(state.get("valueMissing")).toBe(true);
+                    done();
+                });
+                this.state.validateRequired(this.input);
+                this.state.checkValidity();
+            });
+        });
+        describe("#validateRange", function () {
+            beforeEach(function () {
+                this.input = document.createElement("input");
+                this.state = new formstate_1.FormState();
+            });
+            it("sets rangeUnderflow true for underflow value", function () {
+                this.input.value = 1;
+                this.input.setAttribute("min", "10");
+                this.state.validateRange(this.input);
+                expect(this.state.get("rangeUnderflow")).toBe(true);
+                expect(this.state.get("validationMessage").length).toBeTruthy();
+            });
+            it("sets rangeOverflow true for overflow value", function () {
+                this.input.value = 100;
+                this.input.setAttribute("max", "10");
+                this.state.validateRange(this.input);
+                expect(this.state.get("rangeOverflow")).toBe(true);
+                expect(this.state.get("validationMessage").length).toBeTruthy();
+            });
+            it("resets rangeUnderflow/rangeOverflow for value in the range", function () {
+                this.input.value = 10;
+                this.input.setAttribute("min", "1");
+                this.input.setAttribute("max", "100");
+                this.state.validateRange(this.input);
+                expect(this.state.get("rangeUnderflow")).toBe(false);
+                expect(this.state.get("rangeOverflow")).toBe(false);
+                expect(this.state.get("validationMessage").length).toBeFalsy();
+            });
+            it("fires change event", function (done) {
+                this.input.value = 1;
+                this.input.setAttribute("min", "10");
+                this.state.on("change", function (state) {
+                    expect(state.get("rangeUnderflow")).toBe(true);
+                    done();
+                });
+                this.state.validateRange(this.input);
+                this.state.checkValidity();
+            });
+        });
+        describe("#patternMismatch", function () {
+            beforeEach(function () {
+                this.input = document.createElement("input");
+                this.state = new formstate_1.FormState();
+            });
+            it("sets patternMismatch true for a value that does not match pattern", function () {
+                this.input.value = "invalid";
+                this.input.setAttribute("pattern", "[A-Z]{3}[0-9]{4}");
+                this.state.patternMismatch(this.input);
+                expect(this.state.get("patternMismatch")).toBe(true);
+                expect(this.state.get("validationMessage").length).toBeTruthy();
+            });
+        });
+        describe("#validateTypeMismatch", function () {
+            beforeEach(function () {
+                this.input = document.createElement("input");
+                this.input.value = "invalid";
+                this.state = new formstate_1.FormState();
+            });
+            describe("email", function () {
+                it("validates", function () {
+                    var _this = this;
+                    this.input.setAttribute("type", "email");
+                    this.state.validateTypeMismatch(this.input)
+                        .then(function () {
+                        expect(_this.state.get("typeMismatch")).toBe(true);
+                        expect(_this.state.get("validationMessage").length).toBeTruthy();
+                    });
+                });
+            });
+            describe("url", function () {
+                it("validates", function () {
+                    var _this = this;
+                    this.input.setAttribute("type", "url");
+                    this.state.validateTypeMismatch(this.input)
+                        .then(function () {
+                        expect(_this.state.get("typeMismatch")).toBe(true);
+                        expect(_this.state.get("validationMessage").length).toBeTruthy();
+                    });
+                });
+            });
+            describe("tel", function () {
+                it("validates", function () {
+                    var _this = this;
+                    this.input.setAttribute("type", "tel");
+                    this.state.validateTypeMismatch(this.input)
+                        .then(function () {
+                        expect(_this.state.get("typeMismatch")).toBe(true);
+                        expect(_this.state.get("validationMessage").length).toBeTruthy();
+                    });
+                });
+            });
+            describe("custom type (injected as object literal)", function () {
+                it("validates", function () {
+                    var _this = this;
+                    this.state = new formstate_1.FormState({
+                        formValidators: {
+                            foo: function (value) {
+                                var pattern = /^(foo|bar)$/;
+                                if (pattern.test(value)) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject("Invalid value");
+                            }
+                        }
+                    });
+                    this.input.setAttribute("type", "foo");
+                    this.state.validateTypeMismatch(this.input)
+                        .then(function () {
+                        expect(_this.state.get("typeMismatch")).toBe(true);
+                        expect(_this.state.get("validationMessage").length).toBeTruthy();
+                    });
+                });
+            });
+            describe("custom type (injected as class)", function () {
+                it("validates", function () {
+                    var _this = this;
+                    var CustomValidators = (function (_super) {
+                        __extends(CustomValidators, _super);
+                        function CustomValidators() {
+                            _super.apply(this, arguments);
+                        }
+                        CustomValidators.prototype.foo = function (value) {
+                            var pattern = /^(foo|bar)$/;
+                            if (pattern.test(value)) {
+                                return Promise.resolve();
+                            }
+                            return Promise.reject("Invalid value");
+                        };
+                        return CustomValidators;
+                    }(formvalidators_1.FormValidators));
+                    this.state = new formstate_1.FormState({
+                        formValidators: CustomValidators
+                    });
+                    this.input.setAttribute("type", "foo");
+                    this.state.validateTypeMismatch(this.input)
+                        .then(function () {
+                        expect(_this.state.get("typeMismatch")).toBe(true);
+                        expect(_this.state.get("validationMessage").length).toBeTruthy();
+                    });
+                });
+            });
+            describe("custom type debounced", function () {
+                it("validates", function () {
+                    var _this = this;
+                    var CustomValidators = (function (_super) {
+                        __extends(CustomValidators, _super);
+                        function CustomValidators() {
+                            _super.apply(this, arguments);
+                        }
+                        CustomValidators.prototype.foo = function (value) {
+                            var pattern = /^(foo|bar)$/;
+                            if (pattern.test(value)) {
+                                return Promise.resolve();
+                            }
+                            return Promise.reject("Invalid value");
+                        };
+                        __decorate([
+                            utils_1.Debounce(200), 
+                            __metadata('design:type', Function), 
+                            __metadata('design:paramtypes', [String]), 
+                            __metadata('design:returntype', Promise)
+                        ], CustomValidators.prototype, "foo", null);
+                        return CustomValidators;
+                    }(formvalidators_1.FormValidators));
+                    this.state = new formstate_1.FormState({
+                        formValidators: CustomValidators
+                    });
+                    this.input.setAttribute("type", "foo");
+                    this.state.validateTypeMismatch(this.input)
+                        .then(function () {
+                        expect(_this.state.get("typeMismatch")).toBe(true);
+                        expect(_this.state.get("validationMessage").length).toBeTruthy();
+                    });
+                });
+            });
+        });
+        describe("#onInputChange", function () {
+            beforeEach(function () {
+                this.input = document.createElement("input");
+                this.state = new formstate_1.FormState();
+            });
+            it("populates state", function (done) {
+                var _this = this;
+                this.input.value = "";
+                this.input.setAttribute("required", true);
+                this.state.on("change", function () {
+                    expect(_this.state.get("value")).toBe(_this.input.value);
+                    expect(_this.state.get("valueMissing")).toBe(true);
+                    expect(_this.state.get("dirty")).toBe(true);
+                    expect(_this.state.get("valid")).toBe(false);
+                    expect(_this.state.get("validationMessage").length).toBeTruthy();
+                    done();
+                });
+                this.state.onInputChange(this.input);
+            });
+        });
+    });
+}
+exports.FormStateSpec = FormStateSpec;
+;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/tests/spec/view-internal.spec.js", function( _require, exports, module, global ){
+"use strict";
+var core_1 = _require( "tests/build/src/core.js" );
+var helper_1 = _require( "tests/build/src/core/view/helper.js" );
+var utils_1 = _require( "tests/build/src/core/utils.js" );
+function ViewInternalSpec() {
+    describe("View (internal)", function () {
+        describe("#modelsToScope", function () {
+            it("converts flat into scope", function () {
+                var models = utils_1.mapFrom({
+                    foo: new core_1.Model({ name: "foo" }),
+                    bar: new core_1.Model({ name: "bar" })
+                }), scope = helper_1.ViewHelper.modelsToScope(models);
+                expect(scope["foo"].name).toBe("foo");
+                expect(scope["bar"].name).toBe("bar");
+            });
+            it("converts form states into scope", function () {
+                var models = utils_1.mapFrom({
+                    "foo.bar": new core_1.Model({ name: "bar" }),
+                    "bar.baz": new core_1.Model({ name: "baz" })
+                }), scope = helper_1.ViewHelper.modelsToScope(models);
+                expect(scope["foo"]["bar"].name).toBe("bar");
+                expect(scope["bar"]["baz"].name).toBe("baz");
+            });
+        });
+        describe("#collectionsToScope", function () {
+            it("converts collections into scope", function () {
+                var collections = utils_1.mapFrom({
+                    foo: new core_1.Collection([new core_1.Model({ name: "foo" })]),
+                    bar: new core_1.Collection([new core_1.Model({ name: "bar" })])
+                }), scope = helper_1.ViewHelper.collectionsToScope(collections);
+                expect(scope["foo"][0].name).toBe("foo");
+                expect(scope["bar"][0].name).toBe("bar");
+            });
+        });
+    });
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = ViewInternalSpec;
+
+  module.exports = exports;
 
 
   return module;
@@ -107,100 +441,139 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = _require( "tests/build/src/core.js" );
 function ViewSpec() {
     describe("View", function () {
-        //    describe("@Component + View + no state", function(){
-        //      it( "applies tagName and template", function() {
-        //        @Component({
-        //          tagName: "ng-component",
-        //          template: "<ng-el></ng-el>"
-        //        })
-        //        class TestView extends View {
-        //        }
-        //        let view = new TestView();
-        //        view.render();
-        //        expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
-        //      });
-        //      it( "applies tagName and className and template", function() {
-        //        @Component({
-        //          tagName: "ng-component",
-        //          className: "ng-class",
-        //          template: "<ng-el></ng-el>"
-        //        })
-        //        class TestView extends View {
-        //        }
-        //        let view = new TestView();
-        //        view.render();
-        //        expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
-        //        expect( view.el.classList.contains( "ng-class" ) ).toBeTruthy();
-        //      });
-        //    });
-        //
-        //    describe("@Component + View + Models", function(){
-        //      it( "binds specified models", function() {
-        //        @Component({
-        //          tagName: "ng-component",
-        //          models: {
-        //            foo: new Model({ bar: "bar" })
-        //          },
-        //          template: `<ng-el data-ng-text="foo.bar">none</ng-el>`
-        //        })
-        //        class TestView extends View {
-        //        }
-        //        let view = new TestView(),
-        //            errors = view.render().errors,
-        //            el = view.el.querySelector( "ng-el" );
-        //        expect( el ).toBeTruthy();
-        //        expect( el.textContent ).toBe( "bar" );
-        //        expect( errors.length ).toBe( 0 );
-        //      });
-        //    });
-        //
-        //    describe("@Component + View + Collections", function(){
-        //      it( "binds specified collections", function() {
-        //        @Component({
-        //          tagName: "ng-component",
-        //          collections: {
-        //            foo: new Collection([
-        //              new Model({ bar: 1 }),
-        //              new Model({ bar: 2 })
-        //            ])
-        //          },
-        //          template: `<ng-el data-ng-for="let i of foo" data-ng-text="i.bar">none</ng-el>`
-        //        })
-        //        class TestView extends View {
-        //        }
-        //        let view = new TestView(),
-        //            errors = view.render().errors,
-        //            els = Array.from( view.el.querySelectorAll( "ng-el" ) );
-        //          expect( els.length ).toBe( 2 );
-        //          expect( els[ 0 ].textContent ).toBe( "1" );
-        //          expect( els[ 1 ].textContent ).toBe( "2" );
-        //      });
-        //    });
-        //
-        //
-        //    describe("View with nested views straigtforward", function(){
-        //      it( "renders both parent and child views", function() {
-        //        @Component({
-        //          tagName: "ng-component",
-        //          template: "<ng-child></ng-child>"
-        //        })
-        //        class TestView extends View {
-        //        }
-        //        @Component({
-        //          template: "<ng-el></ng-el>"
-        //        })
-        //        class TestChildView extends View {
-        //        }
-        //
-        //        let view = new TestView();
-        //        view.render();
-        //        let child = new TestChildView({
-        //          el: view.el.querySelector( "ng-child" )
-        //        });
-        //        child.render();
-        //        expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
-        //      });
-        //    });
+        describe("@Component + View + no state", function () {
+            it("applies tagName and template", function () {
+                var TestView = (function (_super) {
+                    __extends(TestView, _super);
+                    function TestView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestView = __decorate([
+                        core_1.Component({
+                            tagName: "ng-component",
+                            template: "<ng-el></ng-el>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestView);
+                    return TestView;
+                }(core_1.View));
+                var view = new TestView();
+                view.render();
+                expect(view.el.querySelector("ng-el")).toBeTruthy();
+            });
+            it("applies tagName and className and template", function () {
+                var TestView = (function (_super) {
+                    __extends(TestView, _super);
+                    function TestView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestView = __decorate([
+                        core_1.Component({
+                            tagName: "ng-component",
+                            className: "ng-class",
+                            template: "<ng-el></ng-el>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestView);
+                    return TestView;
+                }(core_1.View));
+                var view = new TestView();
+                view.render();
+                expect(view.el.querySelector("ng-el")).toBeTruthy();
+                expect(view.el.classList.contains("ng-class")).toBeTruthy();
+            });
+        });
+        describe("@Component + View + Models", function () {
+            it("binds specified models", function () {
+                var TestView = (function (_super) {
+                    __extends(TestView, _super);
+                    function TestView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestView = __decorate([
+                        core_1.Component({
+                            tagName: "ng-component",
+                            models: {
+                                foo: new core_1.Model({ bar: "bar" })
+                            },
+                            template: "<ng-el data-ng-text=\"foo.bar\">none</ng-el>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestView);
+                    return TestView;
+                }(core_1.View));
+                var view = new TestView(), errors = view.render().errors, el = view.el.querySelector("ng-el");
+                expect(el).toBeTruthy();
+                expect(el.textContent).toBe("bar");
+                expect(errors.length).toBe(0);
+            });
+        });
+        describe("@Component + View + Collections", function () {
+            it("binds specified collections", function () {
+                var TestView = (function (_super) {
+                    __extends(TestView, _super);
+                    function TestView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestView = __decorate([
+                        core_1.Component({
+                            tagName: "ng-component",
+                            collections: {
+                                foo: new core_1.Collection([
+                                    new core_1.Model({ bar: 1 }),
+                                    new core_1.Model({ bar: 2 })
+                                ])
+                            },
+                            template: "<ng-el data-ng-for=\"let i of foo\" data-ng-text=\"i.bar\">none</ng-el>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestView);
+                    return TestView;
+                }(core_1.View));
+                var view = new TestView(), errors = view.render().errors, els = Array.from(view.el.querySelectorAll("ng-el"));
+                expect(els.length).toBe(2);
+                expect(els[0].textContent).toBe("1");
+                expect(els[1].textContent).toBe("2");
+            });
+        });
+        describe("View with nested views straigtforward", function () {
+            it("renders both parent and child views", function () {
+                var TestView = (function (_super) {
+                    __extends(TestView, _super);
+                    function TestView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestView = __decorate([
+                        core_1.Component({
+                            tagName: "ng-component",
+                            template: "<ng-child></ng-child>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestView);
+                    return TestView;
+                }(core_1.View));
+                var TestChildView = (function (_super) {
+                    __extends(TestChildView, _super);
+                    function TestChildView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestChildView = __decorate([
+                        core_1.Component({
+                            template: "<ng-el></ng-el>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestChildView);
+                    return TestChildView;
+                }(core_1.View));
+                var view = new TestView();
+                view.render();
+                var child = new TestChildView({
+                    el: view.el.querySelector("ng-child")
+                });
+                child.render();
+                expect(view.el.querySelector("ng-el")).toBeTruthy();
+            });
+        });
         describe("View with nested views as @Component.views = [Ctor, Ctor]", function () {
             it("renders both parent and child views", function () {
                 var TestChildView = (function (_super) {
@@ -248,7 +621,8 @@ function ViewSpec() {
                     function TestChildView() {
                         _super.apply(this, arguments);
                     }
-                    TestChildView.prototype.initialize = function () {
+                    TestChildView.prototype.initialize = function (options) {
+                        expect(options.id).toBe("ngId");
                         this.render();
                     };
                     TestChildView = __decorate([
@@ -270,7 +644,7 @@ function ViewSpec() {
                             tagName: "ng-component",
                             template: "<ng-child></ng-child>",
                             views: [
-                                [TestChildView, { some: "ng-class" }]
+                                [TestChildView, { id: "ngId" }]
                             ]
                         }), 
                         __metadata('design:paramtypes', [])
@@ -279,7 +653,6 @@ function ViewSpec() {
                 }(core_1.View));
                 var view = new TestView();
                 view.render();
-                console.log(view.el.outerHTML);
                 expect(view.views[0] instanceof TestChildView).toBeTruthy();
                 expect(view.el.querySelector("ng-el")).toBeTruthy();
             });
@@ -295,23 +668,73 @@ exports.default = ViewSpec;
   return module;
 });
 
-_require.def( "tests/build/src/core.js", function( _require, exports, module, global ){
-/// <reference path="../node_modules/typescript/lib/lib.d.ts" />
-/// <reference path="./core.d.ts" />
+_require.def( "tests/build/tests/spec/formview.spec.js", function( _require, exports, module, global ){
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+var core_1 = _require( "tests/build/src/core.js" );
+var formstate_1 = _require( "tests/build/src/core/formstate.js" );
+function FormViewSpec() {
+    describe("FormView", function () {
+        describe("#_findGroups", function () {
+            it("finds forms within boundinx box", function () {
+                var el = document.createElement("div"), view = new core_1.FormView({
+                    el: el
+                });
+                el.innerHTML = "<div><form data-ng-group=\"foo\"></form><form data-ng-group=\"bar\"></form></div>";
+                var forms = view._findGroups();
+                expect(Array.isArray(forms)).toBe(true);
+                expect(forms[0].dataset["ngGroup"]).toBe("foo");
+                expect(forms[1].dataset["ngGroup"]).toBe("bar");
+            });
+            it("finds form on boundinx box", function () {
+                var el = document.createElement("form"), view = new core_1.FormView({
+                    el: el
+                });
+                el.innerHTML = "<div><form data-ng-group=\"foo\"></form><form data-ng-group=\"bar\"></form></div>";
+                el.dataset["ngGroup"] = "baz";
+                var forms = view._findGroups();
+                // If boundinx box not inner forms allowed
+                expect(forms.length).toBe(1);
+                expect(forms[0].dataset["ngGroup"]).toBe("baz");
+            });
+        });
+        describe("#_bindGroup", function () {
+            it("sets a model to  this.models.FormName.form", function () {
+                var el = document.createElement("form"), view = new core_1.FormView({
+                    el: el
+                });
+                el.dataset["ngGroup"] = "baz";
+                view._bindGroup(el, "baz");
+                var model = view.models.get("baz.form");
+                expect(model instanceof formstate_1.FormState).toBe(true);
+            });
+        });
+        describe("#_findGroupElements", function () {
+            it("finds all form inputs", function () {
+                var el = document.createElement("form"), next, view = new core_1.FormView({
+                    el: el
+                });
+                el.dataset["ngGroup"] = "baz";
+                el.innerHTML = "<div>\n<input name=\"inputText\" />\n<input name=\"inputCheckbox\" type=\"checkbox\" />\n<input name=\"inputEmail\" type=\"email\" />\n<select name=\"select\"></select>\n<custom name=\"quiz\"></custom>\n</div>";
+                var els = view._findGroupElements(el);
+                expect(Array.isArray(els)).toBe(true);
+                expect(els.length).toBe(4);
+            });
+        });
+        describe("#_bindGroupElement", function () {
+            it("finds all form elements", function () {
+                var el = document.createElement("form"), next, view = new core_1.FormView({
+                    el: el
+                });
+                el.dataset["ngGroup"] = "baz";
+                view._bindGroup(el, "foo");
+                view._bindGroupElement("foo", "bar");
+                var model = view.models.get("foo.bar");
+                expect(model instanceof formstate_1.FormState).toBe(true);
+            });
+        });
+    });
 }
-/**
- * Facade
- */
-__export(_require( "tests/build/src/core/exception.js" ));
-__export(_require( "tests/build/src/core/component.js" ));
-__export(_require( "tests/build/src/core/utils.js" ));
-__export(_require( "tests/build/src/core/view.js" ));
-__export(_require( "tests/build/src/core/formview.js" ));
-__export(_require( "tests/build/src/core/model.js" ));
-__export(_require( "tests/build/src/core/collection.js" ));
+exports.FormViewSpec = FormViewSpec;
 
   module.exports = exports;
 
@@ -319,27 +742,100 @@ __export(_require( "tests/build/src/core/collection.js" ));
   return module;
 });
 
-_require.def( "tests/build/src/core/exception.js", function( _require, exports, module, global ){
+_require.def( "tests/build/tests/spec/utils.spec.js", function( _require, exports, module, global ){
+"use strict";
+var utils_1 = _require( "tests/build/src/core/utils.js" );
+function UtilsSpec() {
+    describe("Utils", function () {
+        describe("#mapFrom", function () {
+            it("converts object literal for map ", function () {
+                var map = utils_1.mapFrom({
+                    foo: 1,
+                    bar: 2
+                });
+                expect(map instanceof Map).toBe(true);
+                expect(map.get("foo")).toBe(1);
+            });
+        });
+        describe("#mapAssign", function () {
+            it("mixes in object literal into map ", function () {
+                var map = new Map();
+                map.set("foo", 1);
+                utils_1.mapAssign(map, {
+                    bar: 2
+                });
+                expect(map instanceof Map).toBe(true);
+                expect(map.get("foo")).toBe(1);
+                expect(map.get("bar")).toBe(2);
+            });
+        });
+    });
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = UtilsSpec;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/tests/spec/collection.spec.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/**
- * Custom exception extending Error
- * @param {string} message
- */
-var Exception = (function (_super) {
-    __extends(Exception, _super);
-    function Exception(message) {
-        _super.call(this, message);
-        this.name = "NgBackboneError",
-            this.message = message;
+var core_1 = _require( "tests/build/src/core.js" );
+var utils_1 = _require( "tests/build/tests/utils.js" );
+var TestCollection = (function (_super) {
+    __extends(TestCollection, _super);
+    function TestCollection() {
+        _super.apply(this, arguments);
+        this.url = "./mock";
     }
-    return Exception;
-}(Error));
-exports.Exception = Exception;
+    return TestCollection;
+}(core_1.Collection));
+function UtilsSpec() {
+    describe("Collection", function () {
+        describe("#fetch", function () {
+            it("returns a resolvable Promise", function (done) {
+                var mock = new utils_1.MockFetch({ foo: "foo" });
+                var col = new TestCollection();
+                col.fetch().then(function (collection) {
+                    var model = collection.shift();
+                    expect(model.get("foo")).toBe("foo");
+                    mock.restore();
+                    done();
+                });
+            });
+            it("does not fall on rejection", function (done) {
+                var mock = new utils_1.MockFetch({ foo: "foo" }, new Error("Read error"));
+                var col = new TestCollection();
+                col.fetch()
+                    .catch(function (err) {
+                    expect(err.message.length > 0).toBe(true);
+                    mock.restore();
+                    done();
+                });
+            });
+        });
+        describe("#create", function () {
+            it("returns a resolvable Promise", function (done) {
+                var mock = new utils_1.MockFetch();
+                var col = new TestCollection();
+                col.create({ foo: "bar" }).then(function (model) {
+                    expect(model.get("foo")).toBe("bar");
+                    mock.restore();
+                    done();
+                });
+            });
+        });
+    });
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = UtilsSpec;
 
   module.exports = exports;
 
@@ -347,35 +843,314 @@ exports.Exception = Exception;
   return module;
 });
 
-_require.def( "tests/build/src/core/component.js", function( _require, exports, module, global ){
+_require.def( "tests/build/tests/spec/model.spec.js", function( _require, exports, module, global ){
 "use strict";
-var utils_1 = _require( "tests/build/src/core/utils.js" );
-function Component(options) {
-    var mixin = {
-        _component: {
-            models: utils_1.mapFrom(options.models),
-            collections: utils_1.mapFrom(options.collections),
-            views: options.views || [],
-            template: options.template,
-        },
-        el: options.el || null,
-        events: options.events || null,
-        id: options.id || null,
-        className: options.className || null,
-        tagName: options.tagName || null,
-        formValidators: options.formValidators || null
-    };
-    return function (target) {
-        Object.assign(target.prototype, mixin);
-        // This way we trick invokation of this.initialize after constructor
-        // Keeping in mind that @Component belongs to View that knows about this._initialize
-        if ("initialize" in target.prototype) {
-            _a = [target.prototype["initialize"], function () { }], target.prototype["_initialize"] = _a[0], target.prototype["initialize"] = _a[1];
-        }
-        var _a;
-    };
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var core_1 = _require( "tests/build/src/core.js" );
+var utils_1 = _require( "tests/build/tests/utils.js" );
+var TestModel = (function (_super) {
+    __extends(TestModel, _super);
+    function TestModel() {
+        _super.apply(this, arguments);
+        this.url = "./mock";
+    }
+    return TestModel;
+}(core_1.Model));
+function UtilsSpec() {
+    describe("Model", function () {
+        describe("#fetch", function () {
+            it("returns a resolvable Promise", function (done) {
+                var mock = new utils_1.MockFetch({ foo: "foo" });
+                var test = new TestModel();
+                test.fetch().then(function (model) {
+                    expect(model.get("foo")).toBe("foo");
+                    mock.restore();
+                    done();
+                });
+            });
+            it("does not fall on rejection", function (done) {
+                var mock = new utils_1.MockFetch({ foo: "foo" }, new Error("Read error"));
+                var test = new TestModel();
+                test.fetch()
+                    .catch(function (err) {
+                    expect(err.message.length > 0).toBe(true);
+                    mock.restore();
+                    done();
+                });
+            });
+        });
+        describe("#save", function () {
+            it("returns a resolvable Promise", function (done) {
+                var mock = new utils_1.MockFetch();
+                var test = new TestModel();
+                test.save({ foo: "bar" }).then(function (model) {
+                    expect(model.get("foo")).toBe("bar");
+                    mock.restore();
+                    done();
+                });
+            });
+        });
+        describe("#destroy", function () {
+            it("returns a resolvable Promise", function (done) {
+                var mock = new utils_1.MockFetch();
+                var test = new TestModel({ foo: "bar" });
+                test.destroy().then(function (model) {
+                    expect(model.get("foo")).toBe("bar");
+                    mock.restore();
+                    done();
+                });
+            });
+        });
+    });
 }
-exports.Component = Component;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = UtilsSpec;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core/formstate.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var model_1 = _require( "tests/build/src/core/model.js" );
+var exception_1 = _require( "tests/build/src/core/exception.js" );
+var formvalidators_1 = _require( "tests/build/src/core/formvalidators.js" );
+var utils_1 = _require( "tests/build/src/core/utils.js" );
+var ERR_TYPES = [
+    "valueMissing", "rangeOverflow", "rangeUnderflow",
+    "typeMismatch", "patternMismatch"], SILENT = { silent: true };
+var FormState = (function (_super) {
+    __extends(FormState, _super);
+    function FormState() {
+        _super.apply(this, arguments);
+    }
+    FormState.prototype.defaults = function () {
+        return {
+            "value": "",
+            "valid": true,
+            "touched": false,
+            "dirty": false,
+            "valueMissing": false,
+            "rangeOverflow": false,
+            "rangeUnderflow": false,
+            "typeMismatch": false,
+            "patternMismatch": false,
+            "validationMessage": ""
+        };
+    };
+    FormState.prototype.initialize = function (options) {
+        this.formValidators = new formvalidators_1.FormValidators();
+        // Inject custom formValidators
+        if (options && "formValidators" in options) {
+            this._assignFormValidators(options.formValidators);
+        }
+    };
+    /**
+     *
+     */
+    FormState.prototype._assignFormValidators = function (formValidators) {
+        if (typeof formValidators !== "function") {
+            Object.assign(this.formValidators, formValidators);
+            return;
+        }
+        this.formValidators = new formValidators();
+        if (!(this.formValidators instanceof formvalidators_1.FormValidators)) {
+            throw new exception_1.Exception("Specified option formValidators has invalid type");
+        }
+    };
+    /**
+     * Check if a given input is a checkbox or radio
+     */
+    FormState.prototype.isCheckboxRadio = function (el) {
+        return el instanceof HTMLInputElement && ["checkbox", "radio"].indexOf(el.type) !== -1;
+    };
+    /**
+     * Update `valid` and `validationMessage` according to the current model state
+     */
+    FormState.prototype.checkValidity = function () {
+        var _this = this;
+        var invalid = ERR_TYPES.some(function (key) {
+            return _this.attributes[key];
+        });
+        this.set("valid", !invalid);
+        if (!invalid) {
+            this.set("validationMessage", "", SILENT);
+        }
+    };
+    /**
+     * Validate <input required/> doesn't have an empty value
+     */
+    FormState.prototype.validateRequired = function (el) {
+        if (!el.hasAttribute("required")) {
+            return;
+        }
+        var value = String(el.value), valid = value.trim().length;
+        this.set("valueMissing", !valid, SILENT);
+        valid || this.set("validationMessage", "This field is mandatory", SILENT);
+    };
+    /**
+     * Validate <input min max /> value in the given range
+     */
+    FormState.prototype.validateRange = function (el) {
+        if (!(el instanceof HTMLInputElement)) {
+            throw TypeError("el must be instance of HTMLInputElement");
+        }
+        if (el.hasAttribute("max")) {
+            var valid = Number(el.value) < Number(el.getAttribute("max"));
+            this.set("rangeOverflow", !valid, SILENT);
+            valid || this.set("validationMessage", "The value is too high", SILENT);
+        }
+        if (el.hasAttribute("min")) {
+            var valid = Number(el.value) > Number(el.getAttribute("min"));
+            this.set("rangeUnderflow", !valid, SILENT);
+            valid || this.set("validationMessage", "The value is too low", SILENT);
+        }
+    };
+    /**
+     * Validate by `pattern`
+     */
+    FormState.prototype.patternMismatch = function (el) {
+        if (!el.hasAttribute("pattern")) {
+            return;
+        }
+        try {
+            var pattern = new RegExp(el.getAttribute("pattern"));
+            this.set("patternMismatch", !pattern.test(el.value), SILENT);
+            this.set("validationMessage", "The value does not match the pattern", SILENT);
+        }
+        catch (err) {
+            throw new exception_1.Exception("Invalid pattern " + el.getAttribute("pattern"));
+        }
+    };
+    FormState.prototype.validateTypeMismatch = function (el) {
+        var _this = this;
+        var value = el.value, itype = el.getAttribute("type");
+        if (!(itype in this.formValidators)) {
+            return Promise.resolve();
+        }
+        return this.formValidators[itype](value)
+            .catch(function (err) {
+            if (err instanceof Error) {
+                throw new exception_1.Exception(err.message);
+            }
+            _this.set("typeMismatch", true, SILENT);
+            _this.set("validationMessage", err, SILENT);
+        });
+    };
+    FormState.prototype.
+    /**
+     * Handle change/input events on the input
+     */
+    onInputChange = function (el) {
+        var _this = this;
+        this.set("dirty", true, SILENT);
+        if (!this.isCheckboxRadio(el)) {
+            this.set("value", el.value, SILENT);
+            this.validateRequired(el);
+            if (el instanceof HTMLInputElement) {
+                this.validateRange(el);
+            }
+            this.patternMismatch(el);
+            this.validateTypeMismatch(el)
+                .then(function () {
+                _this.checkValidity();
+            });
+        }
+        else {
+            this.set("value", el.checked, SILENT);
+            this.checkValidity();
+        }
+    };
+    /**
+     * Handle focus event on the input
+     */
+    FormState.prototype.onInputFocus = function () {
+        this.set("touched", true);
+    };
+    __decorate([
+        utils_1.Debounce(100), 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', [Object]), 
+        __metadata('design:returntype', void 0)
+    ], FormState.prototype, "onInputChange", null);
+    return FormState;
+}(model_1.Model));
+exports.FormState = FormState;
+var GroupState = (function (_super) {
+    __extends(GroupState, _super);
+    function GroupState() {
+        _super.apply(this, arguments);
+    }
+    return GroupState;
+}(FormState));
+exports.GroupState = GroupState;
+var ControlState = (function (_super) {
+    __extends(ControlState, _super);
+    function ControlState() {
+        _super.apply(this, arguments);
+    }
+    return ControlState;
+}(FormState));
+exports.ControlState = ControlState;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core/formvalidators.js", function( _require, exports, module, global ){
+"use strict";
+var FormValidators = (function () {
+    function FormValidators() {
+    }
+    FormValidators.prototype.email = function (value) {
+        var pattern = /^[a-zA-Z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~\.]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,4}$/g;
+        if (pattern.test(value)) {
+            return Promise.resolve();
+        }
+        return Promise.reject("Please enter a valid email address");
+    };
+    FormValidators.prototype.tel = function (value) {
+        var pattern = /^\+(?:[0-9] ?){6,14}[0-9]$/;
+        if (pattern.test(value)) {
+            return Promise.resolve();
+        }
+        return Promise.reject("Please enter a valid tel. number +1 11 11 11");
+    };
+    FormValidators.prototype.url = function (value) {
+        var pattern = new RegExp("^(https?:\\/\\/)?((([a-z\\d]([a-z\\d\\-]*[a-z\\d])*)\\.)" +
+            "+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[\\-a-z\\d%_.~+]*)" +
+            "*(\\?[;&a-z\\d%_.~+=\\-]*)?(\\#[\\-a-z\\d_]*)?$", "i");
+        if (pattern.test(value)) {
+            return Promise.resolve();
+        }
+        return Promise.reject("Please enter a valid URL");
+    };
+    return FormValidators;
+}());
+exports.FormValidators = FormValidators;
+;
 
   module.exports = exports;
 
@@ -449,6 +1224,319 @@ function promisify(callback, options) {
     });
 }
 exports.promisify = promisify;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core.js", function( _require, exports, module, global ){
+/// <reference path="../node_modules/typescript/lib/lib.d.ts" />
+/// <reference path="./core.d.ts" />
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+/**
+ * Facade
+ */
+__export(_require( "tests/build/src/core/exception.js" ));
+__export(_require( "tests/build/src/core/component.js" ));
+__export(_require( "tests/build/src/core/utils.js" ));
+__export(_require( "tests/build/src/core/view.js" ));
+__export(_require( "tests/build/src/core/formview.js" ));
+__export(_require( "tests/build/src/core/model.js" ));
+__export(_require( "tests/build/src/core/collection.js" ));
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core/view/helper.js", function( _require, exports, module, global ){
+"use strict";
+var ngtemplate_1 = _require( "tests/build/src/ngtemplate.js" );
+var utils_1 = _require( "tests/build/src/core/utils.js" );
+var ViewHelper = (function () {
+    function ViewHelper() {
+    }
+    /**
+     * Converts { foo: Collection, bar: Collection } into
+     * { foo: [{},{}], bar: [{},{}] }
+     */
+    ViewHelper.collectionsToScope = function (collections) {
+        var scope = {};
+        collections.forEach(function (collection, key) {
+            scope[key] = [];
+            collection.forEach(function (model) {
+                var data = model.toJSON();
+                if (model.id) {
+                    data.id = model.id;
+                }
+                scope[key].push(data);
+            });
+        });
+        return scope;
+    };
+    /**
+     * Converts model map into JSON
+     */
+    ViewHelper.modelsToScope = function (models) {
+        var scope = {};
+        models.forEach(function (model, key) {
+            // "groupName.controlName" -> { groupName: { controlName: val } }
+            if (key.indexOf(".") !== -1) {
+                var ref = key.split(".");
+                scope[ref[0]] = scope[ref[0]] || {};
+                scope[ref[0]][ref[1]] = model.toJSON();
+                return;
+            }
+            scope[key] = model.toJSON();
+        });
+        return scope;
+    };
+    /**
+     * Bind specified models to the template
+     */
+    ViewHelper.bindModels = function (view) {
+        view.models.forEach(function (model) {
+            view.stopListening(model);
+            view.options.logger && view.trigger("log:listen", "subscribes for `change`", model);
+            view.listenTo(model, "change", view.render);
+        });
+    };
+    /**
+     * Bind specified collections to the template
+     */
+    ViewHelper.bindCollections = function (view) {
+        view.collections.forEach(function (collection) {
+            view.stopListening(collection);
+            view.options.logger && view.trigger("log:listen", "subscribes for `change destroy sync`", collection);
+            view.listenTo(collection, "change destroy sync", view.render);
+        });
+    };
+    /**
+     * Subscribe logger handlers from options
+     */
+    ViewHelper.subscribeLogger = function (view, logger) {
+        Object.keys(logger).forEach(function (events) {
+            view.listenTo(view, events, logger[events]);
+        });
+    };
+    /**
+     * collections/models passed in options, take them
+     */
+    ViewHelper.initializeOptions = function (view, options) {
+        var template = "_component" in view ? view._component.template : null;
+        // shared template
+        if ("template" in options && view.options.template) {
+            template = view.options.template;
+        }
+        // process Component's payload
+        view.template = new ngtemplate_1.NgTemplate(view.el, template),
+            view.models = utils_1.mapFrom({});
+        view.collections = utils_1.mapFrom({});
+        if ("_component" in view) {
+            view.models = view._component.models;
+            view.collections = view._component.collections;
+        }
+        if ("collections" in options) {
+            utils_1.mapAssign(view.collections, options.collections);
+        }
+        if ("models" in options) {
+            utils_1.mapAssign(view.models, options.models);
+        }
+        // init views
+        if (!view.options.views.length) {
+            view.options.views = "_component" in view ? view._component.views : [];
+        }
+        if (view.options.views.find(function (mix) { return typeof mix === "undefined"; })) {
+            throw new SyntaxError("Invalid content of options.views");
+        }
+    };
+    /**
+     * Hendler that called once after view first rendered
+     */
+    ViewHelper.onceOnRender = function (view) {
+        ViewHelper.initSubViews(view, view.options.views);
+    };
+    /**
+     * Initialize subview
+     */
+    ViewHelper.initSubViews = function (view, constructors) {
+        view.views = constructors.map(function (item) {
+            var dto;
+            if (typeof item === "function") {
+                return ViewHelper.createSubView(view, item);
+            }
+            dto = item;
+            return ViewHelper.createSubView(view, dto[0], dto[1]);
+        });
+    };
+    ViewHelper.createSubView = function (view, ViewCtor, options) {
+        if (options === void 0) { options = {}; }
+        var el = ViewHelper.findSubViewEl(view, ViewCtor.prototype["el"]);
+        return new ViewCtor(Object.assign(options, { el: el }));
+    };
+    ViewHelper.findSubViewEl = function (view, selector) {
+        if (typeof selector !== "string") {
+            throw new SyntaxError("Invalid options.el type, must be a string");
+        }
+        return view.el.querySelector(selector);
+    };
+    return ViewHelper;
+}());
+exports.ViewHelper = ViewHelper;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/tests/utils.js", function( _require, exports, module, global ){
+"use strict";
+var fetchOrigin = window.fetch;
+var MockFetch = (function () {
+    function MockFetch(stored, err) {
+        var that = this;
+        window.fetch = function (url, init) {
+            if (err) {
+                throw err;
+            }
+            var jsonStr = stored ? JSON.stringify(stored, null, 2) : init.body;
+            var blob = new Blob([jsonStr], { type: 'application/json' }), rsp = new Response(blob, { "status": 200 });
+            that.url = url;
+            that.init = init;
+            return Promise.resolve(rsp);
+        };
+    }
+    MockFetch.prototype.restore = function () {
+        window.fetch = fetchOrigin;
+    };
+    return MockFetch;
+}());
+exports.MockFetch = MockFetch;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core/exception.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/**
+ * Custom exception extending Error
+ * @param {string} message
+ */
+var Exception = (function (_super) {
+    __extends(Exception, _super);
+    function Exception(message) {
+        _super.call(this, message);
+        this.name = "NgBackboneError",
+            this.message = message;
+    }
+    return Exception;
+}(Error));
+exports.Exception = Exception;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core/model.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var utils_1 = _require( "tests/build/src/core/utils.js" );
+var Model = (function (_super) {
+    __extends(Model, _super);
+    function Model(attributes, options) {
+        _super.call(this, attributes, options);
+        this.options = options || {};
+    }
+    /**
+     * Promisable destroy
+     */
+    Model.prototype.destroy = function (options) {
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        return utils_1.promisify(function () {
+            Backbone.Model.prototype.destroy.call(_this, options);
+        }, options);
+    };
+    /**
+     * Promisable save
+     */
+    Model.prototype.save = function (attributes, options) {
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        return utils_1.promisify(function () {
+            Backbone.Model.prototype.save.call(_this, attributes, options);
+        }, options);
+    };
+    /**
+     * Promisable fetch
+     */
+    Model.prototype.fetch = function (options) {
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        return utils_1.promisify(function () {
+            Backbone.Model.prototype.fetch.call(_this, options);
+        }, options);
+    };
+    return Model;
+}(Backbone.Model));
+exports.Model = Model;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core/component.js", function( _require, exports, module, global ){
+"use strict";
+var utils_1 = _require( "tests/build/src/core/utils.js" );
+function Component(options) {
+    var mixin = {
+        _component: {
+            models: utils_1.mapFrom(options.models),
+            collections: utils_1.mapFrom(options.collections),
+            views: options.views || [],
+            template: options.template,
+        },
+        el: options.el || null,
+        events: options.events || null,
+        id: options.id || null,
+        className: options.className || null,
+        tagName: options.tagName || null,
+        formValidators: options.formValidators || null
+    };
+    return function (target) {
+        Object.assign(target.prototype, mixin);
+        // This way we trick invokation of this.initialize after constructor
+        // Keeping in mind that @Component belongs to View that knows about this._initialize
+        if ("initialize" in target.prototype) {
+            _a = [target.prototype["initialize"], function () { }], target.prototype["_initialize"] = _a[0], target.prototype["initialize"] = _a[1];
+        }
+        var _a;
+    };
+}
+exports.Component = Component;
 
   module.exports = exports;
 
@@ -736,60 +1824,6 @@ exports.FormView = FormView;
   return module;
 });
 
-_require.def( "tests/build/src/core/model.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var utils_1 = _require( "tests/build/src/core/utils.js" );
-var Model = (function (_super) {
-    __extends(Model, _super);
-    function Model(attributes, options) {
-        _super.call(this, attributes, options);
-        this.options = options || {};
-    }
-    /**
-     * Promisable destroy
-     */
-    Model.prototype.destroy = function (options) {
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        return utils_1.promisify(function () {
-            Backbone.Model.prototype.destroy.call(_this, options);
-        }, options);
-    };
-    /**
-     * Promisable save
-     */
-    Model.prototype.save = function (attributes, options) {
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        return utils_1.promisify(function () {
-            Backbone.Model.prototype.save.call(_this, attributes, options);
-        }, options);
-    };
-    /**
-     * Promisable fetch
-     */
-    Model.prototype.fetch = function (options) {
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        return utils_1.promisify(function () {
-            Backbone.Model.prototype.fetch.call(_this, options);
-        }, options);
-    };
-    return Model;
-}(Backbone.Model));
-exports.Model = Model;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/core/collection.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -836,349 +1870,6 @@ var Collection = (function (_super) {
     return Collection;
 }(Backbone.Collection));
 exports.Collection = Collection;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/core/view/helper.js", function( _require, exports, module, global ){
-"use strict";
-var ngtemplate_1 = _require( "tests/build/src/ngtemplate.js" );
-var utils_1 = _require( "tests/build/src/core/utils.js" );
-var ViewHelper = (function () {
-    function ViewHelper() {
-    }
-    /**
-     * Converts { foo: Collection, bar: Collection } into
-     * { foo: [{},{}], bar: [{},{}] }
-     */
-    ViewHelper.collectionsToScope = function (collections) {
-        var scope = {};
-        collections.forEach(function (collection, key) {
-            scope[key] = [];
-            collection.forEach(function (model) {
-                var data = model.toJSON();
-                if (model.id) {
-                    data.id = model.id;
-                }
-                scope[key].push(data);
-            });
-        });
-        return scope;
-    };
-    /**
-     * Converts model map into JSON
-     */
-    ViewHelper.modelsToScope = function (models) {
-        var scope = {};
-        models.forEach(function (model, key) {
-            // "groupName.controlName" -> { groupName: { controlName: val } }
-            if (key.indexOf(".") !== -1) {
-                var ref = key.split(".");
-                scope[ref[0]] = scope[ref[0]] || {};
-                scope[ref[0]][ref[1]] = model.toJSON();
-                return;
-            }
-            scope[key] = model.toJSON();
-        });
-        return scope;
-    };
-    /**
-     * Bind specified models to the template
-     */
-    ViewHelper.bindModels = function (view) {
-        view.models.forEach(function (model) {
-            view.stopListening(model);
-            view.options.logger && view.trigger("log:listen", "subscribes for `change`", model);
-            view.listenTo(model, "change", view.render);
-        });
-    };
-    /**
-     * Bind specified collections to the template
-     */
-    ViewHelper.bindCollections = function (view) {
-        view.collections.forEach(function (collection) {
-            view.stopListening(collection);
-            view.options.logger && view.trigger("log:listen", "subscribes for `change destroy sync`", collection);
-            view.listenTo(collection, "change destroy sync", view.render);
-        });
-    };
-    /**
-     * Subscribe logger handlers from options
-     */
-    ViewHelper.subscribeLogger = function (view, logger) {
-        Object.keys(logger).forEach(function (events) {
-            view.listenTo(view, events, logger[events]);
-        });
-    };
-    /**
-     * collections/models passed in options, take them
-     */
-    ViewHelper.initializeOptions = function (view, options) {
-        var template = "_component" in view ? view._component.template : null;
-        // shared template
-        if ("template" in options && view.options.template) {
-            template = view.options.template;
-        }
-        // process Component's payload
-        view.template = new ngtemplate_1.NgTemplate(view.el, template),
-            view.models = utils_1.mapFrom({});
-        view.collections = utils_1.mapFrom({});
-        if ("_component" in view) {
-            view.models = view._component.models;
-            view.collections = view._component.collections;
-        }
-        if ("collections" in options) {
-            utils_1.mapAssign(view.collections, options.collections);
-        }
-        if ("models" in options) {
-            utils_1.mapAssign(view.models, options.models);
-        }
-        // init views
-        if (!view.options.views.length) {
-            view.options.views = "_component" in view ? view._component.views : [];
-        }
-        if (view.options.views.find(function (mix) { return typeof mix === "undefined"; })) {
-            throw new SyntaxError("Invalid content of options.views");
-        }
-    };
-    /**
-     * Hendler that called once after view first rendered
-     */
-    ViewHelper.onceOnRender = function (view) {
-        ViewHelper.initSubViews(view);
-    };
-    /**
-     * Initialize subview
-     */
-    ViewHelper.initSubViews = function (view) {
-        var constructors = view.options.views;
-        view.views = constructors.map(function (item) {
-            var ViewCtor, options, selector;
-            if (typeof item === "function") {
-                ViewCtor = item;
-                selector = ViewCtor.prototype["el"];
-                if (typeof selector !== "string") {
-                    throw new SyntaxError("Invalid options.el type, must be a string");
-                }
-                return new ViewCtor({
-                    el: view.el.querySelector(selector)
-                });
-            }
-            _a = item, ViewCtor = _a[0], options = _a[1];
-            console.log("PP", Object.assign(options, { el: view.el.querySelector(selector) }));
-            return new ViewCtor(Object.assign(options, { el: view.el.querySelector(selector) }));
-            var _a;
-        });
-    };
-    return ViewHelper;
-}());
-exports.ViewHelper = ViewHelper;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/core/formstate.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var model_1 = _require( "tests/build/src/core/model.js" );
-var exception_1 = _require( "tests/build/src/core/exception.js" );
-var formvalidators_1 = _require( "tests/build/src/core/formvalidators.js" );
-var utils_1 = _require( "tests/build/src/core/utils.js" );
-var ERR_TYPES = [
-    "valueMissing", "rangeOverflow", "rangeUnderflow",
-    "typeMismatch", "patternMismatch"], SILENT = { silent: true };
-var FormState = (function (_super) {
-    __extends(FormState, _super);
-    function FormState() {
-        _super.apply(this, arguments);
-    }
-    FormState.prototype.defaults = function () {
-        return {
-            "value": "",
-            "valid": true,
-            "touched": false,
-            "dirty": false,
-            "valueMissing": false,
-            "rangeOverflow": false,
-            "rangeUnderflow": false,
-            "typeMismatch": false,
-            "patternMismatch": false,
-            "validationMessage": ""
-        };
-    };
-    FormState.prototype.initialize = function (options) {
-        this.formValidators = new formvalidators_1.FormValidators();
-        // Inject custom formValidators
-        if (options && "formValidators" in options) {
-            this._assignFormValidators(options.formValidators);
-        }
-    };
-    /**
-     *
-     */
-    FormState.prototype._assignFormValidators = function (formValidators) {
-        if (typeof formValidators !== "function") {
-            Object.assign(this.formValidators, formValidators);
-            return;
-        }
-        this.formValidators = new formValidators();
-        if (!(this.formValidators instanceof formvalidators_1.FormValidators)) {
-            throw new exception_1.Exception("Specified option formValidators has invalid type");
-        }
-    };
-    /**
-     * Check if a given input is a checkbox or radio
-     */
-    FormState.prototype.isCheckboxRadio = function (el) {
-        return el instanceof HTMLInputElement && ["checkbox", "radio"].indexOf(el.type) !== -1;
-    };
-    /**
-     * Update `valid` and `validationMessage` according to the current model state
-     */
-    FormState.prototype.checkValidity = function () {
-        var _this = this;
-        var invalid = ERR_TYPES.some(function (key) {
-            return _this.attributes[key];
-        });
-        this.set("valid", !invalid);
-        if (!invalid) {
-            this.set("validationMessage", "", SILENT);
-        }
-    };
-    /**
-     * Validate <input required/> doesn't have an empty value
-     */
-    FormState.prototype.validateRequired = function (el) {
-        if (!el.hasAttribute("required")) {
-            return;
-        }
-        var value = String(el.value), valid = value.trim().length;
-        this.set("valueMissing", !valid, SILENT);
-        valid || this.set("validationMessage", "This field is mandatory", SILENT);
-    };
-    /**
-     * Validate <input min max /> value in the given range
-     */
-    FormState.prototype.validateRange = function (el) {
-        if (!(el instanceof HTMLInputElement)) {
-            throw TypeError("el must be instance of HTMLInputElement");
-        }
-        if (el.hasAttribute("max")) {
-            var valid = Number(el.value) < Number(el.getAttribute("max"));
-            this.set("rangeOverflow", !valid, SILENT);
-            valid || this.set("validationMessage", "The value is too high", SILENT);
-        }
-        if (el.hasAttribute("min")) {
-            var valid = Number(el.value) > Number(el.getAttribute("min"));
-            this.set("rangeUnderflow", !valid, SILENT);
-            valid || this.set("validationMessage", "The value is too low", SILENT);
-        }
-    };
-    /**
-     * Validate by `pattern`
-     */
-    FormState.prototype.patternMismatch = function (el) {
-        if (!el.hasAttribute("pattern")) {
-            return;
-        }
-        try {
-            var pattern = new RegExp(el.getAttribute("pattern"));
-            this.set("patternMismatch", !pattern.test(el.value), SILENT);
-            this.set("validationMessage", "The value does not match the pattern", SILENT);
-        }
-        catch (err) {
-            throw new exception_1.Exception("Invalid pattern " + el.getAttribute("pattern"));
-        }
-    };
-    FormState.prototype.validateTypeMismatch = function (el) {
-        var _this = this;
-        var value = el.value, itype = el.getAttribute("type");
-        if (!(itype in this.formValidators)) {
-            return Promise.resolve();
-        }
-        return this.formValidators[itype](value)
-            .catch(function (err) {
-            if (err instanceof Error) {
-                throw new exception_1.Exception(err.message);
-            }
-            _this.set("typeMismatch", true, SILENT);
-            _this.set("validationMessage", err, SILENT);
-        });
-    };
-    FormState.prototype.
-    /**
-     * Handle change/input events on the input
-     */
-    onInputChange = function (el) {
-        var _this = this;
-        this.set("dirty", true, SILENT);
-        if (!this.isCheckboxRadio(el)) {
-            this.set("value", el.value, SILENT);
-            this.validateRequired(el);
-            if (el instanceof HTMLInputElement) {
-                this.validateRange(el);
-            }
-            this.patternMismatch(el);
-            this.validateTypeMismatch(el)
-                .then(function () {
-                _this.checkValidity();
-            });
-        }
-        else {
-            this.set("value", el.checked, SILENT);
-            this.checkValidity();
-        }
-    };
-    /**
-     * Handle focus event on the input
-     */
-    FormState.prototype.onInputFocus = function () {
-        this.set("touched", true);
-    };
-    __decorate([
-        utils_1.Debounce(100), 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', [Object]), 
-        __metadata('design:returntype', void 0)
-    ], FormState.prototype, "onInputChange", null);
-    return FormState;
-}(model_1.Model));
-exports.FormState = FormState;
-var GroupState = (function (_super) {
-    __extends(GroupState, _super);
-    function GroupState() {
-        _super.apply(this, arguments);
-    }
-    return GroupState;
-}(FormState));
-exports.GroupState = GroupState;
-var ControlState = (function (_super) {
-    __extends(ControlState, _super);
-    function ControlState() {
-        _super.apply(this, arguments);
-    }
-    return ControlState;
-}(FormState));
-exports.ControlState = ControlState;
 
   module.exports = exports;
 
@@ -1250,45 +1941,6 @@ var NgTemplate = (function () {
     return NgTemplate;
 }());
 exports.NgTemplate = NgTemplate;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/core/formvalidators.js", function( _require, exports, module, global ){
-"use strict";
-var FormValidators = (function () {
-    function FormValidators() {
-    }
-    FormValidators.prototype.email = function (value) {
-        var pattern = /^[a-zA-Z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~\.]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,4}$/g;
-        if (pattern.test(value)) {
-            return Promise.resolve();
-        }
-        return Promise.reject("Please enter a valid email address");
-    };
-    FormValidators.prototype.tel = function (value) {
-        var pattern = /^\+(?:[0-9] ?){6,14}[0-9]$/;
-        if (pattern.test(value)) {
-            return Promise.resolve();
-        }
-        return Promise.reject("Please enter a valid tel. number +1 11 11 11");
-    };
-    FormValidators.prototype.url = function (value) {
-        var pattern = new RegExp("^(https?:\\/\\/)?((([a-z\\d]([a-z\\d\\-]*[a-z\\d])*)\\.)" +
-            "+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[\\-a-z\\d%_.~+]*)" +
-            "*(\\?[;&a-z\\d%_.~+=\\-]*)?(\\#[\\-a-z\\d_]*)?$", "i");
-        if (pattern.test(value)) {
-            return Promise.resolve();
-        }
-        return Promise.reject("Please enter a valid URL");
-    };
-    return FormValidators;
-}());
-exports.FormValidators = FormValidators;
-;
 
   module.exports = exports;
 
@@ -2138,73 +2790,6 @@ exports.ERROR_CODES = {
   return module;
 });
 
-_require.def( "tests/build/src/ng-template/expression/parser.js", function( _require, exports, module, global ){
-"use strict";
-var tokenizer_1 = _require( "tests/build/src/ng-template/expression/tokenizer.js" );
-var Parser = (function () {
-    function Parser() {
-    }
-    Parser.split = function (expr) {
-        var re = /(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)/;
-        return expr
-            .split(re)
-            .map(function (i) { return i.trim(); })
-            .filter(function (i) { return Boolean(i); });
-    };
-    Parser.parse = function (expr) {
-        // if the whole expr is a string
-        if (tokenizer_1.StringToken.valid(expr)) {
-            var token = tokenizer_1.tokenizer(expr.trim());
-            return [token];
-        }
-        var com = Parser.split(expr);
-        // case 3: foo + bar
-        // case 1: foo (no operators found)
-        if (com.length !== 3 && com.length !== 1) {
-            return [];
-        }
-        var tokens = com.map(function (i) { return tokenizer_1.tokenizer(i); });
-        // any of tokens is invalid
-        if (tokens.find(function (i) { return i instanceof tokenizer_1.InvalidToken; })) {
-            return [];
-        }
-        return tokens;
-    };
-    return Parser;
-}());
-exports.Parser = Parser;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ng-template/expression/exception.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
-var ExpressionException = (function (_super) {
-    __extends(ExpressionException, _super);
-    function ExpressionException(message) {
-        _super.call(this, message);
-        this.name = "NgTemplateExpressionException",
-            this.message = message;
-    }
-    return ExpressionException;
-}(exception_1.Exception));
-exports.ExpressionException = ExpressionException;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/ng-template/expression/tokenizer.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -2360,6 +2945,73 @@ function tokenizer(rawValue) {
     }
 }
 exports.tokenizer = tokenizer;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/expression/exception.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
+var ExpressionException = (function (_super) {
+    __extends(ExpressionException, _super);
+    function ExpressionException(message) {
+        _super.call(this, message);
+        this.name = "NgTemplateExpressionException",
+            this.message = message;
+    }
+    return ExpressionException;
+}(exception_1.Exception));
+exports.ExpressionException = ExpressionException;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/expression/parser.js", function( _require, exports, module, global ){
+"use strict";
+var tokenizer_1 = _require( "tests/build/src/ng-template/expression/tokenizer.js" );
+var Parser = (function () {
+    function Parser() {
+    }
+    Parser.split = function (expr) {
+        var re = /(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)/;
+        return expr
+            .split(re)
+            .map(function (i) { return i.trim(); })
+            .filter(function (i) { return Boolean(i); });
+    };
+    Parser.parse = function (expr) {
+        // if the whole expr is a string
+        if (tokenizer_1.StringToken.valid(expr)) {
+            var token = tokenizer_1.tokenizer(expr.trim());
+            return [token];
+        }
+        var com = Parser.split(expr);
+        // case 3: foo + bar
+        // case 1: foo (no operators found)
+        if (com.length !== 3 && com.length !== 1) {
+            return [];
+        }
+        var tokens = com.map(function (i) { return tokenizer_1.tokenizer(i); });
+        // any of tokens is invalid
+        if (tokens.find(function (i) { return i instanceof tokenizer_1.InvalidToken; })) {
+            return [];
+        }
+        return tokens;
+    };
+    return Parser;
+}());
+exports.Parser = Parser;
 
   module.exports = exports;
 

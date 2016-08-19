@@ -7,10 +7,10 @@ import UtilsSpec from "./spec/utils.spec";
 import CollectionSpec from "./spec/collection.spec";
 import ModelSpec from "./spec/model.spec";
 
-//UtilsSpec();
-//FormStateSpec();
-//ViewInternalSpec();
+UtilsSpec();
+FormStateSpec();
+ViewInternalSpec();
 ViewSpec();
-//FormViewSpec();
-//CollectionSpec();
-//ModelSpec();
+FormViewSpec();
+CollectionSpec();
+ModelSpec();
