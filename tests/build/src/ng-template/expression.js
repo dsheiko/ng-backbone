@@ -1,5 +1,7 @@
 "use strict";
+var constants_1 = require("./constants");
 var exception_1 = require("./exception");
+var exception_2 = require("./expression/exception");
 var parser_1 = require("./expression/parser");
 var tokenizer_1 = require("./expression/tokenizer");
 /**
@@ -12,7 +14,7 @@ function reduceComposite(tokens, data) {
     }
     var left = tokens[0], leftVal = left.resolveValue(data), operator = tokens[1], right = tokens[2], rightVal = right.resolveValue(data);
     if (!(operator instanceof tokenizer_1.OperatorToken)) {
-        throw new SyntaxError("Invalid operator " + operator.value + " in ng* expression");
+        throw new exception_1.Exception("Invalid operator " + operator.value + " in ng* expression");
     }
     switch (operator.value) {
         case "+":
@@ -54,24 +56,26 @@ function wrap(value, wrapper) {
  * Throw an error or silently report the exception
  */
 function treatException(err, expr, reporter) {
-    if (!(err instanceof exception_1.Exception)) {
-        console.log(err);
-        throw new SyntaxError("Invalid ng* expression " + expr);
+    if (!(err instanceof exception_2.ExpressionException)) {
+        throw new exception_1.Exception("Invalid ng* expression " + expr);
     }
-    reporter.addError(err.message);
+    reporter.addError((constants_1.ERROR_CODES.NGT0003 + ": ") + err.message);
 }
 /**
  * Create evaluation function for expressions like "prop, value"
  */
 function tryGroupStrategy(expr, reporter) {
     var leftExpr, rightExpr;
+    if (expr.indexOf(",") === -1) {
+        throw new exception_1.Exception("Group expression must have syntax: 'foo, bar'");
+    }
     _a = expr.split(","), leftExpr = _a[0], rightExpr = _a[1];
     var leftTokens = parser_1.Parser.parse(leftExpr), rightTokens = parser_1.Parser.parse(rightExpr);
     if (!leftTokens.length) {
-        throw new parser_1.ParserException("Cannot parse expression " + leftExpr);
+        throw new exception_2.ExpressionException("Cannot parse expression " + leftExpr);
     }
     if (!rightTokens.length) {
-        throw new parser_1.ParserException("Cannot parse expression " + rightExpr);
+        throw new exception_2.ExpressionException("Cannot parse expression " + rightExpr);
     }
     reporter.addTokens(leftTokens);
     reporter.addTokens(rightTokens);
@@ -94,7 +98,7 @@ function tryOptimalStrategy(expr, wrapper, reporter) {
     if (wrapper === void 0) { wrapper = ""; }
     var tokens = parser_1.Parser.parse(expr);
     if (!tokens.length) {
-        throw new parser_1.ParserException("Cannot parse expression " + expr);
+        throw new exception_2.ExpressionException("Cannot parse expression " + expr);
     }
     reporter.addTokens(tokens);
     return function (data) {
@@ -129,7 +133,7 @@ function fallbackStrategy(expr, wrapper, reporter) {
             return cb.apply(this, vals);
         }
         catch (err) {
-            reporter.addError("Could not evaluate " + code);
+            reporter.addError(constants_1.ERROR_CODES.NGT0002 + ": Could not evaluate " + code);
         }
     };
     return func;
@@ -144,10 +148,11 @@ function compile(expr, wrapper, reporter) {
         return tryOptimalStrategy(expr, wrapper, reporter);
     }
     catch (err) {
-        if (!(err instanceof parser_1.ParserException)) {
-            throw SyntaxError(err.message);
+        if (!(err instanceof exception_2.ExpressionException)) {
+            throw new exception_1.Exception(err.message);
         }
     }
+    reporter.addError(constants_1.ERROR_CODES.NGT0001 + ": Could not parse the expression, going eval()");
     return fallbackStrategy.call(this, expr, wrapper, reporter);
 }
 exports.compile = compile;

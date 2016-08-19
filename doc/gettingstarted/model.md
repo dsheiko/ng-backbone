@@ -14,6 +14,8 @@ export class Model extends Backbone.Model {
 
 ```javascript
 
+import { Model } from "ng-template/core";
+
  class TestModel extends Model {
    url= "./api/";
  }

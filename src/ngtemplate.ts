@@ -19,7 +19,7 @@ export class NgTemplate {
   private directives: NgTemplate.Directive[] = [];
   private reporter: Reporter;
 
-  static factory( el: HTMLElement, template?: string ): NgTemplate {
+  static factory( el:Element, template?: string ): NgTemplate {
     return new NgTemplate( el, template || null );
   }
 
@@ -28,7 +28,7 @@ export class NgTemplate {
    * If template passed, load it into the Element
    */
 
-  constructor( public el: HTMLElement, public template?: string ){
+  constructor( public el: Element, public template?: string ){
     if ( !this.el ) {
       throw new Exception( "(NgTemplate) Invalid first parameter: must be an existing DOM node" );
     }
@@ -49,7 +49,7 @@ export class NgTemplate {
   sync( data: NgTemplate.DataMap ): NgTemplate {
     // Late initialization: renders from a given template on first sync
     if ( this.template ) {
-      this.el.innerHTML = this.template;
+      this.el.innerHTML = this.template + "";
       this.init( DIRECTIVES );
       this.template = null;
     }

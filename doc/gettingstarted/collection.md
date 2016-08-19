@@ -15,6 +15,8 @@ export class Collection extends Backbone.Collection<Backbone.Model> {
 
 ```javascript
 
+ import { Collection } from "ng-template/core";
+
  class TestCollection extends Collection {
    url= "./mock";
  }

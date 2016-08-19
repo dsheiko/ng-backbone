@@ -1,18 +1,21 @@
 import { NgTemplate } from "../ngtemplate";
-import { mapAssign, Debounce } from "./utils";
+import { mapFrom, mapAssign, Debounce } from "./utils";
 
 export class View extends Backbone.NativeView<Backbone.Model> {
   el: HTMLElement;
   models: NgBackbone.ModelMap;
   collections: NgBackbone.CollectionMap;
   template: NgTemplate;
-  options: NgBackbone.ViewOptions;
+  options: NgBackbone.ViewOptions = {};
+  errors: string[] = [];
+  private _component: NgBackbone.ComponentDto;
 
   _initialize: Function;
 
   constructor( options: NgBackbone.ViewOptions = {} ) {
     super( options );
-    this.options = options;
+
+    Object.assign( this.options, options );
     // If we want to listen to log events
     options.logger && this._subscribeLogger( options.logger );
     this.initializeOptions( options );
@@ -21,6 +24,31 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     // Call earlier cached this.initialize
     this._initialize && this._initialize( options );
   }
+
+  /**
+   * collections/models passed in options, take them
+   */
+  initializeOptions( options: NgBackbone.ViewOptions ) {
+    let template = "_component" in this ? this._component.template : null;
+    // process Component's payload
+    this.template = new NgTemplate( this.el, template ),
+
+    this.models = mapFrom({});
+    this.collections = mapFrom({});
+
+    if ( "_component" in this ) {
+      this.models = this._component.models;
+      this.collections = this._component.collections;
+    }
+
+    if ( "collections" in options ) {
+      mapAssign( this.collections, options.collections );
+    }
+    if ( "models" in options ) {
+      mapAssign( this.models, options.models );
+    }
+  }
+
 
   private _subscribeLogger( logger: NgBackbone.LoggerOption ): void {
     Object.keys( logger ).forEach(( events: string ) => {
@@ -31,7 +59,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   private _bindModels(){
       this.models.forEach(( model: Backbone.Model ): void => {
         this.stopListening( model );
-        this.trigger( "log:listen", "subscribes for `change`", model );
+        this.options.logger && this.trigger( "log:listen", "subscribes for `change`", model );
         this.listenTo( model, "change", this.render );
       });
   }
@@ -39,7 +67,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   private _bindCollections(){
     this.collections.forEach(( collection: Backbone.Collection<Backbone.Model> ) => {
       this.stopListening( collection );
-      this.trigger( "log:listen", "subscribes for `change destroy sync`", collection );
+      this.options.logger && this.trigger( "log:listen", "subscribes for `change destroy sync`", collection );
       this.listenTo( collection, "change destroy sync", this._onCollectionChange );
     });
   }
@@ -52,23 +80,6 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     this.render( collection );
   }
 
-  /**
-   * collections/models passed in options, take them
-   */
-  initializeOptions( options: NgBackbone.ViewOptions ) {
-    if ( !( "models" in this ) ) {
-      this.models = <NgBackbone.ModelMap> new Map();
-    }
-    if ( !( "collections" in this ) ) {
-      this.collections = <NgBackbone.CollectionMap> new Map();
-    }
-    if ( "collections" in options ) {
-      mapAssign( this.collections, options.collections );
-    }
-    if ( "models" in options ) {
-      mapAssign( this.models, options.models );
-    }
-  }
 
   /**
    * Converts { foo: Collection, bar: Collection } into
@@ -115,11 +126,12 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     this.models && Object.assign( scope, View.modelsToScope( this.models ) );
     this.collections && Object.assign( scope, View.collectionsToScope( this.collections ) );
     try {
-      let errors: string[] = this.template.sync( scope ).report()[ "errors" ];
-      errors.forEach(( msg: string ) => {
+      this.errors = this.template.sync( scope ).report()[ "errors" ];
+      this.options.logger && this.errors.forEach(( msg: string ) => {
         this.trigger( "log:template", msg );
       });
-      this.trigger( "log:sync", "synced template on in " + ( performance.now() - ms ) + " ms", scope, source );
+      this.options.logger &&
+        this.trigger( "log:sync", "synced template on in " + ( performance.now() - ms ) + " ms", scope, source );
     } catch ( err ) {
       console.error( (<Error>err).message );
     }

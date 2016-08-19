@@ -77,6 +77,7 @@ _require.def( "tests/build/tests/index.spec.js", function( _require, exports, mo
 "use strict";
 /// <reference path="../src/core.d.ts" />
 var formstate_spec_1 = _require( "tests/build/tests/spec/formstate.spec.js" );
+var view_internal_spec_1 = _require( "tests/build/tests/spec/view-internal.spec.js" );
 var view_spec_1 = _require( "tests/build/tests/spec/view.spec.js" );
 var formview_spec_1 = _require( "tests/build/tests/spec/formview.spec.js" );
 var utils_spec_1 = _require( "tests/build/tests/spec/utils.spec.js" );
@@ -84,7 +85,8 @@ var collection_spec_1 = _require( "tests/build/tests/spec/collection.spec.js" );
 var model_spec_1 = _require( "tests/build/tests/spec/model.spec.js" );
 utils_spec_1.default();
 formstate_spec_1.FormStateSpec();
-view_spec_1.ViewSpec();
+view_internal_spec_1.default();
+view_spec_1.default();
 formview_spec_1.FormViewSpec();
 collection_spec_1.default();
 model_spec_1.default();
@@ -374,12 +376,12 @@ exports.FormStateSpec = FormStateSpec;
   return module;
 });
 
-_require.def( "tests/build/tests/spec/view.spec.js", function( _require, exports, module, global ){
+_require.def( "tests/build/tests/spec/view-internal.spec.js", function( _require, exports, module, global ){
 "use strict";
 var core_1 = _require( "tests/build/src/core.js" );
 var utils_1 = _require( "tests/build/src/core/utils.js" );
-function ViewSpec() {
-    describe("View", function () {
+function ViewInternalSpec() {
+    describe("View (internal)", function () {
         describe("#modelsToScope", function () {
             it("converts flat into scope", function () {
                 var models = utils_1.mapFrom({
@@ -410,7 +412,171 @@ function ViewSpec() {
         });
     });
 }
-exports.ViewSpec = ViewSpec;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = ViewInternalSpec;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/tests/spec/view.spec.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var core_1 = _require( "tests/build/src/core.js" );
+function ViewSpec() {
+    describe("View", function () {
+        describe("@Component + View + no state", function () {
+            it("applies tagName and template", function () {
+                var TestView = (function (_super) {
+                    __extends(TestView, _super);
+                    function TestView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestView = __decorate([
+                        core_1.Component({
+                            tagName: "ng-component",
+                            template: "<ng-el></ng-el>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestView);
+                    return TestView;
+                }(core_1.View));
+                var view = new TestView();
+                view.render();
+                expect(view.el.querySelector("ng-el")).toBeTruthy();
+            });
+            it("applies tagName and className and template", function () {
+                var TestView = (function (_super) {
+                    __extends(TestView, _super);
+                    function TestView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestView = __decorate([
+                        core_1.Component({
+                            tagName: "ng-component",
+                            className: "ng-class",
+                            template: "<ng-el></ng-el>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestView);
+                    return TestView;
+                }(core_1.View));
+                var view = new TestView();
+                view.render();
+                expect(view.el.querySelector("ng-el")).toBeTruthy();
+                expect(view.el.classList.contains("ng-class")).toBeTruthy();
+            });
+        });
+        describe("@Component + View + Models", function () {
+            it("binds specified models", function () {
+                var TestView = (function (_super) {
+                    __extends(TestView, _super);
+                    function TestView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestView = __decorate([
+                        core_1.Component({
+                            tagName: "ng-component",
+                            models: {
+                                foo: new core_1.Model({ bar: "bar" })
+                            },
+                            template: "<ng-el data-ng-text=\"foo.bar\">none</ng-el>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestView);
+                    return TestView;
+                }(core_1.View));
+                var view = new TestView(), errors = view.render().errors, el = view.el.querySelector("ng-el");
+                expect(el).toBeTruthy();
+                expect(el.textContent).toBe("bar");
+                expect(errors.length).toBe(0);
+            });
+        });
+        describe("@Component + View + Collections", function () {
+            it("binds specified collections", function () {
+                var TestView = (function (_super) {
+                    __extends(TestView, _super);
+                    function TestView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestView = __decorate([
+                        core_1.Component({
+                            tagName: "ng-component",
+                            collections: {
+                                foo: new core_1.Collection([
+                                    new core_1.Model({ bar: 1 }),
+                                    new core_1.Model({ bar: 2 })
+                                ])
+                            },
+                            template: "<ng-el data-ng-for=\"let i of foo\" data-ng-text=\"i.bar\">none</ng-el>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestView);
+                    return TestView;
+                }(core_1.View));
+                var view = new TestView(), errors = view.render().errors, els = Array.from(view.el.querySelectorAll("ng-el"));
+                expect(els.length).toBe(2);
+                expect(els[0].textContent).toBe("1");
+                expect(els[1].textContent).toBe("2");
+            });
+        });
+        describe("View with child View", function () {
+            it("applies tagName and template", function () {
+                var TestView = (function (_super) {
+                    __extends(TestView, _super);
+                    function TestView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestView = __decorate([
+                        core_1.Component({
+                            tagName: "ng-component",
+                            template: "<ng-child></ng-child>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestView);
+                    return TestView;
+                }(core_1.View));
+                var TestChildView = (function (_super) {
+                    __extends(TestChildView, _super);
+                    function TestChildView() {
+                        _super.apply(this, arguments);
+                    }
+                    TestChildView = __decorate([
+                        core_1.Component({
+                            template: "<ng-el></ng-el>"
+                        }), 
+                        __metadata('design:paramtypes', [])
+                    ], TestChildView);
+                    return TestChildView;
+                }(core_1.View));
+                var view = new TestView();
+                view.render();
+                var child = new TestChildView({
+                    el: view.el.querySelector("ng-child")
+                });
+                child.render();
+                expect(view.el.querySelector("ng-el")).toBeTruthy();
+            });
+        });
+    });
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = ViewSpec;
 
   module.exports = exports;
 
@@ -1119,22 +1285,19 @@ exports.Exception = Exception;
 
 _require.def( "tests/build/src/core/component.js", function( _require, exports, module, global ){
 "use strict";
-var ngtemplate_1 = _require( "tests/build/src/ngtemplate.js" );
 var utils_1 = _require( "tests/build/src/core/utils.js" );
 function Component(options) {
-    var el = typeof options.el === "string" ? document.querySelector(options.el) : options.el;
-    if (!(el instanceof Element)) {
-        throw new Error("options.el not found");
-    }
     var mixin = {
-        models: utils_1.mapFrom(options.models) || null,
-        collections: utils_1.mapFrom(options.collections) || null,
+        _component: {
+            models: utils_1.mapFrom(options.models),
+            collections: utils_1.mapFrom(options.collections),
+            template: options.template,
+        },
         el: options.el || null,
         events: options.events || null,
         id: options.id || null,
         className: options.className || null,
         tagName: options.tagName || null,
-        template: new ngtemplate_1.NgTemplate(el, options.template),
         formValidators: options.formValidators || null
     };
     return function (target) {
@@ -1142,7 +1305,7 @@ function Component(options) {
         // This way we trick invokation of this.initialize after constructor
         // Keeping in mind that @Component belongs to View that knows about this._initialize
         if ("initialize" in target.prototype) {
-            _a = [target.prototype.initialize, function () { }], target.prototype._initialize = _a[0], target.prototype.initialize = _a[1];
+            _a = [target.prototype["initialize"], function () { }], target.prototype["_initialize"] = _a[0], target.prototype["initialize"] = _a[1];
         }
         var _a;
     };
@@ -1162,27 +1325,55 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var ngtemplate_1 = _require( "tests/build/src/ngtemplate.js" );
 var utils_1 = _require( "tests/build/src/core/utils.js" );
 var View = (function (_super) {
     __extends(View, _super);
     function View(options) {
         if (options === void 0) { options = {}; }
         _super.call(this, options);
-        this.options = options;
-        // If want to listen to log events
-        options.logger &&
-            this.listenTo(this, "log", options.logger);
+        this.options = {};
+        this.errors = [];
+        Object.assign(this.options, options);
+        // If we want to listen to log events
+        options.logger && this._subscribeLogger(options.logger);
         this.initializeOptions(options);
         this.models.size && this._bindModels();
         this.collections && this._bindCollections();
         // Call earlier cached this.initialize
         this._initialize && this._initialize(options);
     }
+    /**
+     * collections/models passed in options, take them
+     */
+    View.prototype.initializeOptions = function (options) {
+        var template = "_component" in this ? this._component.template : null;
+        // process Component's payload
+        this.template = new ngtemplate_1.NgTemplate(this.el, template),
+            this.models = utils_1.mapFrom({});
+        this.collections = utils_1.mapFrom({});
+        if ("_component" in this) {
+            this.models = this._component.models;
+            this.collections = this._component.collections;
+        }
+        if ("collections" in options) {
+            utils_1.mapAssign(this.collections, options.collections);
+        }
+        if ("models" in options) {
+            utils_1.mapAssign(this.models, options.models);
+        }
+    };
+    View.prototype._subscribeLogger = function (logger) {
+        var _this = this;
+        Object.keys(logger).forEach(function (events) {
+            _this.listenTo(_this, events, logger[events]);
+        });
+    };
     View.prototype._bindModels = function () {
         var _this = this;
         this.models.forEach(function (model) {
             _this.stopListening(model);
-            _this.trigger("log", "subscribes for `change`", model);
+            _this.options.logger && _this.trigger("log:listen", "subscribes for `change`", model);
             _this.listenTo(model, "change", _this.render);
         });
     };
@@ -1190,7 +1381,7 @@ var View = (function (_super) {
         var _this = this;
         this.collections.forEach(function (collection) {
             _this.stopListening(collection);
-            _this.trigger("log", "subscribes for `change destroy sync`", collection);
+            _this.options.logger && _this.trigger("log:listen", "subscribes for `change destroy sync`", collection);
             _this.listenTo(collection, "change destroy sync", _this._onCollectionChange);
         });
     };
@@ -1200,23 +1391,6 @@ var View = (function (_super) {
     View.prototype._onCollectionChange = function (collection) {
         // @TODO control change of collection models
         this.render(collection);
-    };
-    /**
-     * collections/models passed in options, take them
-     */
-    View.prototype.initializeOptions = function (options) {
-        if (!("models" in this)) {
-            this.models = new Map();
-        }
-        if (!("collections" in this)) {
-            this.collections = new Map();
-        }
-        if ("collections" in options) {
-            utils_1.mapAssign(this.collections, options.collections);
-        }
-        if ("models" in options) {
-            utils_1.mapAssign(this.models, options.models);
-        }
     };
     /**
      * Converts { foo: Collection, bar: Collection } into
@@ -1257,13 +1431,18 @@ var View = (function (_super) {
      * Render first and then sync the template
      */
     View.prototype.render = function (source) {
+        var _this = this;
         var ms = performance.now();
         var scope = {};
         this.models && Object.assign(scope, View.modelsToScope(this.models));
         this.collections && Object.assign(scope, View.collectionsToScope(this.collections));
         try {
-            this.template.sync(scope);
-            this.trigger("log", "synced template in " + (performance.now() - ms) + " ms", scope, source);
+            this.errors = this.template.sync(scope).report()["errors"];
+            this.options.logger && this.errors.forEach(function (msg) {
+                _this.trigger("log:template", msg);
+            });
+            this.options.logger &&
+                this.trigger("log:sync", "synced template on in " + (performance.now() - ms) + " ms", scope, source);
         }
         catch (err) {
             console.error(err.message);
@@ -1375,7 +1554,7 @@ var FormView = (function (_super) {
         var model = new formstate_1.GroupState({ formValidators: this.formValidators });
         this.models.set(FormView.getKey(groupName, "form"), model);
         this.stopListening(model);
-        this.trigger("log", "subscribes for `change`", model);
+        this.options.logger && this.trigger("log:listen", "subscribes for `change`", model);
         this.listenTo(model, "change", this.render);
     };
     FormView.getKey = function (groupName, controlName) {
@@ -1393,7 +1572,7 @@ var FormView = (function (_super) {
         var model = new formstate_1.ControlState({ formValidators: this.formValidators });
         this.models.set(key, model);
         this.stopListening(model);
-        this.trigger("log", "subscribes for `change`", model);
+        this.options.logger && this.trigger("log:listen", "subscribes for `change`", model);
         this.listenTo(model, "change", function () {
             _this._onFromControlModelChange(groupName);
         });
@@ -1583,7 +1762,7 @@ var NgTemplate = (function () {
     NgTemplate.prototype.sync = function (data) {
         // Late initialization: renders from a given template on first sync
         if (this.template) {
-            this.el.innerHTML = this.template;
+            this.el.innerHTML = this.template + "";
             this.init(DIRECTIVES);
             this.template = null;
         }
@@ -2239,38 +2418,11 @@ exports.AbstractDirective = AbstractDirective;
   return module;
 });
 
-_require.def( "tests/build/src/ng-template/cache.js", function( _require, exports, module, global ){
-"use strict";
-var Cache = (function () {
-    function Cache() {
-    }
-    Cache.prototype.match = function (exVal) {
-        if (exVal === this.cache) {
-            return true;
-        }
-        this.cache = exVal;
-        return false;
-    };
-    Cache.prototype.evaluate = function (exVal, cb) {
-        if (this.match(exVal)) {
-            return;
-        }
-        cb(exVal);
-    };
-    return Cache;
-}());
-exports.Cache = Cache;
-;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/ng-template/expression.js", function( _require, exports, module, global ){
 "use strict";
+var constants_1 = _require( "tests/build/src/ng-template/constants.js" );
 var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
+var exception_2 = _require( "tests/build/src/ng-template/expression/exception.js" );
 var parser_1 = _require( "tests/build/src/ng-template/expression/parser.js" );
 var tokenizer_1 = _require( "tests/build/src/ng-template/expression/tokenizer.js" );
 /**
@@ -2283,7 +2435,7 @@ function reduceComposite(tokens, data) {
     }
     var left = tokens[0], leftVal = left.resolveValue(data), operator = tokens[1], right = tokens[2], rightVal = right.resolveValue(data);
     if (!(operator instanceof tokenizer_1.OperatorToken)) {
-        throw new SyntaxError("Invalid operator " + operator.value + " in ng* expression");
+        throw new exception_1.Exception("Invalid operator " + operator.value + " in ng* expression");
     }
     switch (operator.value) {
         case "+":
@@ -2325,24 +2477,26 @@ function wrap(value, wrapper) {
  * Throw an error or silently report the exception
  */
 function treatException(err, expr, reporter) {
-    if (!(err instanceof exception_1.Exception)) {
-        console.log(err);
-        throw new SyntaxError("Invalid ng* expression " + expr);
+    if (!(err instanceof exception_2.ExpressionException)) {
+        throw new exception_1.Exception("Invalid ng* expression " + expr);
     }
-    reporter.addError(err.message);
+    reporter.addError((constants_1.ERROR_CODES.NGT0003 + ": ") + err.message);
 }
 /**
  * Create evaluation function for expressions like "prop, value"
  */
 function tryGroupStrategy(expr, reporter) {
     var leftExpr, rightExpr;
+    if (expr.indexOf(",") === -1) {
+        throw new exception_1.Exception("Group expression must have syntax: 'foo, bar'");
+    }
     _a = expr.split(","), leftExpr = _a[0], rightExpr = _a[1];
     var leftTokens = parser_1.Parser.parse(leftExpr), rightTokens = parser_1.Parser.parse(rightExpr);
     if (!leftTokens.length) {
-        throw new parser_1.ParserException("Cannot parse expression " + leftExpr);
+        throw new exception_2.ExpressionException("Cannot parse expression " + leftExpr);
     }
     if (!rightTokens.length) {
-        throw new parser_1.ParserException("Cannot parse expression " + rightExpr);
+        throw new exception_2.ExpressionException("Cannot parse expression " + rightExpr);
     }
     reporter.addTokens(leftTokens);
     reporter.addTokens(rightTokens);
@@ -2365,7 +2519,7 @@ function tryOptimalStrategy(expr, wrapper, reporter) {
     if (wrapper === void 0) { wrapper = ""; }
     var tokens = parser_1.Parser.parse(expr);
     if (!tokens.length) {
-        throw new parser_1.ParserException("Cannot parse expression " + expr);
+        throw new exception_2.ExpressionException("Cannot parse expression " + expr);
     }
     reporter.addTokens(tokens);
     return function (data) {
@@ -2400,7 +2554,7 @@ function fallbackStrategy(expr, wrapper, reporter) {
             return cb.apply(this, vals);
         }
         catch (err) {
-            reporter.addError("Could not evaluate " + code);
+            reporter.addError(constants_1.ERROR_CODES.NGT0002 + ": Could not evaluate " + code);
         }
     };
     return func;
@@ -2415,10 +2569,11 @@ function compile(expr, wrapper, reporter) {
         return tryOptimalStrategy(expr, wrapper, reporter);
     }
     catch (err) {
-        if (!(err instanceof parser_1.ParserException)) {
-            throw SyntaxError(err.message);
+        if (!(err instanceof exception_2.ExpressionException)) {
+            throw new exception_1.Exception(err.message);
         }
     }
+    reporter.addError(constants_1.ERROR_CODES.NGT0001 + ": Could not parse the expression, going eval()");
     return fallbackStrategy.call(this, expr, wrapper, reporter);
 }
 exports.compile = compile;
@@ -2429,24 +2584,78 @@ exports.compile = compile;
   return module;
 });
 
-_require.def( "tests/build/src/ng-template/expression/parser.js", function( _require, exports, module, global ){
+_require.def( "tests/build/src/ng-template/cache.js", function( _require, exports, module, global ){
+"use strict";
+var Cache = (function () {
+    function Cache() {
+    }
+    Cache.prototype.match = function (exVal) {
+        if (exVal === this.cache) {
+            return true;
+        }
+        this.cache = exVal;
+        return false;
+    };
+    Cache.prototype.evaluate = function (exVal, cb) {
+        if (this.match(exVal)) {
+            return;
+        }
+        cb(exVal);
+    };
+    return Cache;
+}());
+exports.Cache = Cache;
+;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/constants.js", function( _require, exports, module, global ){
+"use strict";
+// Do not dare yet to go with Symbol - TS doesn't transpile them and support isn't good yet
+exports.ERROR_CODES = {
+    NGT0001: "NGT0001",
+    NGT0002: "NGT0002",
+    NGT0003: "NGT0003"
+};
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/expression/exception.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var tokenizer_1 = _require( "tests/build/src/ng-template/expression/tokenizer.js" );
-var ParserException = (function (_super) {
-    __extends(ParserException, _super);
-    function ParserException(message) {
+var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
+var ExpressionException = (function (_super) {
+    __extends(ExpressionException, _super);
+    function ExpressionException(message) {
         _super.call(this, message);
-        this.name = "NgTemplateParserException",
+        this.name = "NgTemplateExpressionException",
             this.message = message;
     }
-    return ParserException;
-}(Error));
-exports.ParserException = ParserException;
+    return ExpressionException;
+}(exception_1.Exception));
+exports.ExpressionException = ExpressionException;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/expression/parser.js", function( _require, exports, module, global ){
+"use strict";
+var tokenizer_1 = _require( "tests/build/src/ng-template/expression/tokenizer.js" );
 var Parser = (function () {
     function Parser() {
     }
@@ -2493,7 +2702,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
+var exception_1 = _require( "tests/build/src/ng-template/expression/exception.js" );
 var Token = (function () {
     function Token(value, negation) {
         if (negation === void 0) { negation = false; }
@@ -2600,10 +2809,10 @@ var ReferenceToken = (function (_super) {
         var value = data;
         path.split("\.").forEach(function (key) {
             if (typeof value !== "object") {
-                throw new exception_1.Exception("'" + path + "' is undefined");
+                throw new exception_1.ExpressionException("'" + path + "' is undefined");
             }
             if (!(key in value)) {
-                throw new exception_1.Exception("'" + path + "' is undefined");
+                throw new exception_1.ExpressionException("'" + path + "' is undefined");
             }
             value = value[key];
         });

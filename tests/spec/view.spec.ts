@@ -1,47 +1,105 @@
-import { View, Model, Collection } from "../../src/core";
+import { Component, View, Model, Collection } from "../../src/core";
 import { mapFrom } from "../../src/core/utils";
 
 
-export function ViewSpec(){
+export default function ViewSpec(){
   describe("View", function(){
 
-    describe("#modelsToScope", function(){
-
-      it( "converts flat into scope", function() {
-        let models = mapFrom({
-          foo: new Model({ name: "foo" }),
-          bar: new Model({ name: "bar" })
-        }),
-        scope = (<any>View).modelsToScope( models );
-        expect( scope["foo"].name ).toBe( "foo" );
-        expect( scope["bar"].name ).toBe( "bar" );
+    describe("@Component + View + no state", function(){
+      it( "applies tagName and template", function() {
+        @Component({
+          tagName: "ng-component",
+          template: "<ng-el></ng-el>"
+        })
+        class TestView extends View {
+        }
+        let view = new TestView();
+        view.render();
+        expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
       });
-
-      it( "converts form states into scope", function() {
-        let models = mapFrom({
-          "foo.bar": new Model({ name: "bar" }),
-          "bar.baz": new Model({ name: "baz" })
-        }),
-        scope = (<any>View).modelsToScope( models );
-        expect( scope["foo"]["bar"].name ).toBe( "bar" );
-        expect( scope["bar"]["baz"].name ).toBe( "baz" );
-      });
-
-    });
-
-    describe("#collectionsToScope", function(){
-
-      it( "converts collections into scope", function() {
-        let collections = mapFrom({
-          foo: new Collection([ new Model({ name: "foo" }) ]),
-          bar: new Collection([ new Model({ name: "bar" }) ])
-        }),
-        scope = (<any>View).collectionsToScope( collections );
-
-        expect( scope["foo"][ 0 ].name ).toBe( "foo" );
-        expect( scope["bar"][ 0 ].name ).toBe( "bar" );
+      it( "applies tagName and className and template", function() {
+        @Component({
+          tagName: "ng-component",
+          className: "ng-class",
+          template: "<ng-el></ng-el>"
+        })
+        class TestView extends View {
+        }
+        let view = new TestView();
+        view.render();
+        expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
+        expect( view.el.classList.contains( "ng-class" ) ).toBeTruthy();
       });
     });
+
+    describe("@Component + View + Models", function(){
+      it( "binds specified models", function() {
+        @Component({
+          tagName: "ng-component",
+          models: {
+            foo: new Model({ bar: "bar" })
+          },
+          template: `<ng-el data-ng-text="foo.bar">none</ng-el>`
+        })
+        class TestView extends View {
+        }
+        let view = new TestView(),
+            errors = view.render().errors,
+            el = view.el.querySelector( "ng-el" );
+        expect( el ).toBeTruthy();
+        expect( el.textContent ).toBe( "bar" );
+        expect( errors.length ).toBe( 0 );
+      });
+    });
+
+    describe("@Component + View + Collections", function(){
+      it( "binds specified collections", function() {
+        @Component({
+          tagName: "ng-component",
+          collections: {
+            foo: new Collection([
+              new Model({ bar: 1 }),
+              new Model({ bar: 2 })
+            ])
+          },
+          template: `<ng-el data-ng-for="let i of foo" data-ng-text="i.bar">none</ng-el>`
+        })
+        class TestView extends View {
+        }
+        let view = new TestView(),
+            errors = view.render().errors,
+            els = Array.from( view.el.querySelectorAll( "ng-el" ) );
+          expect( els.length ).toBe( 2 );
+          expect( els[ 0 ].textContent ).toBe( "1" );
+          expect( els[ 1 ].textContent ).toBe( "2" );
+      });
+    });
+
+
+    describe("View with child View", function(){
+      it( "applies tagName and template", function() {
+        @Component({
+          tagName: "ng-component",
+          template: "<ng-child></ng-child>"
+        })
+        class TestView extends View {
+        }
+        @Component({
+          template: "<ng-el></ng-el>"
+        })
+        class TestChildView extends View {
+        }
+
+        let view = new TestView();
+        view.render();
+        let child = new TestChildView({
+          el: view.el.querySelector( "ng-child" )
+        });
+        child.render();
+        expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
+      });
+    });
+
 
 
   });

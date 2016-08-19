@@ -43,6 +43,13 @@ declare namespace NgBackbone {
     collections?: Collections | {};
     formValidators?: { [key: string]: Function; };
     logger?: LoggerOption;
+    template?: string;
+  }
+
+  interface ComponentDto {
+    models: NgBackbone.ModelMap;
+    collections: NgBackbone.CollectionMap;
+    template: string;
   }
 
 

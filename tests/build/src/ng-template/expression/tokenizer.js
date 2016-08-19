@@ -4,7 +4,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var exception_1 = require("../exception");
+var exception_1 = require("./exception");
 var Token = (function () {
     function Token(value, negation) {
         if (negation === void 0) { negation = false; }
@@ -111,10 +111,10 @@ var ReferenceToken = (function (_super) {
         var value = data;
         path.split("\.").forEach(function (key) {
             if (typeof value !== "object") {
-                throw new exception_1.Exception("'" + path + "' is undefined");
+                throw new exception_1.ExpressionException("'" + path + "' is undefined");
             }
             if (!(key in value)) {
-                throw new exception_1.Exception("'" + path + "' is undefined");
+                throw new exception_1.ExpressionException("'" + path + "' is undefined");
             }
             value = value[key];
         });

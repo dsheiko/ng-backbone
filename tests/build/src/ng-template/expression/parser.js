@@ -1,20 +1,5 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var tokenizer_1 = require("./tokenizer");
-var ParserException = (function (_super) {
-    __extends(ParserException, _super);
-    function ParserException(message) {
-        _super.call(this, message);
-        this.name = "NgTemplateParserException",
-            this.message = message;
-    }
-    return ParserException;
-}(Error));
-exports.ParserException = ParserException;
 var Parser = (function () {
     function Parser() {
     }

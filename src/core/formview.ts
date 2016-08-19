@@ -69,7 +69,7 @@ export class FormView extends View {
     let model = <GroupState> new GroupState({ formValidators:  this.formValidators });
     this.models.set(  FormView.getKey( groupName, "form" ),  model );
     this.stopListening( model );
-    this.trigger( "log:listen", "subscribes for `change`", model );
+    this.options.logger && this.trigger( "log:listen", "subscribes for `change`", model );
     this.listenTo( model, "change", this.render );
   }
 
@@ -87,7 +87,7 @@ export class FormView extends View {
     let model = <ControlState> new ControlState({ formValidators:  this.formValidators });
     this.models.set( key, model );
     this.stopListening( model );
-    this.trigger( "log:listen", "subscribes for `change`", model );
+    this.options.logger && this.trigger( "log:listen", "subscribes for `change`", model );
     this.listenTo( model, "change", () => {
       this._onFromControlModelChange( groupName );
     });
