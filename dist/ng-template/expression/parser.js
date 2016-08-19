@@ -32,4 +32,3 @@ var Parser = (function () {
     return Parser;
 }());
 exports.Parser = Parser;
-//# sourceMappingURL=parser.js.map

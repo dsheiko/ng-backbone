@@ -29,8 +29,12 @@ declare namespace NgBackbone {
     [key: string]: Backbone.Collection<Backbone.Model>;
   }
 
-  interface LoggerCb {
-     ( msg: string, ...args: any[] ): void;
+
+  interface LoggerHandler {
+     ( msg: string, ...args: any[] ): void
+  }
+
+  interface LoggerOption extends DataMap<any> {
   }
 
   interface ViewOptions extends Backbone.ViewOptions<Backbone.Model>{
@@ -38,7 +42,7 @@ declare namespace NgBackbone {
     models?: Models | {};
     collections?: Collections | {};
     formValidators?: { [key: string]: Function; };
-    logger?: LoggerCb;
+    logger?: LoggerOption;
   }
 
 

@@ -1,4 +1,4 @@
-import { Exception } from "../exception";
+import { ExpressionException } from "./exception";
 
 export class Token {
   name: string = "Token";
@@ -77,10 +77,10 @@ export class ReferenceToken extends Token {
     let value: any = data;
     path.split( "\." ).forEach(( key: string ) => {
       if ( typeof value !== "object" ) {
-        throw new Exception( `'${path}' is undefined` );
+        throw new ExpressionException( `'${path}' is undefined` );
       }
       if ( !( key in value ) ) {
-        throw new Exception( `'${path}' is undefined` );
+        throw new ExpressionException( `'${path}' is undefined` );
       }
       value = value[ key ];
     });

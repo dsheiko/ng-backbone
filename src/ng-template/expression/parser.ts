@@ -1,13 +1,5 @@
 import { tokenizer, InvalidToken, Token, StringToken } from "./tokenizer";
 
-export class ParserException extends Error {
-  constructor( message: string ) {
-    super( message );
-    this.name = "NgTemplateParserException",
-    this.message = message;
-  }
-}
-
 export class Parser {
 
   static split( expr: string ): string[] {

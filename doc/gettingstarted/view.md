@@ -84,7 +84,7 @@ interface NgBackbone.ViewOptions extends Backbone.ViewOptions<Backbone.Model> {
   models?: Models | {}; // injected shared model map
   collections?: Collections | {}; // injected shared collection map
   formValidators?: { [key: string]: Function; }; // form validator map
-  logger?: LoggerCb; // a handler for logging events
+  logger?: LoggerOption; // subscribe for logging events
 }
 ```
 
@@ -96,4 +96,21 @@ let heroes = new HeroCollection();
 
 new HeroView({ collections: { heroes: heroes } });
 new HeroListView({ collections: { heroes: heroes } });
+```
+
+## Logging Events
+
+* log.sync - fires every time the template synchronizes
+* log.listen - fires when View subscribes a model or a collection
+* log.template - fires on template warnings
+
+Example:
+```
+let logger = {
+  "log:sync log:template": function( msg: string, ...args: any[] ): void {
+      console.log( `LOG(${this.cid}):`, msg, args );
+   }
+};
+
+new FooView({ logger: logger });
 ```

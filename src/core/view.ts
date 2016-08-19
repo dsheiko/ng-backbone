@@ -13,9 +13,8 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   constructor( options: NgBackbone.ViewOptions = {} ) {
     super( options );
     this.options = options;
-    // If want to listen to log events
-    options.logger &&
-      this.listenTo( this, "log", options.logger );
+    // If we want to listen to log events
+    options.logger && this._subscribeLogger( options.logger );
     this.initializeOptions( options );
     this.models.size && this._bindModels();
     this.collections && this._bindCollections();
@@ -23,11 +22,16 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     this._initialize && this._initialize( options );
   }
 
+  private _subscribeLogger( logger: NgBackbone.LoggerOption ): void {
+    Object.keys( logger ).forEach(( events: string ) => {
+      this.listenTo( this, events, logger[ events ] );
+    });
+  }
 
   private _bindModels(){
       this.models.forEach(( model: Backbone.Model ): void => {
         this.stopListening( model );
-        this.trigger( "log", "subscribes for `change`", model );
+        this.trigger( "log:listen", "subscribes for `change`", model );
         this.listenTo( model, "change", this.render );
       });
   }
@@ -35,7 +39,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   private _bindCollections(){
     this.collections.forEach(( collection: Backbone.Collection<Backbone.Model> ) => {
       this.stopListening( collection );
-      this.trigger( "log", "subscribes for `change destroy sync`", collection );
+      this.trigger( "log:listen", "subscribes for `change destroy sync`", collection );
       this.listenTo( collection, "change destroy sync", this._onCollectionChange );
     });
   }
@@ -111,8 +115,11 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     this.models && Object.assign( scope, View.modelsToScope( this.models ) );
     this.collections && Object.assign( scope, View.collectionsToScope( this.collections ) );
     try {
-      this.template.sync( scope );
-      this.trigger( "log", "synced template in " + ( performance.now() - ms ) + " ms", scope, source );
+      let errors: string[] = this.template.sync( scope ).report()[ "errors" ];
+      errors.forEach(( msg: string ) => {
+        this.trigger( "log:template", msg );
+      });
+      this.trigger( "log:sync", "synced template on in " + ( performance.now() - ms ) + " ms", scope, source );
     } catch ( err ) {
       console.error( (<Error>err).message );
     }

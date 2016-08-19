@@ -142,4 +142,3 @@ var View = (function (_super) {
     return View;
 }(Backbone.NativeView));
 exports.View = View;
-//# sourceMappingURL=view.js.map

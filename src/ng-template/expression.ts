@@ -1,6 +1,7 @@
+import { ERROR_CODES } from "./constants";
 import { Exception } from "./exception";
-
-import { Parser, ParserException } from "./expression/parser";
+import { ExpressionException } from "./expression/exception";
+import { Parser } from "./expression/parser";
 import { Token, OperatorToken } from "./expression/tokenizer";
 
 /**
@@ -18,7 +19,7 @@ function reduceComposite( tokens: Token[], data: any ){
       rightVal = right.resolveValue( data );
 
       if ( !( operator instanceof OperatorToken ) ) {
-        throw new SyntaxError( `Invalid operator ${operator.value} in ng* expression` );
+        throw new Exception( `Invalid operator ${operator.value} in ng* expression` );
       }
 
       switch ( operator.value ) {
@@ -63,11 +64,10 @@ function wrap( value: any, wrapper: string ): any {
  * Throw an error or silently report the exception
  */
 function treatException( err: Error, expr: string, reporter: NgTemplate.Reporter ){
-  if ( !( err instanceof Exception ) ) {
-    console.log(err);
-    throw new SyntaxError( `Invalid ng* expression ${expr}` );
+  if ( !( err instanceof ExpressionException ) ) {
+    throw new Exception( `Invalid ng* expression ${expr}` );
   }
-  reporter.addError( ( <Exception> err ).message );
+  reporter.addError( `${ERROR_CODES.NGT0003}: ` + ( <ExpressionException> err ).message );
 }
 
 /**
@@ -75,16 +75,19 @@ function treatException( err: Error, expr: string, reporter: NgTemplate.Reporter
  */
 export function tryGroupStrategy( expr: string, reporter: NgTemplate.Reporter ): Function {
   let leftExpr: string, rightExpr: string;
+  if ( expr.indexOf( "," ) === -1 ) {
+    throw new Exception( `Group expression must have syntax: 'foo, bar'` );
+  }
   [ leftExpr, rightExpr ] = expr.split( "," );
 
   let leftTokens = Parser.parse( leftExpr ),
       rightTokens = Parser.parse( rightExpr );
 
   if ( !leftTokens.length ) {
-    throw new ParserException( `Cannot parse expression ${leftExpr}` );
+    throw new ExpressionException( `Cannot parse expression ${leftExpr}` );
   }
   if ( !rightTokens.length ) {
-    throw new ParserException( `Cannot parse expression ${rightExpr}` );
+    throw new ExpressionException( `Cannot parse expression ${rightExpr}` );
   }
 
   reporter.addTokens( leftTokens );
@@ -106,7 +109,7 @@ export function tryGroupStrategy( expr: string, reporter: NgTemplate.Reporter ):
 export function tryOptimalStrategy( expr: string, wrapper: string = "", reporter: NgTemplate.Reporter ): Function {
   let tokens = Parser.parse( expr );
   if ( !tokens.length ) {
-    throw new ParserException( `Cannot parse expression ${expr}` );
+    throw new ExpressionException( `Cannot parse expression ${expr}` );
   }
   reporter.addTokens( tokens );
   return function( data: any ) {
@@ -141,7 +144,7 @@ export function fallbackStrategy( expr: string, wrapper: string = "", reporter: 
           eval( code );
           return cb.apply( this, vals );
         } catch ( err ) {
-          reporter.addError( `Could not evaluate ${code}` );
+          reporter.addError( `${ERROR_CODES.NGT0002}: Could not evaluate ${code}` );
         }
       };
     return func;
@@ -156,10 +159,11 @@ export function compile( expr: string, wrapper: string = "", reporter: NgTemplat
     return tryOptimalStrategy( expr, wrapper, reporter );
 
   } catch ( err ) {
-    if ( !( err instanceof ParserException ) ) {
-      throw SyntaxError( (<Error>err).message );
+    if ( !( err instanceof ExpressionException ) ) {
+      throw new Exception( (<Error>err).message );
     }
   }
+  reporter.addError( `${ERROR_CODES.NGT0001}: Could not parse the expression, going eval()` );
   return fallbackStrategy.call( this, expr, wrapper, reporter );
 }
 
