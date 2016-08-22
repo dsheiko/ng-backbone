@@ -9,7 +9,6 @@
 Well, I love old good Backbone for its simplicity and flexibility. However after working with such frameworks as Angular and React, I see that Backbone app requires much more code. Yet I don't want to ditch Backbone and deal with some 20K LOC framework codebase. I just want a minimal modular extension that will improve my programming experience and maintainability of my code.
 And that is how I came up with `NgBackbone`
 
-[NgBackbone.Book](https://dsheiko.gitbooks.io/ng-backbone/content/)
 
 ## Motivation
 * Angular inspired live templates via [NgTemplate](https://github.com/dsheiko/ng-template)
@@ -22,16 +21,23 @@ And that is how I came up with `NgBackbone`
 * Fluent TypeScript programming experience
 
 
-My base Backbone build consists of [Exoskeleton](https://github.com/paulmillr/exoskeleton) (Backbone decoupled from Underscore), [Backbone.NativeView](https://github.com/akre54/Backbone.NativeView) (Backbone View decoupled from jQuery) and
-[Backbone.Fetch](https://github.com/akre54/Backbone.Fetch) (Backbone.sync leveraging Feth API instead of XHR)
-
+## What does it do?
 `NgBackbone` extends the base with:
 * View module + @Component decorator that provide 1-way binding and control over nested views
 * FormView module that gives 2-way binding
-* Model module that make methods `fetch`, `save` and `destroy` promisable
-* Collection module make methods `fetch` and `create` promisable
+
+
+`Ng.Backbone` does not depend on jQuery or Underscore, meaning you can use on an optimized build of Backbone. For example,
+my preferred  build consists of [Exoskeleton](https://github.com/paulmillr/exoskeleton) (Backbone decoupled from Underscore), [Backbone.NativeView](https://github.com/akre54/Backbone.NativeView) (Backbone View decoupled from jQuery) and
+[Backbone.Fetch](https://github.com/akre54/Backbone.Fetch) (Backbone.sync leveraging Feth API instead of XHR)
+
+If running with jQuery, one needs to do the following trick:
+```javascript
+ Backbone.NativeView = Backbone.View;
+```
 
 ## How does it look?
+
 
 ```javascript
 import { Component, FormView } from "backbone-ng/core";
