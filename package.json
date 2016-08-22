@@ -30,7 +30,6 @@
     "url": "git@github.com:dsheiko/backbone-abstract.git"
   },
   "devDependencies": {
-    "phantomjs-prebuilt": "^2.1.12",
     "backbone.fetch": "^0.2.4",
     "backbone.localstorage": "github:jeromegn/Backbone.localStorage",
     "backbone.nativeview": "^0.3.3",
@@ -45,6 +44,7 @@
     "karma-firefox-launcher": "^0.1.3",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
+    "phantomjs-prebuilt": "^2.1.12",
     "systemjs": "^0.19.36",
     "tslint": "^3.14.0",
     "typescript": "^1.8.10",
