@@ -32,8 +32,9 @@ var HeroView = (function (_super) {
         var collection = this.collections.get("heroes"), data = this.getData("hero");
         el.reset();
         if (data["name"]) {
-            collection.create(data)
-                .catch(console.error);
+            collection.create(data, {
+                error: console.error
+            });
         }
     };
     HeroView = __decorate([

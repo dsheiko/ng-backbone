@@ -62,8 +62,9 @@ export class HeroView extends FormView {
 
     el.reset();
     if ( data[ "name" ] ) {
-      collection.create( data )
-        .catch( console.error );
+      collection.create( data, {
+        error: console.error
+      });
     }
   }
 

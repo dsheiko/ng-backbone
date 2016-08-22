@@ -88,11 +88,9 @@ export class HeroView extends FormView {
 
 # Documentation
 
+* [View Module and @Component](./doc/gettingstarted/view.md)
+* [FormView Module](./doc/gettingstarted/formview.md)
 * [Template syntax](./doc/gettingstarted/template.md)
-* [View](./doc/gettingstarted/view.md)
-* [FormView](./doc/gettingstarted/formview.md)
-* [Model](./doc/gettingstarted/model.md)
-* [Collection](./doc/gettingstarted/collection.md)
 
 ## Contributing
 

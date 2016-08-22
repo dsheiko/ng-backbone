@@ -1,4 +1,3 @@
-import { promisify } from "./utils";
 
 export class Collection extends Backbone.Collection<Backbone.Model> {
   private options: NgBackbone.DataMap<any>;
@@ -15,22 +14,6 @@ export class Collection extends Backbone.Collection<Backbone.Model> {
     this.sort();
     this.trigger( "change" );
     return this;
-  }
-  /**
-   * Promisable fetch
-   */
-  fetch( options: Backbone.ModelFetchOptions = {} ): Promise<any> {
-    return promisify(() => {
-      Backbone.Collection.prototype.fetch.call( this, options );
-    }, options );
-  }
-  /**
-   * Promisable create
-   */
-  create( attributes: any, options: Backbone.ModelSaveOptions = {} ): Promise<any> {
-    return promisify(() => {
-      Backbone.Collection.prototype.create.call( this, attributes, options );
-    }, options );
   }
 }
 

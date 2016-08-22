@@ -81,15 +81,11 @@ var view_internal_spec_1 = _require( "tests/build/tests/spec/view-internal.spec.
 var view_spec_1 = _require( "tests/build/tests/spec/view.spec.js" );
 var formview_spec_1 = _require( "tests/build/tests/spec/formview.spec.js" );
 var utils_spec_1 = _require( "tests/build/tests/spec/utils.spec.js" );
-var collection_spec_1 = _require( "tests/build/tests/spec/collection.spec.js" );
-var model_spec_1 = _require( "tests/build/tests/spec/model.spec.js" );
 utils_spec_1.default();
 formstate_spec_1.FormStateSpec();
 view_internal_spec_1.default();
 view_spec_1.default();
 formview_spec_1.FormViewSpec();
-collection_spec_1.default();
-model_spec_1.default();
 
 
   return module;
@@ -780,142 +776,6 @@ exports.default = UtilsSpec;
   return module;
 });
 
-_require.def( "tests/build/tests/spec/collection.spec.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var core_1 = _require( "tests/build/src/core.js" );
-var utils_1 = _require( "tests/build/tests/utils.js" );
-var TestCollection = (function (_super) {
-    __extends(TestCollection, _super);
-    function TestCollection() {
-        _super.apply(this, arguments);
-        this.url = "./mock";
-    }
-    return TestCollection;
-}(core_1.Collection));
-function UtilsSpec() {
-    describe("Collection", function () {
-        describe("#fetch", function () {
-            it("returns a resolvable Promise", function (done) {
-                var mock = new utils_1.MockFetch({ foo: "foo" });
-                var col = new TestCollection();
-                col.fetch().then(function (collection) {
-                    var model = collection.shift();
-                    expect(model.get("foo")).toBe("foo");
-                    mock.restore();
-                    done();
-                });
-            });
-            it("does not fall on rejection", function (done) {
-                var mock = new utils_1.MockFetch({ foo: "foo" }, new Error("Read error"));
-                var col = new TestCollection();
-                col.fetch()
-                    .catch(function (err) {
-                    expect(err.message.length > 0).toBe(true);
-                    mock.restore();
-                    done();
-                });
-            });
-        });
-        describe("#create", function () {
-            it("returns a resolvable Promise", function (done) {
-                var mock = new utils_1.MockFetch();
-                var col = new TestCollection();
-                col.create({ foo: "bar" }).then(function (model) {
-                    expect(model.get("foo")).toBe("bar");
-                    mock.restore();
-                    done();
-                });
-            });
-        });
-    });
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = UtilsSpec;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/tests/spec/model.spec.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var core_1 = _require( "tests/build/src/core.js" );
-var utils_1 = _require( "tests/build/tests/utils.js" );
-var TestModel = (function (_super) {
-    __extends(TestModel, _super);
-    function TestModel() {
-        _super.apply(this, arguments);
-        this.url = "./mock";
-    }
-    return TestModel;
-}(core_1.Model));
-function UtilsSpec() {
-    describe("Model", function () {
-        describe("#fetch", function () {
-            it("returns a resolvable Promise", function (done) {
-                var mock = new utils_1.MockFetch({ foo: "foo" });
-                var test = new TestModel();
-                test.fetch().then(function (model) {
-                    expect(model.get("foo")).toBe("foo");
-                    mock.restore();
-                    done();
-                });
-            });
-            it("does not fall on rejection", function (done) {
-                var mock = new utils_1.MockFetch({ foo: "foo" }, new Error("Read error"));
-                var test = new TestModel();
-                test.fetch()
-                    .catch(function (err) {
-                    expect(err.message.length > 0).toBe(true);
-                    mock.restore();
-                    done();
-                });
-            });
-        });
-        describe("#save", function () {
-            it("returns a resolvable Promise", function (done) {
-                var mock = new utils_1.MockFetch();
-                var test = new TestModel();
-                test.save({ foo: "bar" }).then(function (model) {
-                    expect(model.get("foo")).toBe("bar");
-                    mock.restore();
-                    done();
-                });
-            });
-        });
-        describe("#destroy", function () {
-            it("returns a resolvable Promise", function (done) {
-                var mock = new utils_1.MockFetch();
-                var test = new TestModel({ foo: "bar" });
-                test.destroy().then(function (model) {
-                    expect(model.get("foo")).toBe("bar");
-                    mock.restore();
-                    done();
-                });
-            });
-        });
-    });
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = UtilsSpec;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/core/formstate.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1205,25 +1065,6 @@ function mapAssign(map, mixin) {
     });
 }
 exports.mapAssign = mapAssign;
-/**
- * make promisable methods of model/collection
- */
-function promisify(callback, options) {
-    return new Promise(function (resolve, reject) {
-        //    if ( options.success || options.error ){
-        //      throw new SyntaxError( "The method returns a Promise. " +
-        //        "Please use syntax like collection.fetch().then( success ).catch( error );" );
-        //    }
-        options.success = function () {
-            return resolve.apply(this, arguments);
-        };
-        options.error = function () {
-            return reject.apply(this, arguments);
-        };
-        callback();
-    });
-}
-exports.promisify = promisify;
 
   module.exports = exports;
 
@@ -1402,36 +1243,6 @@ exports.ViewHelper = ViewHelper;
   return module;
 });
 
-_require.def( "tests/build/tests/utils.js", function( _require, exports, module, global ){
-"use strict";
-var fetchOrigin = window.fetch;
-var MockFetch = (function () {
-    function MockFetch(stored, err) {
-        var that = this;
-        window.fetch = function (url, init) {
-            if (err) {
-                throw err;
-            }
-            var jsonStr = stored ? JSON.stringify(stored, null, 2) : init.body;
-            var blob = new Blob([jsonStr], { type: 'application/json' }), rsp = new Response(blob, { "status": 200 });
-            that.url = url;
-            that.init = init;
-            return Promise.resolve(rsp);
-        };
-    }
-    MockFetch.prototype.restore = function () {
-        window.fetch = fetchOrigin;
-    };
-    return MockFetch;
-}());
-exports.MockFetch = MockFetch;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/core/model.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1439,74 +1250,15 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var utils_1 = _require( "tests/build/src/core/utils.js" );
 var Model = (function (_super) {
     __extends(Model, _super);
     function Model(attributes, options) {
         _super.call(this, attributes, options);
         this.options = options || {};
     }
-    /**
-     * Promisable destroy
-     */
-    Model.prototype.destroy = function (options) {
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        return utils_1.promisify(function () {
-            Backbone.Model.prototype.destroy.call(_this, options);
-        }, options);
-    };
-    /**
-     * Promisable save
-     */
-    Model.prototype.save = function (attributes, options) {
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        return utils_1.promisify(function () {
-            Backbone.Model.prototype.save.call(_this, attributes, options);
-        }, options);
-    };
-    /**
-     * Promisable fetch
-     */
-    Model.prototype.fetch = function (options) {
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        return utils_1.promisify(function () {
-            Backbone.Model.prototype.fetch.call(_this, options);
-        }, options);
-    };
     return Model;
 }(Backbone.Model));
 exports.Model = Model;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/core/exception.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-/**
- * Custom exception extending Error
- * @param {string} message
- */
-var Exception = (function (_super) {
-    __extends(Exception, _super);
-    function Exception(message) {
-        _super.call(this, message);
-        this.name = "NgBackboneError",
-            this.message = message;
-    }
-    return Exception;
-}(Error));
-exports.Exception = Exception;
 
   module.exports = exports;
 
@@ -1543,6 +1295,137 @@ function Component(options) {
     };
 }
 exports.Component = Component;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core/exception.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/**
+ * Custom exception extending Error
+ * @param {string} message
+ */
+var Exception = (function (_super) {
+    __extends(Exception, _super);
+    function Exception(message) {
+        _super.call(this, message);
+        this.name = "NgBackboneError",
+            this.message = message;
+    }
+    return Exception;
+}(Error));
+exports.Exception = Exception;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core/collection.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Collection = (function (_super) {
+    __extends(Collection, _super);
+    function Collection(models, options) {
+        _super.call(this, models, options);
+        this.options = options || {};
+    }
+    /**
+     * Shortcut for sorting
+     */
+    Collection.prototype.orderBy = function (key) {
+        this.comparator = key;
+        this.sort();
+        this.trigger("change");
+        return this;
+    };
+    return Collection;
+}(Backbone.Collection));
+exports.Collection = Collection;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ngtemplate.js", function( _require, exports, module, global ){
+"use strict";
+/// <reference path="./ngtemplate.d.ts" />
+var ngif_1 = _require( "tests/build/src/ng-template/ngif.js" );
+var ngel_1 = _require( "tests/build/src/ng-template/ngel.js" );
+var ngtext_1 = _require( "tests/build/src/ng-template/ngtext.js" );
+var ngfor_1 = _require( "tests/build/src/ng-template/ngfor.js" );
+var ngswitch_1 = _require( "tests/build/src/ng-template/ngswitch.js" );
+var ngswitchcase_1 = _require( "tests/build/src/ng-template/ngswitchcase.js" );
+var ngswitchcasedefault_1 = _require( "tests/build/src/ng-template/ngswitchcasedefault.js" );
+var ngclass_1 = _require( "tests/build/src/ng-template/ngclass.js" );
+var ngprop_1 = _require( "tests/build/src/ng-template/ngprop.js" );
+var ngdata_1 = _require( "tests/build/src/ng-template/ngdata.js" );
+var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
+var reporter_1 = _require( "tests/build/src/ng-template/reporter.js" );
+var DIRECTIVES = [ngfor_1.NgFor, ngswitch_1.NgSwitch, ngswitchcase_1.NgSwitchCase, ngswitchcasedefault_1.NgSwitchCaseDefault, ngif_1.NgIf,
+    ngclass_1.NgClass, ngdata_1.NgData, ngprop_1.NgProp, ngel_1.NgEl, ngtext_1.NgText];
+var NgTemplate = (function () {
+    /**
+     * Initialize template for a given Element
+     * If template passed, load it into the Element
+     */
+    function NgTemplate(el, template) {
+        this.el = el;
+        this.template = template;
+        this.directives = [];
+        if (!this.el) {
+            throw new exception_1.Exception("(NgTemplate) Invalid first parameter: must be an existing DOM node");
+        }
+        this.reporter = new reporter_1.Reporter();
+        this.template || this.init(DIRECTIVES);
+    }
+    NgTemplate.factory = function (el, template) {
+        return new NgTemplate(el, template || null);
+    };
+    NgTemplate.prototype.init = function (directives) {
+        var _this = this;
+        directives.forEach(function (Directive) {
+            _this.directives.push(new Directive(_this.el, _this.reporter));
+        });
+    };
+    NgTemplate.prototype.report = function () {
+        return this.reporter.get();
+    };
+    NgTemplate.prototype.sync = function (data) {
+        // Late initialization: renders from a given template on first sync
+        if (this.template) {
+            this.el.innerHTML = this.template + "";
+            this.init(DIRECTIVES);
+            this.template = null;
+        }
+        this.directives.forEach(function (d) {
+            d.sync(data, NgTemplate);
+        });
+        return this;
+    };
+    NgTemplate.prototype.pipe = function (cb, context) {
+        if (context === void 0) { context = this; }
+        cb.call(context, this.el, this.reporter);
+        return this;
+    };
+    return NgTemplate;
+}());
+exports.NgTemplate = NgTemplate;
 
   module.exports = exports;
 
@@ -1638,59 +1521,6 @@ var View = (function (_super) {
     return View;
 }(Backbone.NativeView));
 exports.View = View;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/core/collection.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var utils_1 = _require( "tests/build/src/core/utils.js" );
-var Collection = (function (_super) {
-    __extends(Collection, _super);
-    function Collection(models, options) {
-        _super.call(this, models, options);
-        this.options = options || {};
-    }
-    /**
-     * Shortcut for sorting
-     */
-    Collection.prototype.orderBy = function (key) {
-        this.comparator = key;
-        this.sort();
-        this.trigger("change");
-        return this;
-    };
-    /**
-     * Promisable fetch
-     */
-    Collection.prototype.fetch = function (options) {
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        return utils_1.promisify(function () {
-            Backbone.Collection.prototype.fetch.call(_this, options);
-        }, options);
-    };
-    /**
-     * Promisable create
-     */
-    Collection.prototype.create = function (attributes, options) {
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        return utils_1.promisify(function () {
-            Backbone.Collection.prototype.create.call(_this, attributes, options);
-        }, options);
-    };
-    return Collection;
-}(Backbone.Collection));
-exports.Collection = Collection;
 
   module.exports = exports;
 
@@ -1883,77 +1713,6 @@ exports.FormView = FormView;
   return module;
 });
 
-_require.def( "tests/build/src/ngtemplate.js", function( _require, exports, module, global ){
-"use strict";
-/// <reference path="./ngtemplate.d.ts" />
-var ngif_1 = _require( "tests/build/src/ng-template/ngif.js" );
-var ngel_1 = _require( "tests/build/src/ng-template/ngel.js" );
-var ngtext_1 = _require( "tests/build/src/ng-template/ngtext.js" );
-var ngfor_1 = _require( "tests/build/src/ng-template/ngfor.js" );
-var ngswitch_1 = _require( "tests/build/src/ng-template/ngswitch.js" );
-var ngswitchcase_1 = _require( "tests/build/src/ng-template/ngswitchcase.js" );
-var ngswitchcasedefault_1 = _require( "tests/build/src/ng-template/ngswitchcasedefault.js" );
-var ngclass_1 = _require( "tests/build/src/ng-template/ngclass.js" );
-var ngprop_1 = _require( "tests/build/src/ng-template/ngprop.js" );
-var ngdata_1 = _require( "tests/build/src/ng-template/ngdata.js" );
-var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
-var reporter_1 = _require( "tests/build/src/ng-template/reporter.js" );
-var DIRECTIVES = [ngfor_1.NgFor, ngswitch_1.NgSwitch, ngswitchcase_1.NgSwitchCase, ngswitchcasedefault_1.NgSwitchCaseDefault, ngif_1.NgIf,
-    ngclass_1.NgClass, ngdata_1.NgData, ngprop_1.NgProp, ngel_1.NgEl, ngtext_1.NgText];
-var NgTemplate = (function () {
-    /**
-     * Initialize template for a given Element
-     * If template passed, load it into the Element
-     */
-    function NgTemplate(el, template) {
-        this.el = el;
-        this.template = template;
-        this.directives = [];
-        if (!this.el) {
-            throw new exception_1.Exception("(NgTemplate) Invalid first parameter: must be an existing DOM node");
-        }
-        this.reporter = new reporter_1.Reporter();
-        this.template || this.init(DIRECTIVES);
-    }
-    NgTemplate.factory = function (el, template) {
-        return new NgTemplate(el, template || null);
-    };
-    NgTemplate.prototype.init = function (directives) {
-        var _this = this;
-        directives.forEach(function (Directive) {
-            _this.directives.push(new Directive(_this.el, _this.reporter));
-        });
-    };
-    NgTemplate.prototype.report = function () {
-        return this.reporter.get();
-    };
-    NgTemplate.prototype.sync = function (data) {
-        // Late initialization: renders from a given template on first sync
-        if (this.template) {
-            this.el.innerHTML = this.template + "";
-            this.init(DIRECTIVES);
-            this.template = null;
-        }
-        this.directives.forEach(function (d) {
-            d.sync(data, NgTemplate);
-        });
-        return this;
-    };
-    NgTemplate.prototype.pipe = function (cb, context) {
-        if (context === void 0) { context = this; }
-        cb.call(context, this.el, this.reporter);
-        return this;
-    };
-    return NgTemplate;
-}());
-exports.NgTemplate = NgTemplate;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/ng-template/ngif.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -2044,47 +1803,6 @@ var NgEl = (function (_super) {
     return NgEl;
 }(abstract_directive_1.AbstractDirective));
 exports.NgEl = NgEl;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ng-template/ngtext.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
-/**
- * <span data-ng-text="foo">...</span>
- */
-var NgText = (function (_super) {
-    __extends(NgText, _super);
-    function NgText(el, reporter) {
-        _super.call(this, el, reporter);
-        this.nodes = this.initNodes(el, "ng-text", function (node, expr, compile, cache) {
-            return {
-                el: node,
-                exp: compile(expr, "String", reporter),
-                cache: cache
-            };
-        });
-    }
-    NgText.prototype.sync = function (data) {
-        var _this = this;
-        this.nodes.forEach(function (node) {
-            node.cache.evaluate(node.exp.call(node.el, data), function (val) {
-                _this.setText(node.el, val);
-            });
-        });
-    };
-    return NgText;
-}(abstract_directive_1.AbstractDirective));
-exports.NgText = NgText;
 
   module.exports = exports;
 
@@ -2211,6 +1929,47 @@ var NgFor = (function (_super) {
     return NgFor;
 }(abstract_directive_1.AbstractDirective));
 exports.NgFor = NgFor;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/ngtext.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
+/**
+ * <span data-ng-text="foo">...</span>
+ */
+var NgText = (function (_super) {
+    __extends(NgText, _super);
+    function NgText(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-text", function (node, expr, compile, cache) {
+            return {
+                el: node,
+                exp: compile(expr, "String", reporter),
+                cache: cache
+            };
+        });
+    }
+    NgText.prototype.sync = function (data) {
+        var _this = this;
+        this.nodes.forEach(function (node) {
+            node.cache.evaluate(node.exp.call(node.el, data), function (val) {
+                _this.setText(node.el, val);
+            });
+        });
+    };
+    return NgText;
+}(abstract_directive_1.AbstractDirective));
+exports.NgText = NgText;
 
   module.exports = exports;
 
@@ -2468,34 +2227,6 @@ exports.NgData = NgData;
   return module;
 });
 
-_require.def( "tests/build/src/ng-template/exception.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-/**
- * Custom exception extending Error
- * @param {string} message
- */
-var Exception = (function (_super) {
-    __extends(Exception, _super);
-    function Exception(message) {
-        _super.call(this, message);
-        this.name = "NgTemplateError",
-            this.message = message;
-    }
-    return Exception;
-}(Error));
-exports.Exception = Exception;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/ng-template/reporter.js", function( _require, exports, module, global ){
 "use strict";
 var Reporter = (function () {
@@ -2521,6 +2252,34 @@ var Reporter = (function () {
     return Reporter;
 }());
 exports.Reporter = Reporter;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/exception.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/**
+ * Custom exception extending Error
+ * @param {string} message
+ */
+var Exception = (function (_super) {
+    __extends(Exception, _super);
+    function Exception(message) {
+        _super.call(this, message);
+        this.name = "NgTemplateError",
+            this.message = message;
+    }
+    return Exception;
+}(Error));
+exports.Exception = Exception;
 
   module.exports = exports;
 
