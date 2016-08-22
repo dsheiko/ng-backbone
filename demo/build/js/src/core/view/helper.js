@@ -55,8 +55,8 @@ var ViewHelper = (function () {
     ViewHelper.bindCollections = function (view) {
         view.collections.forEach(function (collection) {
             view.stopListening(collection);
-            view.options.logger && view.trigger("log:listen", "subscribes for `change destroy sync`", collection);
-            view.listenTo(collection, "change destroy sync", view.render);
+            view.options.logger && view.trigger("log:listen", "subscribes for `change destroy sync sort`", collection);
+            view.listenTo(collection, "change destroy sync sort", view.render);
         });
     };
     /**

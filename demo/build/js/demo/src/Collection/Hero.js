@@ -13,6 +13,15 @@ var HeroCollection = (function (_super) {
         this.localStorage = new Backbone.LocalStorage("heroes");
         this.model = Hero_1.HeroModel;
     }
+    /**
+     * Shortcut for sorting
+     */
+    HeroCollection.prototype.orderBy = function (key) {
+        this.comparator = key;
+        this.sort();
+        // this.trigger( "change" );
+        return this;
+    };
     return HeroCollection;
 }(core_1.Collection));
 exports.HeroCollection = HeroCollection;

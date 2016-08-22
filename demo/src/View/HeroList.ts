@@ -16,12 +16,11 @@ import { Collection, Component, View, Model } from "../../../src/core";
     })
   },
   template: `
-
 <table class="table">
 <tr>
   <th data-bind="markall"><i class="glyphicon glyphicon-ok"></i>&nbsp;</th>
-  <th data-sort="name">Name <i data-ng-class-list-toggle="'is-inactive', state.order === 'name'" class="glyphicon glyphicon-chevron-down pull-right is-inactive"></i></th>
-  <th data-sort="power">Power <i data-ng-class-list-toggle="'is-inactive', state.order === 'power'" class="glyphicon glyphicon-chevron-down pull-right is-inactive"></i></th>
+  <th data-sort="name">Name <i data-ng-class="'is-inactive', state.order !== 'name'" class="glyphicon glyphicon-chevron-down pull-right is-inactive"></i></th>
+  <th data-sort="power">Power <i data-ng-class="'is-inactive', state.order !== 'power'" class="glyphicon glyphicon-chevron-down pull-right is-inactive"></i></th>
 </tr>
 <tr data-ng-for="let p of heroes" class="list__tool-row">
 

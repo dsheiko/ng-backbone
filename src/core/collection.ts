@@ -6,15 +6,7 @@ export class Collection extends Backbone.Collection<Backbone.Model> {
     this.options = options || {};
   }
 
-  /**
-   * Shortcut for sorting
-   */
-  orderBy( key: string ): Collection {
-    this.comparator = key;
-    this.sort();
-    this.trigger( "change" );
-    return this;
-  }
+  
 }
 
 

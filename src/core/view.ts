@@ -1,6 +1,6 @@
 import { NgTemplate } from "../ngtemplate";
 import { ViewHelper } from "./view/helper";
-import { mapFrom, mapAssign, Debounce } from "./utils";
+import { Debounce } from "./utils";
 
 export class View extends Backbone.NativeView<Backbone.Model> {
   // bounding box
@@ -42,7 +42,9 @@ export class View extends Backbone.NativeView<Backbone.Model> {
 
   /**
    * Render first and then sync the template
+   * Slightly debounced for repeating calls like collection.sync/sort
    */
+  @Debounce( 50 )
   render( source?: NgBackbone.Model | NgBackbone.Collection ){
     let ms =  performance.now();
     let scope: NgBackbone.DataMap<any> = {};
