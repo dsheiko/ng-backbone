@@ -73,7 +73,7 @@ export class ReferenceToken extends Token {
     return value.substr( 0, 5 ) !== "this." && re.test( value );
   }
 
-  static findValue( path: string, data: NgTemplate.DataMap ): string | number | boolean {
+  static findValue( path: string, data: NgTemplate.DataMap ): any {
     let value: any = data;
     path.split( "\." ).forEach(( key: string ) => {
       if ( typeof value !== "object" ) {

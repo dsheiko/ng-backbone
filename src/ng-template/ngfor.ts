@@ -1,5 +1,8 @@
 import { AbstractDirective } from "./abstract-directive";
 import { Exception } from "./exception";
+import { ERROR_CODES } from "./constants";
+import { ReferenceToken } from "./expression/tokenizer";
+import { ExpressionException } from "./expression/exception";
 
 
 let counter: number = 0;
@@ -35,14 +38,17 @@ export class NgFor extends AbstractDirective implements NgTemplate.Directive {
         exp: function( data: NgTemplate.DataMap, cb: Function ): boolean {
           let it: any[] = [];
           try {
-              eval( `it = data.${parsed.iterable}` );
+            it = ReferenceToken.findValue( parsed.iterable, data );
           } catch ( err ) {
-              throw new Exception( `NgTemplate variable ${parsed.iterable} undefined` );
-          }
-          if ( !Array.isArray( it ) ) {
-             throw new Exception( `NgTemplate variable ${parsed.iterable} must be an array` );
+            if ( !( err instanceof ExpressionException ) ) {
+              throw new Exception( `Invalid ng* expression ${expr}` );
+            }
+            reporter.addLog( `${ERROR_CODES.NGT0003}: ` + ( <ExpressionException> err ).message );
           }
 
+          if ( !Array.isArray( it ) ) {
+             it = [];
+          }
           if ( cache.match( JSON.stringify( it ) ) ) {
             return false;
           }

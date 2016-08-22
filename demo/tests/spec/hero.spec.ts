@@ -24,6 +24,10 @@ export default function HeroSpec(){
        });
     });
 
+    it( "tests if any syntax errors in template", function() {
+      expect( this.view.template.report().errors.length ).toBe( 0 );
+    });
+
     it( "shows error msg when power not selected", function() {
       expect( this.view.el.textContent ).not.toMatch( "Power is required" );
        this.view.models

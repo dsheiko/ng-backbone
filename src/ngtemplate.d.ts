@@ -2,12 +2,14 @@ declare namespace NgTemplate {
 
   interface Report extends DataMap {
     errors: string[];
+    log: string[];
     tokens: DataMap[];
   }
 
   interface Reporter {
     get( key?: string ): NgTemplate.Report;
     addError( msg: string ): void;
+    addLog( msg: string ): void;
     addTokens( tokens: NgTemplate.Token[] ): void;
     isParsed(): boolean;
   }

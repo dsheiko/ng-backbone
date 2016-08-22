@@ -49,7 +49,7 @@ export class NgTemplate {
   sync( data: NgTemplate.DataMap ): NgTemplate {
     // Late initialization: renders from a given template on first sync
     if ( this.template ) {
-      this.el.innerHTML = this.template + "";
+      this.el.innerHTML = this.template;
       this.init( DIRECTIVES );
       this.template = null;
     }

@@ -67,7 +67,7 @@ function treatException( err: Error, expr: string, reporter: NgTemplate.Reporter
   if ( !( err instanceof ExpressionException ) ) {
     throw new Exception( `Invalid ng* expression ${expr}` );
   }
-  reporter.addError( `${ERROR_CODES.NGT0003}: ` + ( <ExpressionException> err ).message );
+  reporter.addLog( `${ERROR_CODES.NGT0003}: ` + ( <ExpressionException> err ).message );
 }
 
 /**

@@ -31,6 +31,10 @@ export default function HeroListSpec(){
        });
     });
 
+     it( "tests if any syntax errors in template", function() {
+      expect( this.view.template.report().errors.length ).toBe( 0 );
+    });
+
     it( "renders into view all the models of the specified collection ", function() {
       this.view.render();
       let items = this.view.el.querySelectorAll( "tr.list__tool-row" );
