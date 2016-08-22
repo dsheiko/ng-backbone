@@ -31,10 +31,6 @@ And that is how I came up with `NgBackbone`
 my preferred  build consists of [Exoskeleton](https://github.com/paulmillr/exoskeleton) (Backbone decoupled from Underscore), [Backbone.NativeView](https://github.com/akre54/Backbone.NativeView) (Backbone View decoupled from jQuery) and
 [Backbone.Fetch](https://github.com/akre54/Backbone.Fetch) (Backbone.sync leveraging Feth API instead of XHR)
 
-If running with jQuery, one needs to do the following trick:
-```javascript
- Backbone.NativeView = Backbone.View;
-```
 
 ## How does it look?
 
