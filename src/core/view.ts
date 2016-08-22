@@ -1,6 +1,5 @@
 import { NgTemplate } from "../ngtemplate";
 import { ViewHelper } from "./view/helper";
-import { Debounce } from "./utils";
 
 export class View extends Backbone.NativeView<Backbone.Model> {
   // bounding box
@@ -10,13 +9,11 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   // collections to bind to the template
   collections: NgBackbone.CollectionMap;
   // array of subviews
-  views: View[] = [];
+  views: NgBackbone.ViewMap;
   // instance of NgTemplate
   template: NgTemplate;
   // constructor options getting available across the prototype
-  options: NgBackbone.ViewOptions = {
-    views: []
-  };
+  options: NgBackbone.ViewOptions = {};
   // template errors/warnings
   errors: string[] = [];
   // is this view ever rendered
@@ -26,6 +23,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   // receives `initialize` of extending class to perform lazy load trick
   _initialize: Function;
 
+  _debounceTimer: number;
 
   constructor( options: NgBackbone.ViewOptions = {} ) {
     super( options );
@@ -39,13 +37,10 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     this._initialize && this._initialize( options );
   }
 
-
   /**
    * Render first and then sync the template
-   * Slightly debounced for repeating calls like collection.sync/sort
    */
-  @Debounce( 50 )
-  render( source?: NgBackbone.Model | NgBackbone.Collection ){
+  render( source?: NgBackbone.Model | NgBackbone.Collection ): any {
     let ms =  performance.now();
     let scope: NgBackbone.DataMap<any> = {};
     this.models && Object.assign( scope, ViewHelper.modelsToScope( this.models ) );
@@ -61,11 +56,19 @@ export class View extends Backbone.NativeView<Backbone.Model> {
       console.error( (<Error>err).message );
     }
     if ( !this.isRendered ) {
-      ViewHelper.onceOnRender( this );
+      this.onceOnRender();
     }
     this.isRendered = true;
     return this;
   }
+
+  /**
+   * Handler that called once after view first rendered
+   */
+  onceOnRender(){
+    ViewHelper.initSubViews( this, this._component.views );
+  }
+
 
   /**
   * Enhance listenTo to process maps

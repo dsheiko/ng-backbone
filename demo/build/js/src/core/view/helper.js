@@ -56,7 +56,18 @@ var ViewHelper = (function () {
         view.collections.forEach(function (collection) {
             view.stopListening(collection);
             view.options.logger && view.trigger("log:listen", "subscribes for `change destroy sync sort`", collection);
-            view.listenTo(collection, "change destroy sync sort", view.render);
+            view.listenTo(collection, "change destroy sync sort", function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i - 0] = arguments[_i];
+                }
+                // Slightly debounced for repeating calls like collection.sync/sort
+                clearTimeout(view._debounceTimer);
+                view._debounceTimer = setTimeout(function () {
+                    view._debounceTimer = null;
+                    view.render.apply(view, args);
+                }, 50);
+            });
         });
     };
     /**
@@ -67,11 +78,23 @@ var ViewHelper = (function () {
             view.listenTo(view, events, logger[events]);
         });
     };
+    ViewHelper.resetComponentDto = function (view) {
+        view._component = {
+            models: utils_1.mapFrom({}),
+            collections: utils_1.mapFrom({}),
+            views: utils_1.mapFrom({}),
+            template: null
+        };
+    };
     /**
      * collections/models passed in options, take them
      */
     ViewHelper.initializeOptions = function (view, options) {
-        var template = "_component" in view ? view._component.template : null;
+        // When @Component isn't defined
+        if (!("_component" in view)) {
+            ViewHelper.resetComponentDto(view);
+        }
+        var template = view._component.template;
         // shared template
         if ("template" in options && view.options.template) {
             template = view.options.template;
@@ -80,6 +103,7 @@ var ViewHelper = (function () {
         view.template = new ngtemplate_1.NgTemplate(view.el, template),
             view.models = utils_1.mapFrom({});
         view.collections = utils_1.mapFrom({});
+        view.views = utils_1.mapFrom({});
         if ("_component" in view) {
             view.models = view._component.models;
             view.collections = view._component.collections;
@@ -90,31 +114,24 @@ var ViewHelper = (function () {
         if ("models" in options) {
             utils_1.mapAssign(view.models, options.models);
         }
-        // init views
-        if (!view.options.views.length) {
-            view.options.views = "_component" in view ? view._component.views : [];
-        }
-        if (view.options.views.find(function (mix) { return typeof mix === "undefined"; })) {
-            throw new SyntaxError("Invalid content of options.views");
+        if ("views" in options) {
+            utils_1.mapAssign(view._component.views, options.views);
         }
     };
     /**
-     * Hendler that called once after view first rendered
-     */
-    ViewHelper.onceOnRender = function (view) {
-        ViewHelper.initSubViews(view, view.options.views);
-    };
-    /**
-     * Initialize subview
-     */
-    ViewHelper.initSubViews = function (view, constructors) {
-        view.views = constructors.map(function (item) {
-            var dto;
-            if (typeof item === "function") {
-                return ViewHelper.createSubView(view, item);
+    * Initialize subview
+    */
+    ViewHelper.initSubViews = function (view, viewCtorMap) {
+        viewCtorMap.forEach(function (Ctor, key) {
+            var dto, instance;
+            if (typeof Ctor === "function") {
+                instance = ViewHelper.createSubView(view, Ctor);
             }
-            dto = item;
-            return ViewHelper.createSubView(view, dto[0], dto[1]);
+            else {
+                dto = Ctor;
+                instance = ViewHelper.createSubView(view, dto[0], dto[1]);
+            }
+            view.views.set(key, instance);
         });
     };
     /**

@@ -437,139 +437,100 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = _require( "tests/build/src/core.js" );
 function ViewSpec() {
     describe("View", function () {
-        describe("@Component + View + no state", function () {
-            it("applies tagName and template", function () {
-                var TestView = (function (_super) {
-                    __extends(TestView, _super);
-                    function TestView() {
-                        _super.apply(this, arguments);
-                    }
-                    TestView = __decorate([
-                        core_1.Component({
-                            tagName: "ng-component",
-                            template: "<ng-el></ng-el>"
-                        }), 
-                        __metadata('design:paramtypes', [])
-                    ], TestView);
-                    return TestView;
-                }(core_1.View));
-                var view = new TestView();
-                view.render();
-                expect(view.el.querySelector("ng-el")).toBeTruthy();
-            });
-            it("applies tagName and className and template", function () {
-                var TestView = (function (_super) {
-                    __extends(TestView, _super);
-                    function TestView() {
-                        _super.apply(this, arguments);
-                    }
-                    TestView = __decorate([
-                        core_1.Component({
-                            tagName: "ng-component",
-                            className: "ng-class",
-                            template: "<ng-el></ng-el>"
-                        }), 
-                        __metadata('design:paramtypes', [])
-                    ], TestView);
-                    return TestView;
-                }(core_1.View));
-                var view = new TestView();
-                view.render();
-                expect(view.el.querySelector("ng-el")).toBeTruthy();
-                expect(view.el.classList.contains("ng-class")).toBeTruthy();
-            });
-        });
-        describe("@Component + View + Models", function () {
-            it("binds specified models", function () {
-                var TestView = (function (_super) {
-                    __extends(TestView, _super);
-                    function TestView() {
-                        _super.apply(this, arguments);
-                    }
-                    TestView = __decorate([
-                        core_1.Component({
-                            tagName: "ng-component",
-                            models: {
-                                foo: new core_1.Model({ bar: "bar" })
-                            },
-                            template: "<ng-el data-ng-text=\"foo.bar\">none</ng-el>"
-                        }), 
-                        __metadata('design:paramtypes', [])
-                    ], TestView);
-                    return TestView;
-                }(core_1.View));
-                var view = new TestView(), errors = view.render().errors, el = view.el.querySelector("ng-el");
-                expect(el).toBeTruthy();
-                expect(el.textContent).toBe("bar");
-                expect(errors.length).toBe(0);
-            });
-        });
-        describe("@Component + View + Collections", function () {
-            it("binds specified collections", function () {
-                var TestView = (function (_super) {
-                    __extends(TestView, _super);
-                    function TestView() {
-                        _super.apply(this, arguments);
-                    }
-                    TestView = __decorate([
-                        core_1.Component({
-                            tagName: "ng-component",
-                            collections: {
-                                foo: new core_1.Collection([
-                                    new core_1.Model({ bar: 1 }),
-                                    new core_1.Model({ bar: 2 })
-                                ])
-                            },
-                            template: "<ng-el data-ng-for=\"let i of foo\" data-ng-text=\"i.bar\">none</ng-el>"
-                        }), 
-                        __metadata('design:paramtypes', [])
-                    ], TestView);
-                    return TestView;
-                }(core_1.View));
-                var view = new TestView(), errors = view.render().errors, els = Array.from(view.el.querySelectorAll("ng-el"));
-                expect(els.length).toBe(2);
-                expect(els[0].textContent).toBe("1");
-                expect(els[1].textContent).toBe("2");
-            });
-        });
-        describe("View with nested views straigtforward", function () {
-            it("renders both parent and child views", function () {
-                var TestView = (function (_super) {
-                    __extends(TestView, _super);
-                    function TestView() {
-                        _super.apply(this, arguments);
-                    }
-                    TestView = __decorate([
-                        core_1.Component({
-                            tagName: "ng-component",
-                            template: "<ng-child></ng-child>"
-                        }), 
-                        __metadata('design:paramtypes', [])
-                    ], TestView);
-                    return TestView;
-                }(core_1.View));
-                var TestChildView = (function (_super) {
-                    __extends(TestChildView, _super);
-                    function TestChildView() {
-                        _super.apply(this, arguments);
-                    }
-                    TestChildView = __decorate([
-                        core_1.Component({
-                            template: "<ng-el></ng-el>"
-                        }), 
-                        __metadata('design:paramtypes', [])
-                    ], TestChildView);
-                    return TestChildView;
-                }(core_1.View));
-                var view = new TestView();
-                view.render();
-                var child = new TestChildView({
-                    el: view.el.querySelector("ng-child")
-                });
-                child.render();
-                expect(view.el.querySelector("ng-el")).toBeTruthy();
-            });
-        });
+        //    describe("@Component + View + no state", function(){
+        //      it( "applies tagName and template", function() {
+        //        @Component({
+        //          tagName: "ng-component",
+        //          template: "<ng-el></ng-el>"
+        //        })
+        //        class TestView extends View {
+        //        }
+        //        let view = new TestView();
+        //        view.render();
+        //        expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
+        //      });
+        //      it( "applies tagName and className and template", function() {
+        //        @Component({
+        //          tagName: "ng-component",
+        //          className: "ng-class",
+        //          template: "<ng-el></ng-el>"
+        //        })
+        //        class TestView extends View {
+        //        }
+        //        let view = new TestView();
+        //        view.render();
+        //        expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
+        //        expect( view.el.classList.contains( "ng-class" ) ).toBeTruthy();
+        //      });
+        //    });
+        //
+        //    describe("@Component + View + Models", function(){
+        //      it( "binds specified models", function() {
+        //        @Component({
+        //          tagName: "ng-component",
+        //          models: {
+        //            foo: new Model({ bar: "bar" })
+        //          },
+        //          template: `<ng-el data-ng-text="foo.bar">none</ng-el>`
+        //        })
+        //        class TestView extends View {
+        //        }
+        //        let view = new TestView(),
+        //            errors = view.render().errors,
+        //            el = view.el.querySelector( "ng-el" );
+        //        expect( el ).toBeTruthy();
+        //        expect( el.textContent ).toBe( "bar" );
+        //        expect( errors.length ).toBe( 0 );
+        //      });
+        //    });
+        //
+        //    describe("@Component + View + Collections", function(){
+        //      it( "binds specified collections", function() {
+        //        @Component({
+        //          tagName: "ng-component",
+        //          collections: {
+        //            foo: new Collection([
+        //              new Model({ bar: 1 }),
+        //              new Model({ bar: 2 })
+        //            ])
+        //          },
+        //          template: `<ng-el data-ng-for="let i of foo" data-ng-text="i.bar">none</ng-el>`
+        //        })
+        //        class TestView extends View {
+        //        }
+        //        let view = new TestView(),
+        //            errors = view.render().errors,
+        //            els = Array.from( view.el.querySelectorAll( "ng-el" ) );
+        //          expect( els.length ).toBe( 2 );
+        //          expect( els[ 0 ].textContent ).toBe( "1" );
+        //          expect( els[ 1 ].textContent ).toBe( "2" );
+        //      });
+        //    });
+        //
+        //
+        //    describe("View with nested views straigtforward", function(){
+        //      it( "renders both parent and child views", function() {
+        //        @Component({
+        //          tagName: "ng-component",
+        //          template: "<ng-child></ng-child>"
+        //        })
+        //        class TestView extends View {
+        //        }
+        //        @Component({
+        //          template: "<ng-el></ng-el>"
+        //        })
+        //        class TestChildView extends View {
+        //        }
+        //
+        //        let view = new TestView();
+        //        view.render();
+        //        let child = new TestChildView({
+        //          el: view.el.querySelector( "ng-child" )
+        //        });
+        //        child.render();
+        //        expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
+        //      });
+        //    });
         describe("View with nested views as @Component.views = [Ctor, Ctor]", function () {
             it("renders both parent and child views", function () {
                 var TestChildView = (function (_super) {
@@ -598,7 +559,9 @@ function ViewSpec() {
                         core_1.Component({
                             tagName: "ng-component",
                             template: "<ng-child></ng-child>",
-                            views: [TestChildView]
+                            views: {
+                                foo: TestChildView
+                            }
                         }), 
                         __metadata('design:paramtypes', [])
                     ], TestView);
@@ -606,7 +569,7 @@ function ViewSpec() {
                 }(core_1.View));
                 var view = new TestView();
                 view.render();
-                expect(view.views[0] instanceof TestChildView).toBeTruthy();
+                expect(view.views.get("foo") instanceof TestChildView).toBeTruthy();
                 expect(view.el.querySelector("ng-el")).toBeTruthy();
             });
         });
@@ -639,9 +602,9 @@ function ViewSpec() {
                         core_1.Component({
                             tagName: "ng-component",
                             template: "<ng-child></ng-child>",
-                            views: [
-                                [TestChildView, { id: "ngId" }]
-                            ]
+                            views: {
+                                foo: [TestChildView, { id: "ngId" }]
+                            }
                         }), 
                         __metadata('design:paramtypes', [])
                     ], TestView);
@@ -649,7 +612,7 @@ function ViewSpec() {
                 }(core_1.View));
                 var view = new TestView();
                 view.render();
-                expect(view.views[0] instanceof TestChildView).toBeTruthy();
+                expect(view.views.get("foo") instanceof TestChildView).toBeTruthy();
                 expect(view.el.querySelector("ng-el")).toBeTruthy();
             });
         });
@@ -740,6 +703,15 @@ exports.FormViewSpec = FormViewSpec;
 
 _require.def( "tests/build/tests/spec/utils.spec.js", function( _require, exports, module, global ){
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var utils_1 = _require( "tests/build/src/core/utils.js" );
 function UtilsSpec() {
     describe("Utils", function () {
@@ -763,6 +735,29 @@ function UtilsSpec() {
                 expect(map instanceof Map).toBe(true);
                 expect(map.get("foo")).toBe(1);
                 expect(map.get("bar")).toBe(2);
+            });
+        });
+        describe("#Debounce", function () {
+            it("debounces a method", function (done) {
+                var Foo = (function () {
+                    function Foo() {
+                    }
+                    Foo.prototype.bar = function () {
+                        return "bar";
+                    };
+                    __decorate([
+                        utils_1.Debounce(50), 
+                        __metadata('design:type', Function), 
+                        __metadata('design:paramtypes', []), 
+                        __metadata('design:returntype', Object)
+                    ], Foo.prototype, "bar", null);
+                    return Foo;
+                }());
+                var foo = new Foo();
+                foo.bar().then(function (val) {
+                    expect(val).toBe("bar");
+                    done();
+                });
             });
         });
     });
@@ -1026,15 +1021,14 @@ _require.def( "tests/build/src/core/utils.js", function( _require, exports, modu
 function Debounce(wait) {
     return function (target, propKey, descriptor) {
         var callback = descriptor.value;
-        var timer = null;
         return Object.assign({}, descriptor, {
             value: function () {
                 var _this = this;
                 var args = Array.from(arguments);
-                clearTimeout(timer);
+                clearTimeout(this["_debounceTimer"]);
                 return new Promise(function (resolve) {
-                    timer = setTimeout(function () {
-                        timer = null;
+                    _this["_debounceTimer"] = setTimeout(function () {
+                        _this["_debounceTimer"] = null;
                         resolve(callback.apply(_this, args));
                     }, wait);
                 });
@@ -1154,8 +1148,19 @@ var ViewHelper = (function () {
     ViewHelper.bindCollections = function (view) {
         view.collections.forEach(function (collection) {
             view.stopListening(collection);
-            view.options.logger && view.trigger("log:listen", "subscribes for `change destroy sync`", collection);
-            view.listenTo(collection, "change destroy sync", view.render);
+            view.options.logger && view.trigger("log:listen", "subscribes for `change destroy sync sort`", collection);
+            view.listenTo(collection, "change destroy sync sort", function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i - 0] = arguments[_i];
+                }
+                // Slightly debounced for repeating calls like collection.sync/sort
+                clearTimeout(view._debounceTimer);
+                view._debounceTimer = setTimeout(function () {
+                    view._debounceTimer = null;
+                    view.render.apply(view, args);
+                }, 50);
+            });
         });
     };
     /**
@@ -1166,11 +1171,23 @@ var ViewHelper = (function () {
             view.listenTo(view, events, logger[events]);
         });
     };
+    ViewHelper.resetComponentDto = function (view) {
+        view._component = {
+            models: utils_1.mapFrom({}),
+            collections: utils_1.mapFrom({}),
+            views: utils_1.mapFrom({}),
+            template: null
+        };
+    };
     /**
      * collections/models passed in options, take them
      */
     ViewHelper.initializeOptions = function (view, options) {
-        var template = "_component" in view ? view._component.template : null;
+        // When @Component isn't defined
+        if (!("_component" in view)) {
+            ViewHelper.resetComponentDto(view);
+        }
+        var template = view._component.template;
         // shared template
         if ("template" in options && view.options.template) {
             template = view.options.template;
@@ -1179,6 +1196,7 @@ var ViewHelper = (function () {
         view.template = new ngtemplate_1.NgTemplate(view.el, template),
             view.models = utils_1.mapFrom({});
         view.collections = utils_1.mapFrom({});
+        view.views = utils_1.mapFrom({});
         if ("_component" in view) {
             view.models = view._component.models;
             view.collections = view._component.collections;
@@ -1189,31 +1207,24 @@ var ViewHelper = (function () {
         if ("models" in options) {
             utils_1.mapAssign(view.models, options.models);
         }
-        // init views
-        if (!view.options.views.length) {
-            view.options.views = "_component" in view ? view._component.views : [];
-        }
-        if (view.options.views.find(function (mix) { return typeof mix === "undefined"; })) {
-            throw new SyntaxError("Invalid content of options.views");
+        if ("views" in options) {
+            utils_1.mapAssign(view._component.views, options.views);
         }
     };
     /**
-     * Hendler that called once after view first rendered
-     */
-    ViewHelper.onceOnRender = function (view) {
-        ViewHelper.initSubViews(view, view.options.views);
-    };
-    /**
-     * Initialize subview
-     */
-    ViewHelper.initSubViews = function (view, constructors) {
-        view.views = constructors.map(function (item) {
-            var dto;
-            if (typeof item === "function") {
-                return ViewHelper.createSubView(view, item);
+    * Initialize subview
+    */
+    ViewHelper.initSubViews = function (view, viewCtorMap) {
+        viewCtorMap.forEach(function (Ctor, key) {
+            var dto, instance;
+            if (typeof Ctor === "function") {
+                instance = ViewHelper.createSubView(view, Ctor);
             }
-            dto = item;
-            return ViewHelper.createSubView(view, dto[0], dto[1]);
+            else {
+                dto = Ctor;
+                instance = ViewHelper.createSubView(view, dto[0], dto[1]);
+            }
+            view.views.set(key, instance);
         });
     };
     /**
@@ -1236,6 +1247,34 @@ var ViewHelper = (function () {
     return ViewHelper;
 }());
 exports.ViewHelper = ViewHelper;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/core/exception.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/**
+ * Custom exception extending Error
+ * @param {string} message
+ */
+var Exception = (function (_super) {
+    __extends(Exception, _super);
+    function Exception(message) {
+        _super.call(this, message);
+        this.name = "NgBackboneError",
+            this.message = message;
+    }
+    return Exception;
+}(Error));
+exports.Exception = Exception;
 
   module.exports = exports;
 
@@ -1274,7 +1313,7 @@ function Component(options) {
         _component: {
             models: utils_1.mapFrom(options.models),
             collections: utils_1.mapFrom(options.collections),
-            views: options.views || [],
+            views: utils_1.mapFrom(options.views),
             template: options.template,
         },
         el: options.el || null,
@@ -1302,137 +1341,6 @@ exports.Component = Component;
   return module;
 });
 
-_require.def( "tests/build/src/core/exception.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-/**
- * Custom exception extending Error
- * @param {string} message
- */
-var Exception = (function (_super) {
-    __extends(Exception, _super);
-    function Exception(message) {
-        _super.call(this, message);
-        this.name = "NgBackboneError",
-            this.message = message;
-    }
-    return Exception;
-}(Error));
-exports.Exception = Exception;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/core/collection.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var Collection = (function (_super) {
-    __extends(Collection, _super);
-    function Collection(models, options) {
-        _super.call(this, models, options);
-        this.options = options || {};
-    }
-    /**
-     * Shortcut for sorting
-     */
-    Collection.prototype.orderBy = function (key) {
-        this.comparator = key;
-        this.sort();
-        this.trigger("change");
-        return this;
-    };
-    return Collection;
-}(Backbone.Collection));
-exports.Collection = Collection;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ngtemplate.js", function( _require, exports, module, global ){
-"use strict";
-/// <reference path="./ngtemplate.d.ts" />
-var ngif_1 = _require( "tests/build/src/ng-template/ngif.js" );
-var ngel_1 = _require( "tests/build/src/ng-template/ngel.js" );
-var ngtext_1 = _require( "tests/build/src/ng-template/ngtext.js" );
-var ngfor_1 = _require( "tests/build/src/ng-template/ngfor.js" );
-var ngswitch_1 = _require( "tests/build/src/ng-template/ngswitch.js" );
-var ngswitchcase_1 = _require( "tests/build/src/ng-template/ngswitchcase.js" );
-var ngswitchcasedefault_1 = _require( "tests/build/src/ng-template/ngswitchcasedefault.js" );
-var ngclass_1 = _require( "tests/build/src/ng-template/ngclass.js" );
-var ngprop_1 = _require( "tests/build/src/ng-template/ngprop.js" );
-var ngdata_1 = _require( "tests/build/src/ng-template/ngdata.js" );
-var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
-var reporter_1 = _require( "tests/build/src/ng-template/reporter.js" );
-var DIRECTIVES = [ngfor_1.NgFor, ngswitch_1.NgSwitch, ngswitchcase_1.NgSwitchCase, ngswitchcasedefault_1.NgSwitchCaseDefault, ngif_1.NgIf,
-    ngclass_1.NgClass, ngdata_1.NgData, ngprop_1.NgProp, ngel_1.NgEl, ngtext_1.NgText];
-var NgTemplate = (function () {
-    /**
-     * Initialize template for a given Element
-     * If template passed, load it into the Element
-     */
-    function NgTemplate(el, template) {
-        this.el = el;
-        this.template = template;
-        this.directives = [];
-        if (!this.el) {
-            throw new exception_1.Exception("(NgTemplate) Invalid first parameter: must be an existing DOM node");
-        }
-        this.reporter = new reporter_1.Reporter();
-        this.template || this.init(DIRECTIVES);
-    }
-    NgTemplate.factory = function (el, template) {
-        return new NgTemplate(el, template || null);
-    };
-    NgTemplate.prototype.init = function (directives) {
-        var _this = this;
-        directives.forEach(function (Directive) {
-            _this.directives.push(new Directive(_this.el, _this.reporter));
-        });
-    };
-    NgTemplate.prototype.report = function () {
-        return this.reporter.get();
-    };
-    NgTemplate.prototype.sync = function (data) {
-        // Late initialization: renders from a given template on first sync
-        if (this.template) {
-            this.el.innerHTML = this.template + "";
-            this.init(DIRECTIVES);
-            this.template = null;
-        }
-        this.directives.forEach(function (d) {
-            d.sync(data, NgTemplate);
-        });
-        return this;
-    };
-    NgTemplate.prototype.pipe = function (cb, context) {
-        if (context === void 0) { context = this; }
-        cb.call(context, this.el, this.reporter);
-        return this;
-    };
-    return NgTemplate;
-}());
-exports.NgTemplate = NgTemplate;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
 _require.def( "tests/build/src/core/view.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1446,12 +1354,8 @@ var View = (function (_super) {
     function View(options) {
         if (options === void 0) { options = {}; }
         _super.call(this, options);
-        // array of subviews
-        this.views = [];
         // constructor options getting available across the prototype
-        this.options = {
-            views: []
-        };
+        this.options = {};
         // template errors/warnings
         this.errors = [];
         // is this view ever rendered
@@ -1486,10 +1390,16 @@ var View = (function (_super) {
             console.error(err.message);
         }
         if (!this.isRendered) {
-            helper_1.ViewHelper.onceOnRender(this);
+            this.onceOnRender();
         }
         this.isRendered = true;
         return this;
+    };
+    /**
+     * Handler that called once after view first rendered
+     */
+    View.prototype.onceOnRender = function () {
+        helper_1.ViewHelper.initSubViews(this, this._component.views);
     };
     /**
     * Enhance listenTo to process maps
@@ -1713,6 +1623,100 @@ exports.FormView = FormView;
   return module;
 });
 
+_require.def( "tests/build/src/core/collection.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Collection = (function (_super) {
+    __extends(Collection, _super);
+    function Collection(models, options) {
+        _super.call(this, models, options);
+        this.options = options || {};
+    }
+    return Collection;
+}(Backbone.Collection));
+exports.Collection = Collection;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ngtemplate.js", function( _require, exports, module, global ){
+"use strict";
+/// <reference path="./ngtemplate.d.ts" />
+var ngif_1 = _require( "tests/build/src/ng-template/ngif.js" );
+var ngel_1 = _require( "tests/build/src/ng-template/ngel.js" );
+var ngtext_1 = _require( "tests/build/src/ng-template/ngtext.js" );
+var ngfor_1 = _require( "tests/build/src/ng-template/ngfor.js" );
+var ngswitch_1 = _require( "tests/build/src/ng-template/ngswitch.js" );
+var ngswitchcase_1 = _require( "tests/build/src/ng-template/ngswitchcase.js" );
+var ngswitchcasedefault_1 = _require( "tests/build/src/ng-template/ngswitchcasedefault.js" );
+var ngclass_1 = _require( "tests/build/src/ng-template/ngclass.js" );
+var ngprop_1 = _require( "tests/build/src/ng-template/ngprop.js" );
+var ngdata_1 = _require( "tests/build/src/ng-template/ngdata.js" );
+var exception_1 = _require( "tests/build/src/ng-template/exception.js" );
+var reporter_1 = _require( "tests/build/src/ng-template/reporter.js" );
+var DIRECTIVES = [ngfor_1.NgFor, ngswitch_1.NgSwitch, ngswitchcase_1.NgSwitchCase, ngswitchcasedefault_1.NgSwitchCaseDefault, ngif_1.NgIf,
+    ngclass_1.NgClass, ngdata_1.NgData, ngprop_1.NgProp, ngel_1.NgEl, ngtext_1.NgText];
+var NgTemplate = (function () {
+    /**
+     * Initialize template for a given Element
+     * If template passed, load it into the Element
+     */
+    function NgTemplate(el, template) {
+        this.el = el;
+        this.template = template;
+        this.directives = [];
+        if (!this.el) {
+            throw new exception_1.Exception("(NgTemplate) Invalid first parameter: must be an existing DOM node");
+        }
+        this.reporter = new reporter_1.Reporter();
+        this.template || this.init(DIRECTIVES);
+    }
+    NgTemplate.factory = function (el, template) {
+        return new NgTemplate(el, template || null);
+    };
+    NgTemplate.prototype.init = function (directives) {
+        var _this = this;
+        directives.forEach(function (Directive) {
+            _this.directives.push(new Directive(_this.el, _this.reporter));
+        });
+    };
+    NgTemplate.prototype.report = function () {
+        return this.reporter.get();
+    };
+    NgTemplate.prototype.sync = function (data) {
+        // Late initialization: renders from a given template on first sync
+        if (this.template) {
+            this.el.innerHTML = this.template + "";
+            this.init(DIRECTIVES);
+            this.template = null;
+        }
+        this.directives.forEach(function (d) {
+            d.sync(data, NgTemplate);
+        });
+        return this;
+    };
+    NgTemplate.prototype.pipe = function (cb, context) {
+        if (context === void 0) { context = this; }
+        cb.call(context, this.el, this.reporter);
+        return this;
+    };
+    return NgTemplate;
+}());
+exports.NgTemplate = NgTemplate;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/src/ng-template/ngif.js", function( _require, exports, module, global ){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1803,6 +1807,47 @@ var NgEl = (function (_super) {
     return NgEl;
 }(abstract_directive_1.AbstractDirective));
 exports.NgEl = NgEl;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
+_require.def( "tests/build/src/ng-template/ngtext.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
+/**
+ * <span data-ng-text="foo">...</span>
+ */
+var NgText = (function (_super) {
+    __extends(NgText, _super);
+    function NgText(el, reporter) {
+        _super.call(this, el, reporter);
+        this.nodes = this.initNodes(el, "ng-text", function (node, expr, compile, cache) {
+            return {
+                el: node,
+                exp: compile(expr, "String", reporter),
+                cache: cache
+            };
+        });
+    }
+    NgText.prototype.sync = function (data) {
+        var _this = this;
+        this.nodes.forEach(function (node) {
+            node.cache.evaluate(node.exp.call(node.el, data), function (val) {
+                _this.setText(node.el, val);
+            });
+        });
+    };
+    return NgText;
+}(abstract_directive_1.AbstractDirective));
+exports.NgText = NgText;
 
   module.exports = exports;
 
@@ -1929,47 +1974,6 @@ var NgFor = (function (_super) {
     return NgFor;
 }(abstract_directive_1.AbstractDirective));
 exports.NgFor = NgFor;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ng-template/ngtext.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var abstract_directive_1 = _require( "tests/build/src/ng-template/abstract-directive.js" );
-/**
- * <span data-ng-text="foo">...</span>
- */
-var NgText = (function (_super) {
-    __extends(NgText, _super);
-    function NgText(el, reporter) {
-        _super.call(this, el, reporter);
-        this.nodes = this.initNodes(el, "ng-text", function (node, expr, compile, cache) {
-            return {
-                el: node,
-                exp: compile(expr, "String", reporter),
-                cache: cache
-            };
-        });
-    }
-    NgText.prototype.sync = function (data) {
-        var _this = this;
-        this.nodes.forEach(function (node) {
-            node.cache.evaluate(node.exp.call(node.el, data), function (val) {
-                _this.setText(node.el, val);
-            });
-        });
-    };
-    return NgText;
-}(abstract_directive_1.AbstractDirective));
-exports.NgText = NgText;
 
   module.exports = exports;
 
@@ -2227,6 +2231,34 @@ exports.NgData = NgData;
   return module;
 });
 
+_require.def( "tests/build/src/ng-template/exception.js", function( _require, exports, module, global ){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/**
+ * Custom exception extending Error
+ * @param {string} message
+ */
+var Exception = (function (_super) {
+    __extends(Exception, _super);
+    function Exception(message) {
+        _super.call(this, message);
+        this.name = "NgTemplateError",
+            this.message = message;
+    }
+    return Exception;
+}(Error));
+exports.Exception = Exception;
+
+  module.exports = exports;
+
+
+  return module;
+});
+
 _require.def( "tests/build/src/ng-template/reporter.js", function( _require, exports, module, global ){
 "use strict";
 var Reporter = (function () {
@@ -2252,34 +2284,6 @@ var Reporter = (function () {
     return Reporter;
 }());
 exports.Reporter = Reporter;
-
-  module.exports = exports;
-
-
-  return module;
-});
-
-_require.def( "tests/build/src/ng-template/exception.js", function( _require, exports, module, global ){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-/**
- * Custom exception extending Error
- * @param {string} message
- */
-var Exception = (function (_super) {
-    __extends(Exception, _super);
-    function Exception(message) {
-        _super.call(this, message);
-        this.name = "NgTemplateError",
-            this.message = message;
-    }
-    return Exception;
-}(Error));
-exports.Exception = Exception;
 
   module.exports = exports;
 

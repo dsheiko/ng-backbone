@@ -4,14 +4,13 @@
 export function Debounce( wait: number ): Function {
   return function( target: Object | Function, propKey: string, descriptor: PropertyDescriptor ): PropertyDescriptor {
     const callback = descriptor.value;
-    let timer: number = null;
     return <PropertyDescriptor>Object.assign({}, descriptor, {
       value: function(): Promise<any> {
         const args = Array.from( arguments );
-        clearTimeout( timer );
+        clearTimeout( this[ "_debounceTimer" ] );
         return new Promise(( resolve ) => {
-          timer = <any>setTimeout(() => {
-            timer = null;
+          this[ "_debounceTimer" ] = <any>setTimeout(() => {
+            this[ "_debounceTimer" ] = null;
             resolve( callback.apply( this, args ) );
           }, wait );
         });

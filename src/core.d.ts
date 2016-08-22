@@ -29,18 +29,26 @@ declare namespace NgBackbone {
     [key: string]: Backbone.Collection<Backbone.Model>;
   }
 
-  interface ViewConstructors {
+  interface View extends Backbone.NativeView<Backbone.Model> {
+    models: ModelMap;
+    collections: CollectionMap;
+    views: ViewMap;
+  }
+
+  interface ViewCtorOptions {
     [index: number]: Function | ViewOptions;
   }
 
   interface Views {
-    [index: number]: Function | ViewConstructors;
-    forEach( callback?: Function, thisArg?: Object ): void;
-    find( callback?: Function, thisArg?: Object ): void;
-    map( callback?: Function, thisArg?: Object ): any[];
-    push( ...args: any[] ): number;
-    length: number;
+    [index: number]: Function | ViewCtorOptions;
   }
+
+  interface ViewCtorMap extends Map<string, Function | ViewCtorOptions> {
+  }
+
+  interface ViewMap extends Map<string, View> {
+  }
+
 
   interface LoggerHandler {
      ( msg: string, ...args: any[] ): void
@@ -63,7 +71,7 @@ declare namespace NgBackbone {
     models: NgBackbone.ModelMap;
     collections: NgBackbone.CollectionMap;
     template: string;
-    views?: Views;
+    views?: NgBackbone.ViewCtorMap;
   }
 
   interface ComponentOptions {

@@ -5,15 +5,14 @@
 function Debounce(wait) {
     return function (target, propKey, descriptor) {
         var callback = descriptor.value;
-        var timer = null;
         return Object.assign({}, descriptor, {
             value: function () {
                 var _this = this;
                 var args = Array.from(arguments);
-                clearTimeout(timer);
+                clearTimeout(this["_debounceTimer"]);
                 return new Promise(function (resolve) {
-                    timer = setTimeout(function () {
-                        timer = null;
+                    _this["_debounceTimer"] = setTimeout(function () {
+                        _this["_debounceTimer"] = null;
                         resolve(callback.apply(_this, args));
                     }, wait);
                 });

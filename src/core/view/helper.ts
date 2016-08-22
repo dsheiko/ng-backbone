@@ -57,7 +57,14 @@ export class ViewHelper {
     view.collections.forEach(( collection: Backbone.Collection<Backbone.Model> ) => {
       view.stopListening( collection );
       view.options.logger && view.trigger( "log:listen", "subscribes for `change destroy sync sort`", collection );
-      view.listenTo( collection, "change destroy sync sort", view.render );
+      view.listenTo( collection, "change destroy sync sort", ( ...args: any[] ) => {
+        // Slightly debounced for repeating calls like collection.sync/sort
+        clearTimeout( view._debounceTimer );
+        view._debounceTimer = <any>setTimeout(() => {
+          view._debounceTimer = null;
+          view.render.apply( view, args );
+        }, 50 );
+      });
     });
   }
 
@@ -70,12 +77,26 @@ export class ViewHelper {
     });
   }
 
+  private static resetComponentDto( view: View )
+  {
+      view._component = {
+        models: mapFrom({}),
+        collections: mapFrom({}),
+        views: mapFrom({}),
+        template: null
+      }
+  }
 
   /**
    * collections/models passed in options, take them
    */
   static initializeOptions( view: View, options: NgBackbone.ViewOptions ) {
-    let template = "_component" in view ? view._component.template : null;
+    // When @Component isn't defined
+    if ( !( "_component" in view ) ) {
+      ViewHelper.resetComponentDto( view );
+    }
+
+    let template = view._component.template;
     // shared template
     if ( "template" in options && view.options.template ) {
       template = view.options.template;
@@ -85,11 +106,13 @@ export class ViewHelper {
 
     view.models = mapFrom({});
     view.collections = mapFrom({});
+    view.views = mapFrom({});
 
     if ( "_component" in view ) {
       view.models = view._component.models;
       view.collections = view._component.collections;
     }
+
     if ( "collections" in options ) {
       mapAssign( view.collections, options.collections );
     }
@@ -97,34 +120,25 @@ export class ViewHelper {
       mapAssign( view.models, options.models );
     }
 
-    // init views
-    if ( !view.options.views.length ) {
-      view.options.views = "_component" in view ? view._component.views : [];
-    }
-
-    if ( view.options.views.find(( mix: any ) => typeof mix === "undefined" )){
-      throw new SyntaxError( "Invalid content of options.views" );
+    if ( "views" in options ) {
+      mapAssign( view._component.views, options.views );
     }
   }
 
-  /**
-   * Hendler that called once after view first rendered
-   */
-  static onceOnRender( view: View ){
-    ViewHelper.initSubViews( view, view.options.views );
-  }
-
-  /**
+   /**
    * Initialize subview
    */
-  static initSubViews( view: View, constructors: NgBackbone.Views ){
-    view.views = constructors.map(( item: Function | NgBackbone.ViewConstructors ) => {
-      let dto: NgBackbone.ViewConstructors;
-      if ( typeof item === "function" ) {
-        return ViewHelper.createSubView( view, <ViewConstructor>item );
+  static initSubViews( view: View, viewCtorMap: NgBackbone.ViewCtorMap ){
+    viewCtorMap.forEach(( Ctor: any, key: string ) => {
+      let dto: NgBackbone.ViewCtorOptions,
+          instance: View;
+      if ( typeof Ctor === "function" ) {
+        instance = ViewHelper.createSubView( view, <ViewConstructor>Ctor );
+      } else {
+        dto = <NgBackbone.ViewCtorOptions>Ctor;
+        instance = ViewHelper.createSubView( view, <ViewConstructor>dto[ 0 ], <NgBackbone.ViewOptions>dto[ 1 ] );
       }
-      dto = <NgBackbone.ViewConstructors>item;
-      return ViewHelper.createSubView( view, <ViewConstructor>dto[ 0 ], <NgBackbone.ViewOptions>dto[ 1 ] );
+      view.views.set( key, instance );
     });
   }
   /**

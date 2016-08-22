@@ -10,15 +10,6 @@ var Collection = (function (_super) {
         _super.call(this, models, options);
         this.options = options || {};
     }
-    /**
-     * Shortcut for sorting
-     */
-    Collection.prototype.orderBy = function (key) {
-        this.comparator = key;
-        this.sort();
-        this.trigger("change");
-        return this;
-    };
     return Collection;
 }(Backbone.Collection));
 exports.Collection = Collection;

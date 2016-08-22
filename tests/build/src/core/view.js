@@ -10,12 +10,8 @@ var View = (function (_super) {
     function View(options) {
         if (options === void 0) { options = {}; }
         _super.call(this, options);
-        // array of subviews
-        this.views = [];
         // constructor options getting available across the prototype
-        this.options = {
-            views: []
-        };
+        this.options = {};
         // template errors/warnings
         this.errors = [];
         // is this view ever rendered
@@ -50,10 +46,16 @@ var View = (function (_super) {
             console.error(err.message);
         }
         if (!this.isRendered) {
-            helper_1.ViewHelper.onceOnRender(this);
+            this.onceOnRender();
         }
         this.isRendered = true;
         return this;
+    };
+    /**
+     * Handler that called once after view first rendered
+     */
+    View.prototype.onceOnRender = function () {
+        helper_1.ViewHelper.initSubViews(this, this._component.views);
     };
     /**
     * Enhance listenTo to process maps

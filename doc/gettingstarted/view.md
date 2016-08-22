@@ -101,19 +101,22 @@ We can make our view to create automatically nested views by specifying a list o
 
 ```javascript
  @Component({
-    views: [ FooView, BarView ]
+    views: {
+      foo: FooView,
+      bar: BarView
+    }
   })
 ```
-In this case nested view expects `el` view option filled with a selector relative to the parent view.  `View` object calls subview constructors after the first rendering. So it has inner DOM subtree already available and can bind subviews in there.  After subviews instantiated we can find them within `this.view` array of the parent view. If destroy a view with `this.remove()`, it automatically destroys every subview.
+In this case nested view expects `el` view option filled with a selector relative to the parent view.  `View` object calls subview constructors after the first rendering. So it has inner DOM subtree already available and can bind subviews in there.  After subviews instantiated we can find them within `this.view` map of the parent view. If destroy a view with `this.remove()`, it automatically destroys every subview.
 
 When we need passing options to subview constructor, we can use the following syntax:
 
 ```javascript
  @Component({
-    views: [
-      [ FooView, { id: "foo" }],
-      [ BarView, { id: "bar" }]
-    ]
+    views: {
+      foo: [ FooView, { id: "foo" }],
+      bar: [ BarView, { id: "bar" }]
+    }
   })
 ```
 

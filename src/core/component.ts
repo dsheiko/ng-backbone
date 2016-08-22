@@ -7,7 +7,7 @@ export function Component( options: NgBackbone.ComponentOptions ): Function {
       _component: {
         models: mapFrom( options.models ),
         collections: mapFrom( options.collections ),
-        views: options.views || [],
+        views: mapFrom( options.views ),
         template: options.template,
       },
       el: options.el || null,
