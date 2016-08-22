@@ -19,7 +19,6 @@ var HeroCollection = (function (_super) {
     HeroCollection.prototype.orderBy = function (key) {
         this.comparator = key;
         this.sort();
-        // this.trigger( "change" );
         return this;
     };
     return HeroCollection;

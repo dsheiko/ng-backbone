@@ -31,7 +31,7 @@ import { Collection, Component, View, Model } from "../../../src/core";
   </td>
 
   <td data-ng-text="p.name" ></td>
-  <td data-ng-text="p.power" ></td>\n\
+  <td data-ng-text="p.power" ></td>
 
 </tr>
 
@@ -85,14 +85,15 @@ export class HeroListView extends View {
 
   onClickSort( e:Event ) {
     let el = <HTMLElement>e.target,
-        state = this.models.get( "state" ),
-        collection = this.collections.get( "heroes" ),
         order: string = el.dataset[ "sort" ];
-
     e.preventDefault();
+    this.orderBy( order );
+  }
 
+  orderBy( order: string ): void {
+    let state = this.models.get( "state" ),
+        collection = this.collections.get( "heroes" );
     state.set( "order", order );
-
     collection.orderBy( order );
   }
 }

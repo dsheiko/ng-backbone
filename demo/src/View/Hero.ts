@@ -23,7 +23,7 @@ import { HeroPowerCollection } from "../Collection/HeroPower";
         <datalist id="names">
           <option data-ng-for="let n of names" data-ng-prop="'value', n.item">
         </datalist>
-        <div class="alert alert-danger" data-ng-if="hero.name.valueMissing">
+        <div class="alert alert-danger" data-ng-if="!hero.name.valid">
           Name is required
         </div>
       </div>

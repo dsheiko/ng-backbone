@@ -80,8 +80,8 @@ export class ViewHelper {
   private static resetComponentDto( view: View )
   {
       view._component = {
-        models: mapFrom({}),
-        collections: mapFrom({}),
+        models: {},
+        collections: {},
         views: mapFrom({}),
         template: null
       }
@@ -104,14 +104,10 @@ export class ViewHelper {
     // process Component's payload
     view.template = new NgTemplate( view.el, template ),
 
-    view.models = mapFrom({});
-    view.collections = mapFrom({});
+    view.models = mapFrom( view._component.models );
+    view.collections = mapFrom( view._component.collections );
     view.views = mapFrom({});
 
-    if ( "_component" in view ) {
-      view.models = view._component.models;
-      view.collections = view._component.collections;
-    }
 
     if ( "collections" in options ) {
       mapAssign( view.collections, options.collections );

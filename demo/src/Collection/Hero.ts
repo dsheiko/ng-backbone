@@ -11,7 +11,6 @@ export class HeroCollection extends Collection {
   orderBy( key: string ): Collection {
     this.comparator = key;
     this.sort();
-   // this.trigger( "change" );
     return this;
   }
 }

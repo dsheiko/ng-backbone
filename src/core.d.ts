@@ -68,10 +68,10 @@ declare namespace NgBackbone {
   }
 
   interface ComponentDto {
-    models: NgBackbone.ModelMap;
-    collections: NgBackbone.CollectionMap;
+    models: Models;
+    collections: Collections;
     template: string;
-    views?: NgBackbone.ViewCtorMap;
+    views?: ViewCtorMap;
   }
 
   interface ComponentOptions {

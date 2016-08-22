@@ -5,8 +5,8 @@ export function Component( options: NgBackbone.ComponentOptions ): Function {
 
   let mixin = {
       _component: {
-        models: mapFrom( options.models ),
-        collections: mapFrom( options.collections ),
+        models: options.models,
+        collections: options.collections,
         views: mapFrom( options.views ),
         template: options.template,
       },

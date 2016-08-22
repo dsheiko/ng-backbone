@@ -44,8 +44,12 @@ var HeroListView = (function (_super) {
         this.syncCheckboxCounter();
     };
     HeroListView.prototype.onClickSort = function (e) {
-        var el = e.target, state = this.models.get("state"), collection = this.collections.get("heroes"), order = el.dataset["sort"];
+        var el = e.target, order = el.dataset["sort"];
         e.preventDefault();
+        this.orderBy(order);
+    };
+    HeroListView.prototype.orderBy = function (order) {
+        var state = this.models.get("state"), collection = this.collections.get("heroes");
         state.set("order", order);
         collection.orderBy(order);
     };

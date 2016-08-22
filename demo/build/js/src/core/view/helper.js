@@ -80,8 +80,8 @@ var ViewHelper = (function () {
     };
     ViewHelper.resetComponentDto = function (view) {
         view._component = {
-            models: utils_1.mapFrom({}),
-            collections: utils_1.mapFrom({}),
+            models: {},
+            collections: {},
             views: utils_1.mapFrom({}),
             template: null
         };
@@ -101,13 +101,9 @@ var ViewHelper = (function () {
         }
         // process Component's payload
         view.template = new ngtemplate_1.NgTemplate(view.el, template),
-            view.models = utils_1.mapFrom({});
-        view.collections = utils_1.mapFrom({});
+            view.models = utils_1.mapFrom(view._component.models);
+        view.collections = utils_1.mapFrom(view._component.collections);
         view.views = utils_1.mapFrom({});
-        if ("_component" in view) {
-            view.models = view._component.models;
-            view.collections = view._component.collections;
-        }
         if ("collections" in options) {
             utils_1.mapAssign(view.collections, options.collections);
         }
