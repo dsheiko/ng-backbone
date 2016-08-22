@@ -3,6 +3,9 @@
 .nfs*
 node_modules
 bower_components
+demo/build
+demo/tests/build
+tests/build
 
 # Compiled source #
 ###################
