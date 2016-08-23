@@ -37,7 +37,7 @@ import { HeroPowerCollection } from "../Collection/HeroPower";
           Power is required
         </div>
       </div>
-       <button type="submit" class="btn btn-default" data-ng-prop="'disabled', !hero.form.valid">Submit</button>
+       <button type="submit" class="btn btn-default" data-ng-prop="'disabled', !hero.group.valid">Submit</button>
 
     </form>
 

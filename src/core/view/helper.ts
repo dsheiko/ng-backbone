@@ -77,14 +77,13 @@ export class ViewHelper {
     });
   }
 
-  private static resetComponentDto( view: View )
-  {
+  private static resetComponentDto( view: View ) {
       view._component = {
         models: {},
         collections: {},
         views: mapFrom({}),
         template: null
-      }
+      };
   }
 
   /**

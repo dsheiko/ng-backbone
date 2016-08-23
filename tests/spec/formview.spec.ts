@@ -35,14 +35,14 @@ export function FormViewSpec(){
     });
 
     describe("#_bindGroup", function(){
-      it( "sets a model to  this.models.FormName.form", function() {
+      it( "sets a model to  this.models.FormName.group", function() {
         let el = document.createElement( "form" ),
             view = new FormView({
               el: el
             });
         el.dataset[ "ngGroup" ] = "baz";
         (<any>view)._bindGroup( el, "baz" );
-        let model = view.models.get( "baz.form" );
+        let model = view.models.get( "baz.group" );
         expect( model instanceof FormState ).toBe( true );
       });
     });

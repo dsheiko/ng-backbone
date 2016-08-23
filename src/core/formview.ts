@@ -58,7 +58,7 @@ export class FormView extends View {
   }
 
   /**
-   * Bind a given form to State model ( myform.form = state model )
+   * Bind a given form to State model ( myform.group = state model )
    */
   private _bindGroup( el: HTMLElement, groupName: string ): void {
     if ( this.models.has( groupName ) ) {
@@ -67,7 +67,7 @@ export class FormView extends View {
     // make sure form is not self-validated
     el.setAttribute( "novalidate", "true" );
     let model = <GroupState> new GroupState({ formValidators:  this.formValidators });
-    this.models.set(  FormView.getKey( groupName, "form" ),  model );
+    this.models.set(  FormView.getKey( groupName, "group" ),  model );
     this.stopListening( model );
     this.options.logger && this.trigger( "log:listen", "subscribes for `change`", model );
     this.listenTo( model, "change", this.render );
@@ -140,7 +140,7 @@ export class FormView extends View {
   }
 
   private _updateGroupValidatity( groupName: string ){
-    let groupModel = this.models.get( FormView.getKey( groupName, "form" ) ),
+    let groupModel = this.models.get( FormView.getKey( groupName, "group" ) ),
         states = new ControlUpdateStates(),
         curValid: boolean,
         curDirty: boolean;
@@ -161,7 +161,7 @@ export class FormView extends View {
   private static filterModels( models: NgBackbone.ModelMap, groupName: string ): NgBackbone.ModelMap {
     let filtered: NgBackbone.ModelMap = mapFrom({});
     models.forEach(( model: GroupState, key: string ) => {
-      if ( key !==  `${groupName}.form` && key.startsWith( `${groupName}.` ) ) {
+      if ( key !==  `${groupName}.group` && key.startsWith( `${groupName}.` ) ) {
         filtered.set( key, model );
       }
     });
@@ -178,7 +178,7 @@ export class FormView extends View {
       .forEach(( model: FormState, key: string ) => {
         let tmp: string, controlName: string;
         [ tmp, controlName ] = key.split( "." );
-        if ( controlName === "form" ){
+        if ( controlName === "group" ){
           return;
         }
         data[ controlName ] = model.get( "value" );

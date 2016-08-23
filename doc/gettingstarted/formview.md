@@ -12,7 +12,7 @@ For example we have a template:
   </div>
 </form>
 ```
-Until anything typed in to the input, it's invalid according to `required` restrictor. Thus template variable `foo.bar.valid` is `false` and the template shows container with error message. If we typed in a wrong value for email address `foo.bar.valid` again has 'false' and we can see the message. We can also access the sate of the group as `foo.form`. See below Control/Group State Model Interface for available properties.
+Until anything typed in to the input, it's invalid according to `required` restrictor. Thus template variable `foo.bar.valid` is `false` and the template shows container with error message. If we typed in a wrong value for email address `foo.bar.valid` again has 'false' and we can see the message. We can also access the sate of the group as `foo.group`. See below Control/Group State Model Interface for available properties.
 
 ## FormView Interface
 
@@ -114,7 +114,7 @@ import { Component, FormView } from "ng-backbone/core";
       Power is invalid <i ng-data-text="hero.name.validationMessage"></i>
     </div>
 
-    <button type="submit" data-ng-prop="'disabled', !hero.form.valid">Submit</button>
+    <button type="submit" data-ng-prop="'disabled', !hero.group.valid">Submit</button>
 
     </form>
 

@@ -69,7 +69,7 @@ export default function HeroSpec(){
        name.value = "bar";
 
        this.view.models
-        .get( "hero.form" )
+        .get( "hero.group" )
         .checkValidity();
 
        expect( this.view.el.textContent ).not.toMatch( "Power is required" );
