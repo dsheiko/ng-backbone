@@ -125,6 +125,10 @@ export class FormView extends View {
      let onChange = () => {
        inputModel.onInputChange( inputEl );
      };
+     // Populate state object on autocomplete
+     setTimeout(() => {
+       inputModel.setState( inputEl );
+     }, 100 );
 
      this.delegate( "change", sel, onChange );
      this.delegate( "input", sel, onChange );
@@ -152,7 +156,7 @@ export class FormView extends View {
      });
 
     curValid = !states.valid.some( toogle => toogle === false );
-    curDirty = states.dirty.every( toogle => toogle );
+    curDirty = states.dirty.some( toogle => toogle );
     groupModel.set( "valid", curValid );
     groupModel.set( "dirty", curDirty );
     // console.info( `group ${groupName}: valid: ${curValid}, dirty: ${curDirty}` );

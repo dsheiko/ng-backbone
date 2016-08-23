@@ -142,8 +142,11 @@ export class FormState extends Model {
    * Handle change/input events on the input
    */
   onInputChange( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ){
-
     this.set( "dirty", true, SILENT );
+    this.setState( el );
+  }
+
+  setState( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ){
     if ( !this.isCheckboxRadio( el ) ) {
       this.set( "value", el.value, SILENT );
       this.validateRequired( el );

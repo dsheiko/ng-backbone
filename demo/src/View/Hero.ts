@@ -23,7 +23,7 @@ import { HeroPowerCollection } from "../Collection/HeroPower";
         <datalist id="names">
           <option data-ng-for="let n of names" data-ng-prop="'value', n.item">
         </datalist>
-        <div class="alert alert-danger" data-ng-if="!hero.name.valid">
+        <div class="alert alert-danger" data-ng-if="hero.group.dirty && !hero.name.valid">
           Name is required
         </div>
       </div>
@@ -33,7 +33,7 @@ import { HeroPowerCollection } from "../Collection/HeroPower";
         <select id="power" name="power" class="form-control" required>
           <option data-ng-for="let p of powers" data-ng-text="p.item" >Nothing here</option>
         </select>
-        <div class="alert alert-danger" data-ng-if="hero.power.dirty && !hero.power.valid">
+        <div class="alert alert-danger" data-ng-if="hero.group.dirty && !hero.power.valid">
           Power is required
         </div>
       </div>
