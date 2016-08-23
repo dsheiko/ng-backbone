@@ -6,6 +6,9 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var abstract_directive_1 = require("./abstract-directive");
 var exception_1 = require("./exception");
+var constants_1 = require("./constants");
+var tokenizer_1 = require("./expression/tokenizer");
+var exception_2 = require("./expression/exception");
 var counter = 0;
 // <div data-ng:for="let hero of data.heroes" data-ng:text="hero" ></div>
 var NgFor = (function (_super) {
@@ -32,13 +35,16 @@ var NgFor = (function (_super) {
                 exp: function (data, cb) {
                     var it = [];
                     try {
-                        eval("it = data." + parsed.iterable);
+                        it = tokenizer_1.ReferenceToken.findValue(parsed.iterable, data);
                     }
                     catch (err) {
-                        throw new exception_1.Exception("NgTemplate variable " + parsed.iterable + " undefined");
+                        if (!(err instanceof exception_2.ExpressionException)) {
+                            throw new exception_1.Exception("Invalid ng* expression " + expr);
+                        }
+                        reporter.addLog((constants_1.ERROR_CODES.NGT0003 + ": ") + err.message);
                     }
                     if (!Array.isArray(it)) {
-                        throw new exception_1.Exception("NgTemplate variable " + parsed.iterable + " must be an array");
+                        it = [];
                     }
                     if (cache.match(JSON.stringify(it))) {
                         return false;

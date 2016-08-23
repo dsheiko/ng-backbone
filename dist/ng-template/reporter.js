@@ -3,11 +3,15 @@ var Reporter = (function () {
     function Reporter() {
         this.data = {
             errors: [],
+            log: [],
             tokens: []
         };
     }
     Reporter.prototype.addError = function (msg) {
         this.data.errors.push(msg);
+    };
+    Reporter.prototype.addLog = function (msg) {
+        this.data.log.push(msg);
     };
     Reporter.prototype.addTokens = function (tokens) {
         var merge = tokens.map(function (token) { return token.toJSON(); });

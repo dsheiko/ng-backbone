@@ -4,6 +4,10 @@
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
+// NgBackbone extends Backbone.Nativeview, but if it's not loaded, works also fine
+if (!("NativeView" in Backbone)) {
+    Backbone.NativeView = Backbone.View;
+}
 /**
  * Facade
  */

@@ -63,7 +63,7 @@ var FormView = (function (_super) {
         return Array.from(this.el.querySelectorAll("[data-ng-group]"));
     };
     /**
-     * Bind a given form to State model ( myform.form = state model )
+     * Bind a given form to State model ( myform.group = state model )
      */
     FormView.prototype._bindGroup = function (el, groupName) {
         if (this.models.has(groupName)) {
@@ -72,7 +72,7 @@ var FormView = (function (_super) {
         // make sure form is not self-validated
         el.setAttribute("novalidate", "true");
         var model = new formstate_1.GroupState({ formValidators: this.formValidators });
-        this.models.set(FormView.getKey(groupName, "form"), model);
+        this.models.set(FormView.getKey(groupName, "group"), model);
         this.stopListening(model);
         this.options.logger && this.trigger("log:listen", "subscribes for `change`", model);
         this.listenTo(model, "change", this.render);
@@ -134,7 +134,7 @@ var FormView = (function (_super) {
         this.render();
     };
     FormView.prototype._updateGroupValidatity = function (groupName) {
-        var groupModel = this.models.get(FormView.getKey(groupName, "form")), states = new ControlUpdateStates(), curValid, curDirty;
+        var groupModel = this.models.get(FormView.getKey(groupName, "group")), states = new ControlUpdateStates(), curValid, curDirty;
         FormView.filterModels(this.models, groupName)
             .forEach(function (model) {
             states.valid.push(model.get("valid"));
@@ -149,7 +149,7 @@ var FormView = (function (_super) {
     FormView.filterModels = function (models, groupName) {
         var filtered = utils_1.mapFrom({});
         models.forEach(function (model, key) {
-            if (key !== groupName + ".form" && key.startsWith(groupName + ".")) {
+            if (key !== groupName + ".group" && key.startsWith(groupName + ".")) {
                 filtered.set(key, model);
             }
         });
@@ -164,7 +164,7 @@ var FormView = (function (_super) {
             .forEach(function (model, key) {
             var tmp, controlName;
             _a = key.split("."), tmp = _a[0], controlName = _a[1];
-            if (controlName === "form") {
+            if (controlName === "group") {
                 return;
             }
             data[controlName] = model.get("value");

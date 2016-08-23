@@ -3,8 +3,8 @@ var utils_1 = require("./utils");
 function Component(options) {
     var mixin = {
         _component: {
-            models: utils_1.mapFrom(options.models),
-            collections: utils_1.mapFrom(options.collections),
+            models: options.models,
+            collections: options.collections,
             views: utils_1.mapFrom(options.views),
             template: options.template,
         },

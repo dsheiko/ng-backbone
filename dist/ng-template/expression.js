@@ -59,7 +59,7 @@ function treatException(err, expr, reporter) {
     if (!(err instanceof exception_2.ExpressionException)) {
         throw new exception_1.Exception("Invalid ng* expression " + expr);
     }
-    reporter.addError((constants_1.ERROR_CODES.NGT0003 + ": ") + err.message);
+    reporter.addLog((constants_1.ERROR_CODES.NGT0003 + ": ") + err.message);
 }
 /**
  * Create evaluation function for expressions like "prop, value"
