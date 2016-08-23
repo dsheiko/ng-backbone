@@ -56,8 +56,8 @@ export class ViewHelper {
   static bindCollections( view: View ){
     view.collections.forEach(( collection: Backbone.Collection<Backbone.Model> ) => {
       view.stopListening( collection );
-      view.options.logger && view.trigger( "log:listen", "subscribes for `change destroy sync sort`", collection );
-      view.listenTo( collection, "change destroy sync sort", ( ...args: any[] ) => {
+      view.options.logger && view.trigger( "log:listen", "subscribes for `change destroy sync sort add`", collection );
+      view.listenTo( collection, "change destroy sync sort add", ( ...args: any[] ) => {
         // Slightly debounced for repeating calls like collection.sync/sort
         clearTimeout( view._debounceTimer );
         view._debounceTimer = <any>setTimeout(() => {
