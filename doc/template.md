@@ -1,7 +1,7 @@
 
 # Template Syntax
 
-[NgTemplate](https://github.com/dsheiko/ng-template) is a light-weight DOM-based template engine, inspired by AngularJS.
+[ngTemplate](https://github.com/dsheiko/ng-template) is a light-weight DOM-based template engine, inspired by AngularJS.
 
 
 ## Template expressions

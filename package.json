@@ -1,6 +1,6 @@
 {
   "name": "ng-backbone",
-  "title": "NG.Backbone",
+  "title": "ngBackbone",
   "description": "A small extension of Backbone.js that unlocks Angular-like programming experience",
   "author": "Dmitry Sheiko",
   "main": "./src",

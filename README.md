@@ -1,28 +1,29 @@
-# NgBackbone 1.0 BETA
+# ngBackbone 1.0 RC1
 
 [![NPM](https://nodei.co/npm/ng-backbone.png)](https://nodei.co/npm/ng-backbone/)
 
 [![Build Status](https://travis-ci.org/dsheiko/ng-backbone.png)](https://travis-ci.org/dsheiko/ng-backbone)
 
-`NgBackbone` is a small extension of [Backbone.js](http://backbonejs.org/) that unlocks Angular-like programming experience
+`ngBackbone` is a small extension of [Backbone.js](http://backbonejs.org/) that unlocks Angular-like programming experience
 
 Well, I love old good Backbone for its simplicity and flexibility. However after working with such frameworks as Angular and React, I see that Backbone app requires much more code. Yet I don't want to ditch Backbone and deal with some 20K LOC framework codebase. I just want a minimal modular extension that will improve my programming experience and maintainability of my code.
-And that is how I came up with `NgBackbone`
+And that is how I came up with `ngBackbone`
 
 
 ## Motivation
-* Angular inspired live templates via [NgTemplate](https://github.com/dsheiko/ng-template)
+* Angular inspired live templates via [ngTemplate](https://github.com/dsheiko/ng-template)
 * Separation of declarative (@Component + template) and impreative programming
 * 2-way binding
 * Testable views
-* Control over nested views*
+* Control over nested views
 * Asynchronous form validators (e.g. server-side validation)
 * Debauncable form validators
 * Fluent TypeScript programming experience
 
 
 ## What does it do?
-`NgBackbone` extends the base with:
+
+`ngBackbone` extends the base with:
 * View module + @Component decorator that provide 1-way binding and control over nested views
 * FormView module that gives 2-way binding
 
@@ -30,9 +31,10 @@ And that is how I came up with `NgBackbone`
 `Ng.Backbone` does not depend on jQuery or Underscore, meaning you can use on an optimized build of Backbone. For example,
 my preferred  build consists of [Exoskeleton](https://github.com/paulmillr/exoskeleton) (Backbone decoupled from Underscore), [Backbone.NativeView](https://github.com/akre54/Backbone.NativeView) (Backbone View decoupled from jQuery) and
 [Backbone.Fetch](https://github.com/akre54/Backbone.Fetch) (Backbone.sync leveraging Feth API instead of XHR)
+Though `Ng.Backbone` works fine with canonical Backbone bundle (Backbone + jQuery + Underscore)
 
 
-## How does it look?
+## What does it look like?
 
 
 ```javascript
@@ -72,7 +74,7 @@ import { HeroPowers } from "./Collection/HeroPowers";
 
 export class HeroView extends FormView {
   el: HTMLElement;
-  models: NgBackbone.ModelMap;
+  models: ngBackbone.ModelMap;
 
   initialize() {
     this.models.get( "powers" ).fetch();
@@ -88,15 +90,17 @@ export class HeroView extends FormView {
 
 ```
 
-# Documentation
+# How to
 
-* [View Module and @Component](./doc/gettingstarted/view.md)
-* [FormView Module](./doc/gettingstarted/formview.md)
-* [Template syntax](./doc/gettingstarted/template.md)
+* [View Module and @Component](./doc/view.md)
+* [FormView Module](./doc/formview.md)
+* [Template syntax](./doc/template.md)
+
+[ngBackbone.Book](https://www.gitbook.com/book/dsheiko/ng-backbone/details)
 
 ## Contributing
 
-`NgBackbone` welcomes maintainers. There is plenty of work to do. No big commitment required,
+`ngBackbone` welcomes maintainers. There is plenty of work to do. No big commitment required,
 if all you do is review a single Pull Request, you are a maintainer.
 
 
@@ -111,7 +115,7 @@ typings install
 ### How to build
 
 ```
-tsc
+npm run build
 ```
 
 ### How to run tests

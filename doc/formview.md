@@ -18,7 +18,7 @@ Until anything typed in to the input, it's invalid according to `required` restr
 
 ```javascript
 interface FormView extends View {
-  getData( groupName: string ): NgBackbone.DataMap<string | boolean>;
+  getData( groupName: string ): ngBackbone.DataMap<string | boolean>;
 }
 ```
 

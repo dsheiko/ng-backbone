@@ -14,7 +14,7 @@
   className?: string,
   tagName?: string,
 
-  // NgBackbone @Component options
+  // ngBackbone @Component options
   template: string; // string that compiles to the template
   models?: Models | {}; // a map of all models that we bind to template scope
   collections?: Collections | {}; // a map of all collections that we bind to template scope
@@ -29,14 +29,14 @@
 
 ```javascript
 interface View extends Backbone.NativeView {
-  constructor(options?: NgBackbone.ViewOptions);
+  constructor(options?: ngBackbone.ViewOptions);
   render(): View;
-  listenToMap( eventEmitter: Backbone.Events, event: NgBackbone.DataMap ): View;
+  listenToMap( eventEmitter: Backbone.Events, event: ngBackbone.DataMap ): View;
   remove(): View;
 }
 
 ```
-`View` creates an instance of NgTemplate based on specified bounding element and template code. It binds models/collections of the given maps to the template. E.g. models: `{ foo: new Model() }` becomes available in the template scope as `foo`. As soon the model changes (`this.models.get("foo").set("bar", "value")`) the template responds (`foo.bar === "value"`);
+`View` creates an instance of ngTemplate based on specified bounding element and template code. It binds models/collections of the given maps to the template. E.g. models: `{ foo: new Model() }` becomes available in the template scope as `foo`. As soon the model changes (`this.models.get("foo").set("bar", "value")`) the template responds (`foo.bar === "value"`);
 
 ```javascript
 import { Component, View, Model, Collection } from "ng-backbone/core";
@@ -77,7 +77,7 @@ export class HeroView extends FormView {
 ## ViewOptions
 
 ```javascript
-interface NgBackbone.ViewOptions extends Backbone.ViewOptions<Backbone.Model> {
+interface ngBackbone.ViewOptions extends Backbone.ViewOptions<Backbone.Model> {
   models?: Models | {}; // injected shared model map
   collections?: Collections | {}; // injected shared collection map
   formValidators?: { [key: string]: Function; }; // form validator map
