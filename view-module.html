@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html lang="" >
     <head>
-        <title>Introduction · GitBook</title>
+        <title>View Module · GitBook</title>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -59,8 +59,10 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="component.html" />
+    <link rel="next" href="view-options.html" />
     
+    
+    <link rel="prev" href="component.html" />
     
 
     </head>
@@ -89,7 +91,7 @@
         
         
     
-        <li class="chapter active" data-level="1.1" data-path="./">
+        <li class="chapter " data-level="1.1" data-path="./">
             
                 <a href="./">
             
@@ -115,7 +117,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3" data-path="view-module.html">
+        <li class="chapter active" data-level="1.3" data-path="view-module.html">
             
                 <a href="view-module.html">
             
@@ -235,7 +237,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="." >Introduction</a>
+        <a href="." >View Module</a>
     </h1>
 </div>
 
@@ -250,87 +252,46 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <a href="#fork"></a><a class="fork" href="https://github.com/dsheiko/ng-backbone" target="_blank"></a>
-                                    <h1 id="ngbackbone">ngBackbone</h1><p><a href="https://github.com/dsheiko/ng-backbone" target="_blank">ngBackbone</a> is a small extension of <a href="http://backbonejs.org/" target="_blank">Backbone.js</a> that unlocks Angular-like programming experience</p><p>Well, I love old good Backbone for its simplicity and flexibility. However after working with such frameworks as Angular and React, I see that Backbone app requires much more code. Yet I don&apos;t want to ditch Backbone and deal with some 20K LOC framework codebase. I just want a minimal modular extension that will improve my programming experience and maintainability of my code.
-And that is how I came up with <code>ngBackbone</code></p><h2 id="motivation">Motivation</h2><ul><li>Angular inspired live templates via <a href="https://github.com/dsheiko/ng-template" target="_blank">ngTemplate</a>
-</li>
-<li>Separation of declarative (@Component + template) and impreative programming
-</li>
-<li>2-way binding
-</li>
-<li>Testable views
-</li>
-<li>Control over nested views
-</li>
-<li>Asynchronous form validators (e.g. server-side validation)
-</li>
-<li>Debauncable form validators
-</li>
-<li>Fluent TypeScript programming experience
-</li></ul>
-<h2 id="what-does-it-do">What does it do?</h2><p><code>ngBackbone</code> extends the base with:</p><ul><li>View module + @Component decorator that provide 1-way binding and control over nested views
-</li>
-<li>FormView module that gives 2-way binding
-</li></ul>
-<p><code>Ng.Backbone</code> does not depend on jQuery or Underscore, meaning you can use on an optimized build of Backbone. For example,
-my preferred  build consists of <a href="https://github.com/paulmillr/exoskeleton" target="_blank">Exoskeleton</a> (Backbone decoupled from Underscore), <a href="https://github.com/akre54/Backbone.NativeView" target="_blank">Backbone.NativeView</a> (Backbone View decoupled from jQuery) and
-<a href="https://github.com/akre54/Backbone.Fetch" target="_blank">Backbone.Fetch</a> (Backbone.sync leveraging Feth API instead of XHR)
-Though <code>Ng.Backbone</code> works fine with canonical Backbone bundle (Backbone + jQuery + Underscore)</p><h2 id="what-does-it-look-like">What does it look like?</h2><pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { Component, FormView } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;backbone-ng/core&quot;</span>;
-<span class="hljs-keyword">import</span> { HeroPowers } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./Collection/HeroPowers&quot;</span>;
+                                <h1 id="view-module">View Module</h1><h2 id="interface">Interface</h2><pre><code class="lang-javascript">interface View extends Backbone.NativeView {
+  <span class="hljs-keyword">constructor</span>(options?: ngBackbone.ViewOptions);
+  render(): View;
+  listenToMap( eventEmitter: Backbone.Events, event: ngBackbone.DataMap ): View;
+  remove(): View;
+}
+</code></pre>
+<p><code>View</code> creates an instance of ngTemplate based on specified bounding element and template code. It binds models/collections of the given maps to the template. E.g. models: <code>{ foo: new Model() }</code> becomes available in the template scope as <code>foo</code>. As soon the model changes (<code>this.models.get(&quot;foo&quot;).set(&quot;bar&quot;, &quot;value&quot;)</code>) the template responds (<code>foo.bar === &quot;value&quot;</code>);</p><pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { Component, View, Model, Collection } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;../ng-backbone/core&quot;</span>;
 
 @Component({
   el: <span class="hljs-string">&quot;ng-hero&quot;</span>,
-  events: {
-    <span class="hljs-string">&quot;submit form&quot;</span>: <span class="hljs-string">&quot;onSubmitForm&quot;</span>
+  models: {
+    hero: <span class="hljs-keyword">new</span> Model({
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;Superman&quot;</span>
+    })
   },
   collections: {
-    powers: <span class="hljs-keyword">new</span> HeroPowers()
+    powers: <span class="hljs-keyword">new</span> Collection([
+      { name: <span class="hljs-string">&quot;Superhuman strength&quot;</span> },
+      { name: <span class="hljs-string">&quot;Flight&quot;</span> }
+      { name: <span class="hljs-string">&quot;Freezing breath&quot;</span> }
+    ])
   },
+
   template: <span class="hljs-string">`
-    &lt;form data-ng-group=&quot;hero&quot; novalidate&gt;
-      &lt;div class=&quot;form-group&quot;&gt;
-        &lt;label for=&quot;name&quot;&gt;Name&lt;/label&gt;
-        &lt;input id=&quot;name&quot; name=&quot;name&quot; type=&quot;text&quot; class=&quot;form-control&quot; required &gt;
-        &lt;div class=&quot;alert alert-danger&quot; data-ng-if=&quot;hero.name.valueMissing&quot;&gt;
-          Name is required
-        &lt;/div&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;form-group&quot;&gt;
-        &lt;label for=&quot;power&quot;&gt;Hero Power&lt;/label&gt;
-        &lt;select id=&quot;power&quot; name=&quot;power&quot; class=&quot;form-control&quot; pattern=&quot;.{2}&quot;&gt;
-          &lt;option data-ng-for=&quot;let p of powers&quot; data-ng-text=&quot;p.name&quot; &gt;Nothing here&lt;/option&gt;
-        &lt;/select&gt;
-        &lt;div class=&quot;alert alert-danger&quot; data-ng-if=&quot;hero.power.dirty &amp;&amp; !hero.power.valid&quot;&gt;
-          Power is required
-        &lt;/div&gt;
-      &lt;/div&gt;
-       &lt;button type=&quot;submit&quot; class=&quot;btn btn-default&quot; data-ng-prop=&quot;&apos;disabled&apos;, !hero.group.valid&quot;&gt;Submit&lt;/button&gt;\n\
-    &lt;/form&gt;
+    &lt;p&gt;&lt;strong data-ng-text=&quot;hero.title&quot;&gt;&lt;/strong&gt; has powers:&lt;/p&gt;
+    &lt;dl data-ng-for=&quot;let p of powers&quot;&gt;
+      &lt;dt data-ng-text=&quot;p.name&quot;&gt;&lt;/dt&gt;
+    &lt;/dl&gt;
 `</span>
 })
 
 <span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HeroView</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">FormView</span> </span>{
-  el: HTMLElement;
-  models: ngBackbone.ModelMap;
 
   initialize() {
-    <span class="hljs-keyword">this</span>.models.get( <span class="hljs-string">&quot;powers&quot;</span> ).fetch();
     <span class="hljs-keyword">this</span>.render();
-  }
-
-  onSubmitForm( e:Event ){
-    e.preventDefault();
-    alert( <span class="hljs-string">&quot;Form submitted&quot;</span> )
   }
 
 }
 </code></pre>
-<p><a href="https://www.gitbook.com/book/dsheiko/ng-backbone/details" target="_blank">ngBackbone.Book</a></p><h2 id="contributing">Contributing</h2><p><code>ngBackbone</code> welcomes maintainers. There is plenty of work to do. No big commitment required,
-if all you do is review a single Pull Request, you are a maintainer.</p><h3 id="how-to-set-up">How to set up</h3><pre><code>npm install typescript -g
-npm install
-typings install</code></pre>
-<h3 id="how-to-build">How to build</h3><pre><code>npm run build</code></pre>
-<h3 id="how-to-run-tests">How to run tests</h3><pre><code>npm run test</code></pre>
 
                                 
                                 </section>
@@ -358,8 +319,12 @@ typings install</code></pre>
 
             
                 
+                <a href="component.html" class="navigation navigation-prev " aria-label="Previous page: @Component Decorator">
+                    <i class="fa fa-angle-left"></i>
+                </a>
                 
-                <a href="component.html" class="navigation navigation-next navigation-unique" aria-label="Next page: @Component Decorator">
+                
+                <a href="view-options.html" class="navigation navigation-next " aria-label="Next page: View Options">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -370,7 +335,7 @@ typings install</code></pre>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Introduction","level":"1.1","depth":1,"next":{"title":"@Component Decorator","level":"1.2","depth":1,"path":"component.md","ref":"component.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2016-08-24T14:38:48.917Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-08-24T14:39:13.360Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"View Module","level":"1.3","depth":1,"next":{"title":"View Options","level":"1.3.1","depth":2,"path":"view-options.md","ref":"view-options.md","articles":[]},"previous":{"title":"@Component Decorator","level":"1.2","depth":1,"path":"component.md","ref":"component.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"view-module.md","mtime":"2016-08-24T14:38:48.921Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-08-24T14:39:13.360Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

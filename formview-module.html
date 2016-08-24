@@ -1,0 +1,454 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <title>FormView Module · GitBook</title>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.0">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="styles/website.css">
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="state-model.html" />
+    
+    
+    <link rel="prev" href="logging-events.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="component.html">
+            
+                <a href="component.html">
+            
+                    
+                    @Component Decorator
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="view-module.html">
+            
+                <a href="view-module.html">
+            
+                    
+                    View Module
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="view-options.html">
+            
+                <a href="view-options.html">
+            
+                    
+                    View Options
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="subviews.html">
+            
+                <a href="subviews.html">
+            
+                    
+                    Subviews
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="logging-events.html">
+            
+                <a href="logging-events.html">
+            
+                    
+                    Logging Events
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4" data-path="formview-module.html">
+            
+                <a href="formview-module.html">
+            
+                    
+                    FormView Module
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="state-model.html">
+            
+                <a href="state-model.html">
+            
+                    
+                    State Model
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >FormView Module</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="formview-module">FormView Module</h1><p>This module is developed to simplify working forms. What do we usually do with Backbone? We subscribe for control change events and write view methods that update view as its state changes. <code>FormView</code> does it for us. It extracts the groups marked in the template with <code>data-ng-group=&quot;groupName&quot;</code>.
+Within every found group it collects all the available controls <code>input[name], textarea[name], select[name]</code> and binds it to state models respectively. So when state of a control/group changes (e.g. validation fails) that gets available within the template immediately.</p><p>For example we have a template:</p><pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">data-ng-group</span>=<span class="hljs-string">&quot;foo&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;bar&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;email&quot;</span> <span class="hljs-attr">required</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">data-ng-if</span>=<span class="hljs-string">&quot;!foo.bar.valid&quot;</span>&gt;</span>
+    Invalid value
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></code></pre>
+<p>Until anything typed in to the input, it&apos;s invalid according to <code>required</code> restrictor. Thus template variable <code>foo.bar.valid</code> is <code>false</code> and the template shows container with error message. If we typed in a wrong value for email address <code>foo.bar.valid</code> again has &apos;false&apos; and we can see the message. We can also access the sate of the group as <code>foo.group</code>. See below Control/Group State Model Interface for available properties.</p><h2 id="interface">Interface</h2><pre><code class="lang-javascript">interface FormView extends View {
+  getData( groupName: string ): ngBackbone.DataMap&lt;string | boolean&gt;;
+}</code></pre>
+<h2 id="form-validation">Form Validation</h2><p><code>FormView</code> subscribes for &quot;input&quot;, &quot;change&quot; and &quot;focus&quot; events on the found controls. Whenever an event fires it updates the <code>ControlState</code>. If the state model reports that <code>valid</code> or <code>touched</code> property changed, <code>FormView</code> updates the <code>GroupState</code>.</p><p><code>FormView</code> contains following built-in validators:</p><ul><li><code>valueMissing</code> - if the control has <code>required</code> attribute and an empty value, <code>ControlState.valueMissing</code> is set <code>false</code>
+</li>
+<li><code>patternMismatch</code> - if the control has <code>pattern</code> attribute and a value that does not match the specified pattern, <code>ControlState.patternMismatch</code> is set <code>false</code>
+</li>
+<li><code>rangeOverflow</code> - if the control has <code>max</code> attribute and a value greater than specified in the attribute, <code>ControlState.rangeOverflow</code> is set <code>false</code>
+</li>
+<li><code>rangeUnderflow</code> - if the control has <code>min</code> attribute and a value less than specified in the attribute, <code>ControlState.rangeUnderflow</code> is set <code>false</code>
+</li>
+<li><code>typeMismatch</code> - if the control has type <code>email</code>, <code>tel</code> or <code>url</code> and a value that does not match the corresponding type, <code>ControlState.typeMismatch</code> is set <code>false</code>
+</li></ul>
+<p>If any of validations fails <code>ControlState.validationMessage</code> receives the corresponding error message.</p><p>Examples:</p><pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;name&quot;</span>  <span class="hljs-attr">required</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">data-ng-if</span>=<span class="hljs-string">&quot;hero.name.valueMissing&quot;</span>&gt;</span>
+  Name is required
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+..
+<span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;age&quot;</span>  <span class="hljs-attr">min</span>=<span class="hljs-string">&quot;18&quot;</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;100&quot;</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">data-ng-if</span>=<span class="hljs-string">&quot;hero.age.valueMissing.rangeOverflow || hero.age.valueMissing.rangeUnderflow&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">data-ng-text</span>=<span class="hljs-string">&quot;hero.age.validationMessage&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<h2 id="viewform-example">ViewForm Example</h2><pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { Component, FormView } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;ng-backbone/core&quot;</span>;
+
+
+@Component({
+  el: <span class="hljs-string">&quot;ng-hero&quot;</span>,
+  events: {
+    <span class="hljs-string">&quot;submit form&quot;</span>: <span class="hljs-string">&quot;onSubmitForm&quot;</span>
+  },
+  template: <span class="hljs-string">`
+    &lt;form data-ng-group=&quot;hero&quot; novalidate&gt;
+
+    &lt;label for=&quot;name&quot;&gt;Name
+      &lt;input name=&quot;name&quot; type=&quot;text&quot; required &gt;
+    &lt;/label&gt;
+    &lt;div data-ng-if=&quot;!hero.name.valid&quot;&gt;
+      Name is invalid &lt;i ng-data-text=&quot;hero.name.validationMessage&quot;&gt;&lt;/i&gt;
+    &lt;/div&gt;
+
+    &lt;label for=&quot;power&quot;&gt;Hero Power
+      &lt;select id=&quot;power&quot; name=&quot;power&quot; class=&quot;form-control&quot; required&gt;
+        &lt;option&gt;Superhuman strength&lt;/option&gt;
+        &lt;option&gt;Flight&lt;/option&gt;
+        &lt;option&gt;Freezing breath&lt;/option&gt;
+      &lt;/select&gt;
+    &lt;/label&gt;
+
+    &lt;div data-ng-if=&quot;!hero.power.valid&quot;&gt;
+      Power is invalid &lt;i ng-data-text=&quot;hero.name.validationMessage&quot;&gt;&lt;/i&gt;
+    &lt;/div&gt;
+
+    &lt;button type=&quot;submit&quot; data-ng-prop=&quot;&apos;disabled&apos;, !hero.group.valid&quot;&gt;Submit&lt;/button&gt;
+
+    &lt;/form&gt;
+
+`</span>
+})
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HeroView</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">FormView</span> </span>{
+
+  initialize() {
+    <span class="hljs-keyword">this</span>.render();
+  }
+
+  onSubmitForm( e:Event ){
+    e.preventDefault();
+    alert( <span class="hljs-string">&quot;Form submitted&quot;</span> );
+  }
+
+}
+</code></pre>
+<h2 id="custom-type-validation">Custom Type Validation</h2><p>You can set up your own custom type validators like that:</p><pre><code class="lang-javascript">@Component({
+  el: <span class="hljs-string">&quot;ng-hero&quot;</span>,
+  formValidators: {
+    hexcolor( value: string ): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-keyword">void</span>&gt; {
+        <span class="hljs-keyword">let</span> pattern = <span class="hljs-regexp">/^#(?:[0-9a-f]{3}){1,2}$/i</span>;
+        <span class="hljs-keyword">if</span> ( pattern.test( value  ) ) {
+          <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.resolve();
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.reject( <span class="hljs-string">&quot;Please enter a valid hexcolor e.g. #EEEAAA&quot;</span> );
+      }
+  },
+  template: <span class="hljs-string">`
+    &lt;form data-ng-group=&quot;hero&quot; novalidate&gt;
+      &lt;input name=&quot;color&quot; type=&quot;hexcolor&quot; /&gt;
+    &lt;/form&gt;
+
+`</span>
+})
+</code></pre>
+<p>Every validator is a callback that returns a Promise. If validation passes the Promised resolves. Otherwise it rejects with error message passed as an argument</p><h2 id="remote-type-validation">Remote Type Validation</h2><p>You can also have a validation that happens on the server.</p><pre><code class="lang-javascript">
+<span class="hljs-keyword">import</span> { Component, FormView, FormValidators, Debounce } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;ng-backbone/core&quot;</span>;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CustomValidators</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">FormValidators</span> </span>{
+   @Debounce( <span class="hljs-number">350</span> )
+   name( value: string ): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-keyword">void</span>&gt; {
+      <span class="hljs-keyword">return</span> NamerModel.fetch();
+   }
+}
+
+@Component({
+  el: <span class="hljs-string">&quot;ng-hero&quot;</span>,
+  formValidators: CustomValidators,
+  template: <span class="hljs-string">`
+    &lt;form data-ng-group=&quot;hero&quot; novalidate&gt;
+      &lt;input name=&quot;color&quot; type=&quot;hexcolor&quot; /&gt;
+    &lt;/form&gt;
+
+`</span>
+})
+</code></pre>
+<p><code>FormView</code> class the validator with every input event that is by default debounced 100ms. For validation via XHR request you may need greater debounce. We use <code>@Debounce()</code> validator to set it.</p>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="logging-events.html" class="navigation navigation-prev " aria-label="Previous page: Logging Events">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="state-model.html" class="navigation navigation-next " aria-label="Next page: State Model">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"FormView Module","level":"1.4","depth":1,"next":{"title":"State Model","level":"1.4.1","depth":2,"path":"state-model.md","ref":"state-model.md","articles":[]},"previous":{"title":"Logging Events","level":"1.3.3","depth":2,"path":"logging-events.md","ref":"logging-events.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"formview-module.md","mtime":"2016-08-24T14:38:48.913Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-08-24T14:39:13.360Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
