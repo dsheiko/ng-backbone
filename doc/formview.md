@@ -1,4 +1,4 @@
-# FormView
+# FormView Module
 
 This module is developed to simplify working forms. What do we usually do with Backbone? We subscribe for control change events and write view methods that update view as its state changes. `FormView` does it for us. It extracts the groups marked in the template with `data-ng-group="groupName"`.
 Within every found group it collects all the available controls `input[name], textarea[name], select[name]` and binds it to state models respectively. So when state of a control/group changes (e.g. validation fails) that gets available within the template immediately.
@@ -19,6 +19,7 @@ Until anything typed in to the input, it's invalid according to `required` restr
 ```javascript
 interface FormView extends View {
   getData( groupName: string ): ngBackbone.DataMap<string | boolean>;
+  reset( groupName: string ): void;
 }
 ```
 

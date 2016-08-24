@@ -33,6 +33,7 @@ my preferred  build consists of [Exoskeleton](https://github.com/paulmillr/exosk
 [Backbone.Fetch](https://github.com/akre54/Backbone.Fetch) (Backbone.sync leveraging Feth API instead of XHR)
 Though `Ng.Backbone` works fine with canonical Backbone bundle (Backbone + jQuery + Underscore)
 
+* [Live Demo](https://dsheiko.github.io/ng-backbone/demo.html)
 
 ## What does it look like?
 

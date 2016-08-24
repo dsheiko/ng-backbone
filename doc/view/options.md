@@ -1,4 +1,4 @@
-# ViewOptions
+# View Options
 
 ## Interface
 ```javascript

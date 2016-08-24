@@ -61,6 +61,7 @@ export class HeroView extends FormView {
         data = this.getData( "hero" );
 
     el.reset();
+    this.reset( "hero" );
     if ( data[ "name" ] ) {
       collection.create( data, {
         error: console.error
