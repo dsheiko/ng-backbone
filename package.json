@@ -4,7 +4,7 @@
   "description": "A small extension of Backbone.js that unlocks Angular-like programming experience",
   "author": "Dmitry Sheiko",
   "main": "./src",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "start": "http-server . -o",
     "build:demo": "tsc -p demo",
@@ -29,7 +29,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:dsheiko/backbone-abstract.git"
+    "url": "git@github.com:dsheiko/ng-backbone.git"
   },
   "devDependencies": {
     "backbone.fetch": "^0.2.4",
