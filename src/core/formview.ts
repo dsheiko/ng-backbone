@@ -146,11 +146,15 @@ export class FormView extends View {
   private _updateGroupValidatity( groupName: string ){
     let groupModel = this.models.get( FormView.getKey( groupName, "group" ) ),
         states = new ControlUpdateStates(),
+        validationMessage: string = "",
         curValid: boolean,
         curDirty: boolean;
 
     FormView.filterModels( this.models, groupName )
         .forEach(( model: ControlState ) => {
+        if ( model.get( "validationMessage" ) )  {
+          validationMessage  = model.get( "validationMessage" );
+        }
         states.valid.push( model.get( "valid" ) );
         states.dirty.push( model.get( "dirty" ) );
      });
@@ -159,7 +163,7 @@ export class FormView extends View {
     curDirty = states.dirty.some( toogle => toogle );
     groupModel.set( "valid", curValid );
     groupModel.set( "dirty", curDirty );
-    // console.info( `group ${groupName}: valid: ${curValid}, dirty: ${curDirty}` );
+    groupModel.set( "validationMessage", validationMessage );
   }
 
   private static filterModels( models: NgBackbone.ModelMap, groupName: string ): NgBackbone.ModelMap {

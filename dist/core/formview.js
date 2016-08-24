@@ -123,6 +123,10 @@ var FormView = (function (_super) {
         var onChange = function () {
             inputModel.onInputChange(inputEl);
         };
+        // Populate state object on autocomplete
+        setTimeout(function () {
+            inputModel.setState(inputEl);
+        }, 100);
         this.delegate("change", sel, onChange);
         this.delegate("input", sel, onChange);
         this.delegate("focus", sel, function () {
@@ -134,17 +138,20 @@ var FormView = (function (_super) {
         this.render();
     };
     FormView.prototype._updateGroupValidatity = function (groupName) {
-        var groupModel = this.models.get(FormView.getKey(groupName, "group")), states = new ControlUpdateStates(), curValid, curDirty;
+        var groupModel = this.models.get(FormView.getKey(groupName, "group")), states = new ControlUpdateStates(), validationMessage = "", curValid, curDirty;
         FormView.filterModels(this.models, groupName)
             .forEach(function (model) {
+            if (model.get("validationMessage")) {
+                validationMessage = model.get("validationMessage");
+            }
             states.valid.push(model.get("valid"));
             states.dirty.push(model.get("dirty"));
         });
         curValid = !states.valid.some(function (toogle) { return toogle === false; });
-        curDirty = states.dirty.every(function (toogle) { return toogle; });
+        curDirty = states.dirty.some(function (toogle) { return toogle; });
         groupModel.set("valid", curValid);
         groupModel.set("dirty", curDirty);
-        // console.info( `group ${groupName}: valid: ${curValid}, dirty: ${curDirty}` );
+        groupModel.set("validationMessage", validationMessage);
     };
     FormView.filterModels = function (models, groupName) {
         var filtered = utils_1.mapFrom({});

@@ -3,6 +3,9 @@ import { Exception } from "./exception";
 import { FormValidators } from "./formvalidators";
 import { Debounce } from "./utils";
 
+// model change
+let forceChangeToggle: boolean = false;
+
 const ERR_TYPES = [
         "valueMissing", "rangeOverflow", "rangeUnderflow",
         "typeMismatch", "patternMismatch" ],
@@ -65,10 +68,13 @@ export class FormState extends Model {
     let invalid = ERR_TYPES.some(( key: string ) => {
       return this.attributes[ key ];
     });
-    this.set( "valid", !invalid );
+    this.set( "valid", !invalid, SILENT );
     if ( !invalid ) {
       this.set( "validationMessage", "", SILENT );
     }
+    forceChangeToggle =  !forceChangeToggle;
+    // force "change" event
+    this.set( "__toggle__", forceChangeToggle );
   }
 
   /**
@@ -113,9 +119,10 @@ export class FormState extends Model {
       return;
     }
     try {
-      let pattern = new RegExp( el.getAttribute( "pattern" ) );
-      this.set( "patternMismatch", !pattern.test( el.value ), SILENT );
-      this.set( "validationMessage", "The value does not match the pattern", SILENT );
+      let pattern = new RegExp( el.getAttribute( "pattern" ) ),
+          valid = pattern.test( el.value );
+      this.set( "patternMismatch", !valid, SILENT );
+      valid || this.set( "validationMessage", "The value does not match the pattern", SILENT );
     } catch ( err ) {
       throw new Exception( "Invalid pattern " + el.getAttribute( "pattern" ) );
     }

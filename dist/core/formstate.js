@@ -17,6 +17,8 @@ var model_1 = require("./model");
 var exception_1 = require("./exception");
 var formvalidators_1 = require("./formvalidators");
 var utils_1 = require("./utils");
+// model change
+var forceChangeToggle = false;
 var ERR_TYPES = [
     "valueMissing", "rangeOverflow", "rangeUnderflow",
     "typeMismatch", "patternMismatch"], SILENT = { silent: true };
@@ -73,10 +75,13 @@ var FormState = (function (_super) {
         var invalid = ERR_TYPES.some(function (key) {
             return _this.attributes[key];
         });
-        this.set("valid", !invalid);
+        this.set("valid", !invalid, SILENT);
         if (!invalid) {
             this.set("validationMessage", "", SILENT);
         }
+        forceChangeToggle = !forceChangeToggle;
+        // force "change" event
+        this.set("__toggle__", forceChangeToggle);
     };
     /**
      * Validate <input required/> doesn't have an empty value
@@ -115,9 +120,9 @@ var FormState = (function (_super) {
             return;
         }
         try {
-            var pattern = new RegExp(el.getAttribute("pattern"));
-            this.set("patternMismatch", !pattern.test(el.value), SILENT);
-            this.set("validationMessage", "The value does not match the pattern", SILENT);
+            var pattern = new RegExp(el.getAttribute("pattern")), valid = pattern.test(el.value);
+            this.set("patternMismatch", !valid, SILENT);
+            valid || this.set("validationMessage", "The value does not match the pattern", SILENT);
         }
         catch (err) {
             throw new exception_1.Exception("Invalid pattern " + el.getAttribute("pattern"));
@@ -143,8 +148,11 @@ var FormState = (function (_super) {
      * Handle change/input events on the input
      */
     onInputChange = function (el) {
-        var _this = this;
         this.set("dirty", true, SILENT);
+        this.setState(el);
+    };
+    FormState.prototype.setState = function (el) {
+        var _this = this;
         if (!this.isCheckboxRadio(el)) {
             this.set("value", el.value, SILENT);
             this.validateRequired(el);

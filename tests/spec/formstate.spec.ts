@@ -133,7 +133,7 @@ export function FormStateSpec(){
 
         this.state.patternMismatch( this.input );
         expect( this.state.get( "patternMismatch" ) ).toBe( true );
-       expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
+        expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
       });
     });
 
