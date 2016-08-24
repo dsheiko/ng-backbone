@@ -14,7 +14,7 @@ For example we have a template:
 ```
 Until anything typed in to the input, it's invalid according to `required` restrictor. Thus template variable `foo.bar.valid` is `false` and the template shows container with error message. If we typed in a wrong value for email address `foo.bar.valid` again has 'false' and we can see the message. We can also access the sate of the group as `foo.group`. See below Control/Group State Model Interface for available properties.
 
-## FormView Interface
+## Interface
 
 ```javascript
 interface FormView extends View {
@@ -22,35 +22,7 @@ interface FormView extends View {
 }
 ```
 
-## State Model Interface
-```javascript
-interface State extends Backbone.Model {
-}
-```
-
-## Control State Model Interface
-```javascript
-interface ControlState extends State {
-  value:    string,
-  valid:    boolean,  // Control's value is valid
-  touched:  boolean, // Control has been visited
-  dirty:    boolean, // Control's value has changed
-  valueMissing: boolean, // indicating the element has a required attribute, but no value.
-  rangeOverflow: boolean, // indicating the value is greater than the maximum specified by the max attribute.
-  rangeUnderflow: boolean, // indicating the value is less than the minimum specified by the min attribute.
-  typeMismatch: boolean, // indicating the value is not in the required syntax
-  patternMismatch: boolean, // indicating the value does not match the specified pattern
-  validationMessage: string
-}
-```
-
-## Group State Model Interface
-```javascript
-interface GroupState extends State {
-  valid:    boolean,  // Control's value is valid
-  dirty:    boolean // Control's value has changed
-}
-```
+* [State Model](./form/state.md)
 
 ## Form Validation
 

@@ -92,7 +92,11 @@ export class HeroView extends FormView {
 
 # How to
 
-* [View Module and @Component](./doc/view.md)
+* [@Component Decorator](./doc/view.md)
+* [View Module](./doc/view.md)
+  * [View Options](./doc/view/options.md)
+  * [Subviews](./doc/view/subviews.md)
+  * [Logging Events](./doc/view/logger.md)
 * [FormView Module](./doc/formview.md)
 * [Template syntax](./doc/template.md)
 
