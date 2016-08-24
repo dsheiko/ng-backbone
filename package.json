@@ -4,9 +4,9 @@
   "description": "A small extension of Backbone.js that unlocks Angular-like programming experience",
   "author": "Dmitry Sheiko",
   "main": "./src",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
-
+    "start": "http-server . -o",
     "build:demo": "tsc -p demo",
     "browserfy:demo": "npm run build:demo && cjsc demo/build/js/demo/src/app.js -o demo/build/js/app.bundled.js -M",
     "build": "tsc && npm run browserfy:demo",
@@ -40,6 +40,7 @@
     "cjsc": "^1.0.7",
     "es6-shim": "github:paulmillr/es6-shim",
     "exoskeleton": "^0.7.0",
+    "http-server": "^0.9.0",
     "install": "^0.8.1",
     "jasmine-core": "^2.4.1",
     "karma": "^1.2.0",
