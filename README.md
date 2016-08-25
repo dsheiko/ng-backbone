@@ -9,6 +9,7 @@
 Well, I love old good Backbone for its simplicity and flexibility. However after working with such frameworks as Angular and React, I see that Backbone app requires much more code. Yet I don't want to ditch Backbone and deal with some 20K LOC framework codebase. I just want a minimal modular extension that will improve my programming experience and maintainability of my code.
 And that is how I came up with `ngBackbone`
 
+![Read ngBackbone.Book](./doc/ng-backbone-book.png "Read ngBackbone.Book")
 
 ## Motivation
 * Angular inspired live templates via [ngTemplate](https://github.com/dsheiko/ng-template)
