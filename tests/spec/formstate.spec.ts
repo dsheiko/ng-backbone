@@ -1,9 +1,9 @@
-import { FormState } from "../../src/core/formstate";
+import { ControlState, GroupState } from "../../src/core/formstate";
 import { FormValidators } from "../../src/core/formvalidators";
 import { Debounce } from "../../src/core/utils";
 
 export function FormStateSpec(){
-  describe("FormState", function(){
+  describe("ControlState", function(){
 
     beforeEach(function(){
       this.boundingBox = document.createElement( "div" );
@@ -17,15 +17,15 @@ export function FormStateSpec(){
       });
       it( "returns true for checkbox", function() {
         this.input.type = "checkbox";
-        expect( FormState.prototype.isCheckboxRadio( this.input ) ).toBe( true );
+        expect( ControlState.prototype.isCheckboxRadio( this.input ) ).toBe( true );
       });
       it( "returns true for radio", function() {
         this.input.type = "radio";
-        expect( FormState.prototype.isCheckboxRadio( this.input ) ).toBe( true );
+        expect( ControlState.prototype.isCheckboxRadio( this.input ) ).toBe( true );
       });
       it( "returns true for text", function() {
         this.input.type = "text";
-        expect( FormState.prototype.isCheckboxRadio( this.input ) ).toBe( false );
+        expect( ControlState.prototype.isCheckboxRadio( this.input ) ).toBe( false );
       });
     });
 
@@ -35,7 +35,7 @@ export function FormStateSpec(){
     describe("#validateRequired", function(){
       beforeEach(function(){
         this.input = document.createElement( "input" );
-        this.state = new FormState();
+        this.state = new ControlState();
       });
 
       it( "sets valueMissing true for empty required", function() {
@@ -76,7 +76,7 @@ export function FormStateSpec(){
     describe("#validateRange", function(){
       beforeEach(function(){
         this.input = document.createElement( "input" );
-        this.state = new FormState();
+        this.state = new ControlState();
       });
 
       it( "sets rangeUnderflow true for underflow value", function() {
@@ -124,7 +124,7 @@ export function FormStateSpec(){
     describe("#patternMismatch", function(){
       beforeEach(function(){
         this.input = document.createElement( "input" );
-        this.state = new FormState();
+        this.state = new ControlState();
       });
 
       it( "sets patternMismatch true for a value that does not match pattern", function() {
@@ -141,7 +141,7 @@ export function FormStateSpec(){
       beforeEach(function(){
         this.input = document.createElement( "input" );
         this.input.value = "invalid";
-        this.state = new FormState();
+        this.state = new ControlState();
       });
 
       describe("email", function(){
@@ -179,7 +179,7 @@ export function FormStateSpec(){
 
       describe("custom type (injected as object literal)", function(){
         it( "validates", function() {
-          this.state = new FormState({
+          this.state = new ControlState({
             formValidators: {
               foo( value: string ): Promise<void> {
                 let pattern = /^(foo|bar)$/;
@@ -213,7 +213,7 @@ export function FormStateSpec(){
             }
           }
 
-          this.state = new FormState({
+          this.state = new ControlState({
             formValidators: CustomValidators
           });
           this.input.setAttribute( "type", "foo" );
@@ -239,7 +239,7 @@ export function FormStateSpec(){
             }
           }
 
-          this.state = new FormState({
+          this.state = new ControlState({
             formValidators: CustomValidators
           });
           this.input.setAttribute( "type", "foo" );
@@ -261,7 +261,7 @@ export function FormStateSpec(){
 
       beforeEach(function(){
         this.input = document.createElement( "input" );
-        this.state = new FormState();
+        this.state = new ControlState();
       });
 
       it( "populates state", function( done ) {
@@ -271,12 +271,11 @@ export function FormStateSpec(){
         this.state.on( "change", () => {
           expect( this.state.get( "value" ) ).toBe( this.input.value );
           expect( this.state.get( "valueMissing" ) ).toBe( true );
-          expect( this.state.get( "dirty" ) ).toBe( true );
           expect( this.state.get( "valid" ) ).toBe( false );
-         expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
+          expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
           done();
         });
-        this.state.onInputChange( this.input );
+        this.state.setState( this.input );
       });
 
     });

@@ -9,6 +9,45 @@ declare namespace NgBackbone {
     [key: string]: V;
   }
 
+
+  interface AbstractState extends Backbone.Model {
+    isCheckboxRadio( el: HTMLElement ): boolean;
+    checkValidity(): void;
+    validateRequired( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ): void;
+    validateRange( el: HTMLInputElement ): void;
+    patternMismatch( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ): void;
+    validateTypeMismatch( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ): Promise<void>;
+    onInputChange( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ): void;
+    setState( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ): Promise<void>;
+    onInputFocus(): void;
+  }
+  interface GroupState extends AbstractState {
+  }
+  interface ControlState extends AbstractState {
+  }
+
+  interface GroupStateValidationMsg {
+    control: string;
+    message: string;
+  }
+  interface GroupStateAttrs {
+    valid:  boolean;
+    dirty:  boolean;
+    validationMessage: string;
+    validationMessages: GroupStateValidationMsg[];
+  }
+  interface ControlStateAttrs {
+    valid:  boolean;
+    dirty:  boolean;
+    touched: boolean;
+    validationMessage: string;
+    valueMissing: boolean;
+    rangeOverflow: boolean;
+    rangeUnderflow: boolean;
+    typeMismatch: boolean;
+    patternMismatch: boolean;
+  }
+
   interface Model extends Backbone.Model {
 
   }

@@ -1,4 +1,4 @@
-import { FormView, Model } from "../../src/core";
+import { Component, FormView, Model } from "../../src/core";
 import { FormState } from "../../src/core/formstate";
 
 export function FormViewSpec(){
@@ -85,6 +85,127 @@ export function FormViewSpec(){
         let model = view.models.get( "foo.bar" );
         expect( model instanceof FormState ).toBe( true );
       });
+    });
+
+
+    describe("FormView", function(){
+
+      it( "updates control and group on valueMissing", function( done ) {
+        @Component({
+          tagName: "ng-component",
+          template: `<form data-ng-group="foo">
+          <input name="bar" required />
+          </form>`
+        })
+        class TestView extends FormView {
+        }
+        let view = new TestView();
+        view.render();
+
+        let group = view.models.get( "foo.group" ),
+            controlEl = <HTMLInputElement>view.el.querySelector( "input" ),
+            control = <NgBackbone.ControlState>view.models.get( "foo.bar" );
+
+        control.setState( controlEl )
+          .then(() => {
+            view._updateGroupValidatity( "foo" );
+            expect( control.get( "valid" ) ).toBe( false );
+            expect( control.get( "valueMissing" ) ).toBe( true );
+            expect( control.get( "validationMessage" ).length ).toBeTruthy();
+            expect( group.get( "valid" ) ).toBe( false );
+            expect( group.get( "validationMessage" ).length ).toBeTruthy();
+            expect( group.get( "validationMessages" ).length ).toBeTruthy();
+            done();
+          });
+      });
+
+      it( "updates control and group on rangeOverflow", function( done ) {
+        @Component({
+          tagName: "ng-component",
+          template: `<form data-ng-group="foo">
+          <input name="bar" value="20" max="10" />
+          </form>`
+        })
+        class TestView extends FormView {
+        }
+        let view = new TestView();
+        view.render();
+
+        let group = view.models.get( "foo.group" ),
+            controlEl = <HTMLInputElement>view.el.querySelector( "input" ),
+            control = <NgBackbone.ControlState>view.models.get( "foo.bar" );
+
+        control.setState( controlEl )
+          .then(() => {
+            view._updateGroupValidatity( "foo" );
+            expect( control.get( "valid" ) ).toBe( false );
+            expect( control.get( "rangeOverflow" ) ).toBe( true );
+            expect( control.get( "validationMessage" ).length ).toBeTruthy();
+            expect( group.get( "valid" ) ).toBe( false );
+            expect( group.get( "validationMessage" ).length ).toBeTruthy();
+            expect( group.get( "validationMessages" ).length ).toBeTruthy();
+            done();
+          });
+      });
+
+      it( "updates control and group on patternMismatch", function( done ) {
+        @Component({
+          tagName: "ng-component",
+          template: `<form data-ng-group="foo">
+          <input name="bar" value="aa" pattern="[a-z]{10}" />
+          </form>`
+        })
+        class TestView extends FormView {
+        }
+        let view = new TestView();
+        view.render();
+
+        let group = view.models.get( "foo.group" ),
+            controlEl = <HTMLInputElement>view.el.querySelector( "input" ),
+            control = <NgBackbone.ControlState>view.models.get( "foo.bar" );
+
+        control.setState( controlEl )
+          .then(() => {
+            view._updateGroupValidatity( "foo" );
+            expect( control.get( "valid" ) ).toBe( false );
+            expect( control.get( "patternMismatch" ) ).toBe( true );
+            expect( control.get( "validationMessage" ).length ).toBeTruthy();
+            expect( group.get( "valid" ) ).toBe( false );
+            expect( group.get( "validationMessage" ).length ).toBeTruthy();
+            expect( group.get( "validationMessages" ).length ).toBeTruthy();
+            done();
+          });
+      });
+
+      it( "updates control and group on typeMismatch", function( done ) {
+        @Component({
+          tagName: "ng-component",
+          template: `<form data-ng-group="foo">
+          <input name="bar" value="aa" type="email" />
+          </form>`
+        })
+        class TestView extends FormView {
+        }
+        let view = new TestView();
+        view.render();
+
+        let group = view.models.get( "foo.group" ),
+            controlEl = <HTMLInputElement>view.el.querySelector( "input" ),
+            control = <NgBackbone.ControlState>view.models.get( "foo.bar" );
+
+        control.setState( controlEl )
+          .then(() => {
+            view._updateGroupValidatity( "foo" );
+            expect( control.get( "valid" ) ).toBe( false );
+            expect( control.get( "typeMismatch" ) ).toBe( true );
+            expect( control.get( "validationMessage" ).length ).toBeTruthy();
+            expect( group.get( "valid" ) ).toBe( false );
+            expect( group.get( "validationMessage" ).length ).toBeTruthy();
+            expect( group.get( "validationMessages" ).length ).toBeTruthy();
+            done();
+          });
+      });
+
     });
 
 

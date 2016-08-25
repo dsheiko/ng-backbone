@@ -89,7 +89,7 @@ export class FormView extends View {
     this.stopListening( model );
     this.options.logger && this.trigger( "log:listen", "subscribes for `change`", model );
     this.listenTo( model, "change", () => {
-      this._onFromControlModelChange( groupName );
+      this._onControlModelChange( groupName, model );
     });
 
   }
@@ -138,22 +138,27 @@ export class FormView extends View {
 
   }
 
-  private _onFromControlModelChange( groupName: string ){
+  private _onControlModelChange( groupName: string, model: ControlState ){
     this._updateGroupValidatity( groupName );
-    this.render();
+    this.render( model );
   }
 
-  private _updateGroupValidatity( groupName: string ){
+  _updateGroupValidatity( groupName: string ){
     let groupModel = this.models.get( FormView.getKey( groupName, "group" ) ),
         states = new ControlUpdateStates(),
         validationMessage: string = "",
+        validationMessages: any[] = [],
         curValid: boolean,
         curDirty: boolean;
 
     FormView.filterModels( this.models, groupName )
-        .forEach(( model: ControlState ) => {
+        .forEach(( model: ControlState, controlName: string ) => {
         if ( model.get( "validationMessage" ) )  {
           validationMessage  = model.get( "validationMessage" );
+          validationMessages.push(<NgBackbone.GroupStateValidationMsg>{
+            control: controlName,
+            message: validationMessage
+          });
         }
         states.valid.push( model.get( "valid" ) );
         states.dirty.push( model.get( "dirty" ) );
@@ -164,6 +169,7 @@ export class FormView extends View {
     groupModel.set( "valid", curValid );
     groupModel.set( "dirty", curDirty );
     groupModel.set( "validationMessage", validationMessage );
+    groupModel.set( "validationMessages", validationMessages );
   }
 
   private static filterModels( models: NgBackbone.ModelMap, groupName: string ): NgBackbone.ModelMap {

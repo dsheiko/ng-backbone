@@ -54,7 +54,7 @@ Examples:
 
 ```
 
-## ViewForm Example
+## Example 1: Showing custom validation message per a control
 
 ```javascript
 import { Component, FormView } from "ng-backbone/core";
@@ -108,6 +108,33 @@ export class HeroView extends FormView {
 }
 
 ```
+
+## Example 2: Showing all group validation messages as a list
+```javascript
+import { Component, FormView } from "../ng-backbone/core";
+
+@Component({
+  el: "ng-hero",
+  template: `
+    <form data-ng-group="hero" novalidate>
+      <div class="alert alert-danger" data-ng-if="hero.group.dirty && !hero.group.valid">
+        <p data-ng-for="let dto of hero.group.validationMessages">
+          <b data-ng-text="dto.control"></b>: <i data-ng-text="dto.message"></i>
+        </p>
+      </div>
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" class="form-control" required pattern="[A-Za-z]{3,12}">
+      </div>
+      <button type="submit" class="btn btn-default" data-ng-prop="'disabled', !hero.group.valid">Submit</button>
+    </form>
+`
+})
+
+export class HeroView extends FormView {
+}
+```
+
 
 ## Custom Type Validation
 

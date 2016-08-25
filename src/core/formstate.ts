@@ -3,8 +3,6 @@ import { Exception } from "./exception";
 import { FormValidators } from "./formvalidators";
 import { Debounce } from "./utils";
 
-// model change
-let forceChangeToggle: boolean = false;
 
 const ERR_TYPES = [
         "valueMissing", "rangeOverflow", "rangeUnderflow",
@@ -16,21 +14,7 @@ export class FormState extends Model {
 
   private formValidators: FormValidators;
 
-  defaults() {
-    return {
-      "value":    "",
-      "valid":    true,  // Control's value is valid
-      "touched":  false, // Control has been visited
-      "dirty":    false, // Control's value has changed
 
-      "valueMissing": false, // indicating the element has a required attribute, but no value.
-      "rangeOverflow": false, // indicating the value is greater than the maximum specified by the max attribute.
-      "rangeUnderflow": false, // indicating the value is less than the minimum specified by the min attribute.
-      "typeMismatch": false, // indicating the value is not in the required syntax
-      "patternMismatch": false, // indicating the value does not match the specified pattern
-      "validationMessage": ""
-    };
-  }
 
   initialize( options: any ){
     this.formValidators = new FormValidators();
@@ -68,13 +52,10 @@ export class FormState extends Model {
     let invalid = ERR_TYPES.some(( key: string ) => {
       return this.attributes[ key ];
     });
-    this.set( "valid", !invalid, SILENT );
     if ( !invalid ) {
       this.set( "validationMessage", "", SILENT );
     }
-    forceChangeToggle =  !forceChangeToggle;
-    // force "change" event
-    this.set( "__toggle__", forceChangeToggle );
+    this.set( "valid", !invalid );
   }
 
   /**
@@ -149,26 +130,27 @@ export class FormState extends Model {
    * Handle change/input events on the input
    */
   onInputChange( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ){
-    this.set( "dirty", true, SILENT );
+    this.get( "dirty" ) || this.set( "dirty", true );
     this.setState( el );
   }
 
-  setState( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ){
+  setState( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ): Promise<void>{
     if ( !this.isCheckboxRadio( el ) ) {
-      this.set( "value", el.value, SILENT );
-      this.validateRequired( el );
-      if ( el instanceof HTMLInputElement ) {
-        this.validateRange( el );
-      }
-      this.patternMismatch( el );
-      this.validateTypeMismatch( el )
-        .then(() => {
-          this.checkValidity();
-        });
-    } else {
-      this.set( "value", ( <HTMLInputElement>el ).checked, SILENT );
-      this.checkValidity();
-    }
+       this.set( "value", el.value, SILENT );
+       this.validateRequired( el );
+       if ( el instanceof HTMLInputElement ) {
+         this.validateRange( el );
+       }
+       this.patternMismatch( el );
+       return this.validateTypeMismatch( el )
+         .then(() => {
+           this.checkValidity();
+         });
+     } else {
+       this.set( "value", ( <HTMLInputElement>el ).checked, SILENT );
+       this.checkValidity();
+       return Promise.resolve();
+     }
   }
 
   /**
@@ -181,8 +163,30 @@ export class FormState extends Model {
 
 
 export class GroupState extends FormState {
-
+  defaults() {
+    return <NgBackbone.GroupStateAttrs>{
+      "valid":    true,  // Control's value is valid
+      "dirty":    false, // Control's value has changed
+      "validationMessage": "",
+      "validationMessages": []
+    };
+  }
 }
-export class ControlState extends FormState {
 
+export class ControlState extends FormState {
+  defaults() {
+    return <NgBackbone.ControlStateAttrs>{
+      "value":    "",
+      "valid":    true,  // Control's value is valid
+      "touched":  false, // Control has been visited
+      "dirty":    false, // Control's value has changed
+
+      "valueMissing": false, // indicating the element has a required attribute, but no value.
+      "rangeOverflow": false, // indicating the value is greater than the maximum specified by the max attribute.
+      "rangeUnderflow": false, // indicating the value is less than the minimum specified by the min attribute.
+      "typeMismatch": false, // indicating the value is not in the required syntax
+      "patternMismatch": false, // indicating the value does not match the specified pattern
+      "validationMessage": ""
+    };
+  }
 }

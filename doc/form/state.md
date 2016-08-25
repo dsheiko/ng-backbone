@@ -13,9 +13,9 @@ interface State extends Backbone.Model {
 ```javascript
 interface ControlState extends State {
   value:    string,
-  valid:    boolean,  // Control's value is valid
-  touched:  boolean, // Control has been visited
-  dirty:    boolean, // Control's value has changed
+  valid:    boolean,  // control's value is valid
+  touched:  boolean, // control has been manually visited
+  dirty:    boolean, // control's value has changed
   valueMissing: boolean, // indicating the element has a required attribute, but no value.
   rangeOverflow: boolean, // indicating the value is greater than the maximum specified by the max attribute.
   rangeUnderflow: boolean, // indicating the value is less than the minimum specified by the min attribute.
@@ -31,7 +31,12 @@ interface ControlState extends State {
 ### Interface
 ```javascript
 interface GroupState extends State {
-  valid:    boolean,  // Control's value is valid
-  dirty:    boolean // Control's value has changed
+  valid:    boolean,  // all of group control values are valid
+  dirty:    boolean // at least one of group control was manually changed
+  validationMessage: string; // Last control validation messages
+  validationMessages: [{ // array of control validation messages
+    control: string;
+    message: string;
+  }];
 }
 ```
