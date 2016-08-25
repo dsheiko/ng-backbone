@@ -282,7 +282,7 @@ Within every found group it collects all the available controls <code>input[name
   <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">data-ng-text</span>=<span class="hljs-string">&quot;hero.age.validationMessage&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 </code></pre>
-<h2 id="viewform-example">ViewForm Example</h2><pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { Component, FormView } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;ng-backbone/core&quot;</span>;
+<h2 id="example-1-showing-custom-validation-message-per-a-control">Example 1: Showing custom validation message per a control</h2><pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { Component, FormView } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;ng-backbone/core&quot;</span>;
 
 
 @Component({
@@ -332,6 +332,28 @@ Within every found group it collects all the available controls <code>input[name
 
 }
 </code></pre>
+<h2 id="example-2-showing-all-group-validation-messages-as-a-list">Example 2: Showing all group validation messages as a list</h2><pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { Component, FormView } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;../ng-backbone/core&quot;</span>;
+
+@Component({
+  el: <span class="hljs-string">&quot;ng-hero&quot;</span>,
+  template: <span class="hljs-string">`
+    &lt;form data-ng-group=&quot;hero&quot; novalidate&gt;
+      &lt;div class=&quot;alert alert-danger&quot; data-ng-if=&quot;hero.group.dirty &amp;&amp; !hero.group.valid&quot;&gt;
+        &lt;p data-ng-for=&quot;let dto of hero.group.validationMessages&quot;&gt;
+          &lt;b data-ng-text=&quot;dto.control&quot;&gt;&lt;/b&gt;: &lt;i data-ng-text=&quot;dto.message&quot;&gt;&lt;/i&gt;
+        &lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;form-group&quot;&gt;
+        &lt;label for=&quot;name&quot;&gt;Name&lt;/label&gt;
+        &lt;input id=&quot;name&quot; name=&quot;name&quot; type=&quot;text&quot; class=&quot;form-control&quot; required pattern=&quot;[A-Za-z]{3,12}&quot;&gt;
+      &lt;/div&gt;
+      &lt;button type=&quot;submit&quot; class=&quot;btn btn-default&quot; data-ng-prop=&quot;&apos;disabled&apos;, !hero.group.valid&quot;&gt;Submit&lt;/button&gt;
+    &lt;/form&gt;
+`</span>
+})
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HeroView</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">FormView</span> </span>{
+}</code></pre>
 <h2 id="custom-type-validation">Custom Type Validation</h2><p>You can set up your own custom type validators like that:</p><pre><code class="lang-javascript">@Component({
   el: <span class="hljs-string">&quot;ng-hero&quot;</span>,
   formValidators: {
@@ -415,7 +437,7 @@ Within every found group it collects all the available controls <code>input[name
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"FormView Module","level":"1.4","depth":1,"next":{"title":"State Model","level":"1.4.1","depth":2,"path":"state-model.md","ref":"state-model.md","articles":[]},"previous":{"title":"Logging Events","level":"1.3.3","depth":2,"path":"logging-events.md","ref":"logging-events.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"formview-module.md","mtime":"2016-08-24T14:38:48.913Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-08-24T14:39:13.360Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"FormView Module","level":"1.4","depth":1,"next":{"title":"State Model","level":"1.4.1","depth":2,"path":"state-model.md","ref":"state-model.md","articles":[]},"previous":{"title":"Logging Events","level":"1.3.3","depth":2,"path":"logging-events.md","ref":"logging-events.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"formview-module.md","mtime":"2016-08-25T14:51:10.223Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-08-25T14:51:45.015Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
