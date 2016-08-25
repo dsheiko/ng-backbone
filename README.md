@@ -102,8 +102,6 @@ export class HeroView extends FormView {
 * [FormView Module](./doc/formview.md)
 * [Template syntax](./doc/template.md)
 
-:green_book: [ngBackbone.Book](https://www.gitbook.com/book/dsheiko/ng-backbone/details)
-
 ## Contributing
 
 `ngBackbone` welcomes maintainers. There is plenty of work to do. No big commitment required,
