@@ -108,7 +108,7 @@ export function FormViewSpec(){
 
         control.setState( controlEl )
           .then(() => {
-            view._updateGroupValidatity( "foo" );
+            view.updateGroupValidatity( "foo" );
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "valueMissing" ) ).toBe( true );
             expect( control.get( "validationMessage" ).length ).toBeTruthy();
@@ -137,7 +137,7 @@ export function FormViewSpec(){
 
         control.setState( controlEl )
           .then(() => {
-            view._updateGroupValidatity( "foo" );
+            view.updateGroupValidatity( "foo" );
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "rangeOverflow" ) ).toBe( true );
             expect( control.get( "validationMessage" ).length ).toBeTruthy();
@@ -166,7 +166,7 @@ export function FormViewSpec(){
 
         control.setState( controlEl )
           .then(() => {
-            view._updateGroupValidatity( "foo" );
+            view.updateGroupValidatity( "foo" );
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "patternMismatch" ) ).toBe( true );
             expect( control.get( "validationMessage" ).length ).toBeTruthy();
@@ -195,7 +195,7 @@ export function FormViewSpec(){
 
         control.setState( controlEl )
           .then(() => {
-            view._updateGroupValidatity( "foo" );
+            view.updateGroupValidatity( "foo" );
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "typeMismatch" ) ).toBe( true );
             expect( control.get( "validationMessage" ).length ).toBeTruthy();

@@ -41,7 +41,7 @@ export class FormView extends View {
         });
 
         // set initial state (.eg. requried contols - are invalid already)
-        this._updateGroupValidatity( groupName );
+        this.updateGroupValidatity( groupName );
         this.render();
     });
   }
@@ -139,11 +139,11 @@ export class FormView extends View {
   }
 
   private _onControlModelChange( groupName: string, model: ControlState ){
-    this._updateGroupValidatity( groupName );
+    this.updateGroupValidatity( groupName );
     this.render( model );
   }
 
-  _updateGroupValidatity( groupName: string ){
+  updateGroupValidatity( groupName: string ){
     let groupModel = this.models.get( FormView.getKey( groupName, "group" ) ),
         states = new ControlUpdateStates(),
         validationMessage: string = "",
