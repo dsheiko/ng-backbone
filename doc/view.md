@@ -4,10 +4,35 @@
 
 ```javascript
 interface View extends Backbone.NativeView {
+
+  // constructor accepts extended map of options - see 'View Options' section
   constructor(options?: ngBackbone.ViewOptions);
+
+  // Update the component (normally doesn't require manual invocation)
   render(): View;
+
+  // Helper to subscribing `listenTo` way by a map
   listenToMap( eventEmitter: Backbone.Events, event: ngBackbone.DataMap ): View;
+
+  // Before removing the view calls this method on every subview
   remove(): View;
+
+  // LIFECYCLE METHODS
+
+  // Override this method when you want to plug in straight before bounding el populated from the template
+  componentWillMount(): void;
+
+  // Override this method when you want to plug in straight after bounding el populated from the template
+  componentDidMount(): void;
+
+  // Override this method when you want to control manually if the template requires an update
+  shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean;
+
+  // Override this method when you need preparation before an template update occurs
+  componentWillUpdate( nextScope: NgBackbone.DataMap<any> ): void;
+
+  // Override this method when you need to operate on the DOM after template update
+  componentDidUpdate( prevScope: NgBackbone.DataMap<any> ): void;
 }
 
 ```

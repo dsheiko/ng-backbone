@@ -64,6 +64,10 @@ declare namespace NgTemplate {
     new( el:Element, template?:string ): NgTemplate;
   }
 
+  interface Options {
+    willMount?: Function;
+    didMount?: Function;
+  }
 
   interface NgTemplate {
     report(): Report;

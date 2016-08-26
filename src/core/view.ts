@@ -36,6 +36,34 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     // Call earlier cached this.initialize
     this._initialize && this._initialize( options );
   }
+  /**
+   * Abstract method: implement it when you want to plug in straight before el.innerHTML populated
+   */
+  componentWillMount(): void {
+
+  }
+  /**
+   * Abstract method: implement it when you want to plug in straight after el.innerHTML populated
+   */
+  componentDidMount(): void {
+
+  }
+  /**
+   * Abstract method: implement it when you want to control manually if the template requires re-sync
+   */
+  shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean {
+    return true;
+  }
+  /**
+   * Abstract method: implement it when you need preparation before an template sync occurs
+   */
+  componentWillUpdate( nextScope: NgBackbone.DataMap<any> ): void {
+  }
+  /**
+   * Abstract method: implement it when you need operate on the DOM after template sync
+   */
+  componentDidUpdate( prevScope: NgBackbone.DataMap<any> ): void {
+  }
 
   /**
    * Render first and then sync the template
@@ -45,13 +73,18 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     let scope: NgBackbone.DataMap<any> = {};
     this.models && Object.assign( scope, ViewHelper.modelsToScope( this.models ) );
     this.collections && Object.assign( scope, ViewHelper.collectionsToScope( this.collections ) );
+
     try {
-      this.errors = this.template.sync( scope ).report()[ "errors" ];
-      this.options.logger && this.errors.forEach(( msg: string ) => {
-        this.trigger( "log:template", msg );
-      });
-      this.options.logger &&
-        this.trigger( "log:sync", "synced template on in " + ( performance.now() - ms ) + " ms", scope, source );
+      if ( this.shouldComponentUpdate( scope ) ) {
+        this.componentWillUpdate( scope );
+        this.errors = this.template.sync( scope ).report()[ "errors" ];
+        this.options.logger && this.errors.forEach(( msg: string ) => {
+          this.trigger( "log:template", msg );
+        });
+        this.options.logger &&
+          this.trigger( "log:sync", "synced template on in " + ( performance.now() - ms ) + " ms", scope, source );
+        this.componentDidUpdate( scope );
+      }
     } catch ( err ) {
       console.error( (<Error>err).message );
     }

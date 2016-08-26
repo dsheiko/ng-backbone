@@ -1,6 +1,7 @@
 *.gz
 .sass-cache
 .nfs*
+dist
 node_modules
 bower_components
 demo/build

@@ -18,9 +18,14 @@ Until anything typed in to the input, it's invalid according to `required` restr
 
 ```javascript
 interface FormView extends View {
-  getData( groupName: string ): ngBackbone.DataMap<string | boolean>; // retrieve group data, e.g. for sending to storage
-  reset( groupName: string ): void; // reset all state models, run it after form.reset()
-  updateGroupValidatity( groupName: string ): void; // run group validation manually - useful in unit-testing
+  // retrieve group data, e.g. for sending to storage
+  getData( groupName: string ): ngBackbone.DataMap<string | boolean>;
+
+  // reset all state models, run it after form.reset()
+  reset( groupName: string ): void;
+
+  // run group validation manually - useful in unit-testing
+  updateGroupValidatity( groupName: string ): void;
 }
 ```
 

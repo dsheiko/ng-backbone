@@ -101,7 +101,10 @@ export class ViewHelper {
       template = view.options.template;
     }
     // process Component's payload
-    view.template = new NgTemplate( view.el, template ),
+    view.template = new NgTemplate( view.el, template, {
+      willMount: view.componentWillMount.bind( view ),
+      didMount: view.componentDidMount.bind( view )
+    }),
 
     view.models = mapFrom( view._component.models );
     view.collections = mapFrom( view._component.collections );

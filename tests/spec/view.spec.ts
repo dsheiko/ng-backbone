@@ -164,6 +164,76 @@ export default function ViewSpec(){
     });
 
 
+    describe("View Lifecycle Methods", function(){
+      it( "invokes lifecycle methods", function() {
+        let called: string[] = [];
+        @Component({
+          tagName: "ng-component",
+          template: "<ng-el></ng-el>"
+        })
+        class TestView extends View {
+          componentWillMount(): void {
+            called.push( "componentWillMount" );
+          }
+          componentDidMount(): void {
+            called.push( "componentDidMount" );
+          }
+          shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean {
+            called.push( "shouldComponentUpdate" );
+            return true;
+          }
+          componentWillUpdate( nextScope: NgBackbone.DataMap<any> ): void {
+            called.push( "componentWillUpdate" );
+          }
+          componentDidUpdate( prevScope: NgBackbone.DataMap<any> ): void {
+            called.push( "componentDidUpdate" );
+          }
+        }
+        let view = new TestView();
+        view.render();
+        expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
+        expect( called ).toContain( "componentWillMount" );
+        expect( called ).toContain( "componentDidMount" );
+        expect( called ).toContain( "shouldComponentUpdate" );
+        expect( called ).toContain( "componentWillUpdate" );
+        expect( called ).toContain( "componentDidUpdate" );
+      });
+
+      it( "prevents rendering if shouldComponentUpdate returns false", function() {
+        let called: string[] = [];
+        @Component({
+          tagName: "ng-component",
+          template: "<ng-el></ng-el>"
+        })
+        class TestView extends View {
+          componentWillMount(): void {
+            called.push( "componentWillMount" );
+          }
+          componentDidMount(): void {
+            called.push( "componentDidMount" );
+          }
+          shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean {
+            called.push( "shouldComponentUpdate" );
+            return false;
+          }
+          componentWillUpdate( nextScope: NgBackbone.DataMap<any> ): void {
+            called.push( "componentWillUpdate" );
+          }
+          componentDidUpdate( prevScope: NgBackbone.DataMap<any> ): void {
+            called.push( "componentDidUpdate" );
+          }
+        }
+        let view = new TestView();
+        view.render();
+        expect( view.el.querySelector( "ng-el" ) ).not.toBeTruthy();
+        expect( called ).not.toContain( "componentWillMount" );
+        expect( called ).not.toContain( "componentDidMount" );
+        expect( called ).not.toContain( "componentWillUpdate" );
+        expect( called ).not.toContain( "componentDidUpdate" );
+      });
+
+    });
+
 
   });
 }
