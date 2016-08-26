@@ -2,7 +2,7 @@ import { ControlState, GroupState } from "../../src/core/formstate";
 import { FormValidators } from "../../src/core/formvalidators";
 import { Debounce } from "../../src/core/utils";
 
-export function FormStateSpec(){
+export default function FormStateSpec(){
   describe("ControlState", function(){
 
     beforeEach(function(){

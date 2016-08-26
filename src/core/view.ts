@@ -18,6 +18,8 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   errors: string[] = [];
   // is this view ever rendered
   isRendered: boolean = false;
+  // link to parent view
+  parent: View;
   // @Component payload for this class
   _component: NgBackbone.ComponentDto;
   // receives `initialize` of extending class to perform lazy load trick
@@ -28,6 +30,9 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   constructor( options: NgBackbone.ViewOptions = {} ) {
     super( options );
     Object.assign( this.options, options );
+    if ( options.parent ) {
+      this.parent = <View>options.parent;
+    }
     // If we want to listen to log events
     options.logger && ViewHelper.subscribeLogger( this, options.logger );
     ViewHelper.initializeOptions( this, options );

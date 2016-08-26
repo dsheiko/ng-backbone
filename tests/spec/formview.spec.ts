@@ -1,7 +1,7 @@
 import { Component, FormView, Model } from "../../src/core";
 import { FormState } from "../../src/core/formstate";
 
-export function FormViewSpec(){
+export default function FormViewSpec(){
   describe("FormView", function(){
 
 

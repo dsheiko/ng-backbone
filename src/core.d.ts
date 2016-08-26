@@ -72,6 +72,7 @@ declare namespace NgBackbone {
     models: ModelMap;
     collections: CollectionMap;
     views: ViewMap;
+    parent?: View;
   }
 
   interface ViewCtorOptions {
@@ -104,6 +105,7 @@ declare namespace NgBackbone {
     formValidators?: { [key: string]: Function; };
     logger?: LoggerOption;
     template?: string;
+    parent?: View;
   }
 
   interface ComponentDto {

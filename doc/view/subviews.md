@@ -51,3 +51,16 @@ class AppView extends View {
   }
 }
 ```
+
+And conversely you can communicate from child to parent
+
+```javascript
+class FooView extends View {
+  toggle(){
+   // toggle view
+   this.el.classList.toggle( "is-hidden", !this.el.classList.contains( "is-hidden" ) );
+   // communicate back to parent
+   this.parent.trigger( "my-custom-event" )l
+  }
+}
+```

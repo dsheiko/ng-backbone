@@ -144,7 +144,7 @@ export class ViewHelper {
    */
   private static createSubView( view: View, ViewCtor: ViewConstructor, options: NgBackbone.ViewOptions = {}): View {
     let el = ViewHelper.findSubViewEl( view, ViewCtor.prototype[ "el" ] );
-    return new ViewCtor( Object.assign( options, { el: el }) );
+    return new ViewCtor( Object.assign( options, { el: el, parent: view }) );
   }
   /**
    * Find inner el
