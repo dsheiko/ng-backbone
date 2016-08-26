@@ -288,6 +288,14 @@
     <span class="hljs-keyword">this</span>.views.get( <span class="hljs-string">&quot;bar&quot;</span> ).toogle();
   }
 }</code></pre>
+<p>And conversely you can communicate from child to parent</p><pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FooView</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">View</span> </span>{
+  toggle(){
+   <span class="hljs-comment">// toggle view</span>
+   <span class="hljs-keyword">this</span>.el.classList.toggle( <span class="hljs-string">&quot;is-hidden&quot;</span>, !<span class="hljs-keyword">this</span>.el.classList.contains( <span class="hljs-string">&quot;is-hidden&quot;</span> ) );
+   <span class="hljs-comment">// communicate back to parent</span>
+   <span class="hljs-keyword">this</span>.parent.trigger( <span class="hljs-string">&quot;my-custom-event&quot;</span> )l
+  }
+}</code></pre>
 
                                 
                                 </section>
@@ -331,7 +339,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Subviews","level":"1.3.2","depth":2,"next":{"title":"Logging Events","level":"1.3.3","depth":2,"path":"logging-events.md","ref":"logging-events.md","articles":[]},"previous":{"title":"View Options","level":"1.3.1","depth":2,"path":"view-options.md","ref":"view-options.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"subviews.md","mtime":"2016-08-26T10:09:41.838Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-08-26T10:10:01.271Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Subviews","level":"1.3.2","depth":2,"next":{"title":"Logging Events","level":"1.3.3","depth":2,"path":"logging-events.md","ref":"logging-events.md","articles":[]},"previous":{"title":"View Options","level":"1.3.1","depth":2,"path":"view-options.md","ref":"view-options.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"subviews.md","mtime":"2016-08-26T10:44:59.230Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-08-26T10:45:09.873Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
