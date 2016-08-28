@@ -142,6 +142,26 @@ export class FormView extends View {
     this.updateGroupValidatity( groupName );
     this.render( model );
   }
+  /**
+   * helpere to test states control/group on input
+   */
+  testInput( pointer: string, value: any ): Promise<any> {
+    let groupName: string, 
+        controlName: string;
+    [ groupName, controlName ] = pointer.split( "." );
+    
+    let el = <HTMLInputElement>this.el.querySelector(
+        `[data-ng-group="${groupName}"] [name="${controlName}"]` );
+    if ( !el ) {
+        throw new Error( `Pointer ${pointer} is invalid` );
+    }    
+    el.value = value;
+    let model = <ControlState> this.models.get( pointer );
+    return model.setState( el )
+        .then(() => {
+            this.updateGroupValidatity( groupName );
+        });
+  }
 
   updateGroupValidatity( groupName: string ){
     let groupModel = this.models.get( FormView.getKey( groupName, "group" ) ),

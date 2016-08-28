@@ -103,12 +103,10 @@ export default function FormViewSpec(){
         view.render();
 
         let group = view.models.get( "foo.group" ),
-            controlEl = <HTMLInputElement>view.el.querySelector( "input" ),
             control = <NgBackbone.ControlState>view.models.get( "foo.bar" );
 
-        control.setState( controlEl )
+         view.testInput( "foo.bar", "" )
           .then(() => {
-            view.updateGroupValidatity( "foo" );
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "valueMissing" ) ).toBe( true );
             expect( control.get( "validationMessage" ).length ).toBeTruthy();
@@ -123,7 +121,7 @@ export default function FormViewSpec(){
         @Component({
           tagName: "ng-component",
           template: `<form data-ng-group="foo">
-          <input name="bar" value="20" max="10" />
+          <input name="bar" max="10" />
           </form>`
         })
         class TestView extends FormView {
@@ -132,12 +130,10 @@ export default function FormViewSpec(){
         view.render();
 
         let group = view.models.get( "foo.group" ),
-            controlEl = <HTMLInputElement>view.el.querySelector( "input" ),
             control = <NgBackbone.ControlState>view.models.get( "foo.bar" );
 
-        control.setState( controlEl )
+         view.testInput( "foo.bar", 20  )
           .then(() => {
-            view.updateGroupValidatity( "foo" );
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "rangeOverflow" ) ).toBe( true );
             expect( control.get( "validationMessage" ).length ).toBeTruthy();
@@ -152,7 +148,7 @@ export default function FormViewSpec(){
         @Component({
           tagName: "ng-component",
           template: `<form data-ng-group="foo">
-          <input name="bar" value="aa" pattern="[a-z]{10}" />
+          <input name="bar" pattern="[a-z]{10}" />
           </form>`
         })
         class TestView extends FormView {
@@ -161,12 +157,10 @@ export default function FormViewSpec(){
         view.render();
 
         let group = view.models.get( "foo.group" ),
-            controlEl = <HTMLInputElement>view.el.querySelector( "input" ),
             control = <NgBackbone.ControlState>view.models.get( "foo.bar" );
 
-        control.setState( controlEl )
+         view.testInput( "foo.bar", "in"  )
           .then(() => {
-            view.updateGroupValidatity( "foo" );
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "patternMismatch" ) ).toBe( true );
             expect( control.get( "validationMessage" ).length ).toBeTruthy();
@@ -181,7 +175,7 @@ export default function FormViewSpec(){
         @Component({
           tagName: "ng-component",
           template: `<form data-ng-group="foo">
-          <input name="bar" value="aa" type="email" />
+          <input name="bar" type="email" />
           </form>`
         })
         class TestView extends FormView {
@@ -190,12 +184,10 @@ export default function FormViewSpec(){
         view.render();
 
         let group = view.models.get( "foo.group" ),
-            controlEl = <HTMLInputElement>view.el.querySelector( "input" ),
             control = <NgBackbone.ControlState>view.models.get( "foo.bar" );
 
-        control.setState( controlEl )
+        view.testInput( "foo.bar", "invalid"  )
           .then(() => {
-            view.updateGroupValidatity( "foo" );
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "typeMismatch" ) ).toBe( true );
             expect( control.get( "validationMessage" ).length ).toBeTruthy();

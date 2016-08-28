@@ -24,8 +24,8 @@ interface FormView extends View {
   // reset all state models, run it after form.reset()
   reset( groupName: string ): void;
 
-  // run group validation manually - useful in unit-testing
-  updateGroupValidatity( groupName: string ): void;
+  // emulate user input for unit-testing
+  testInput( pointer: string, value: any ): Promise<any>;
 }
 ```
 
