@@ -13,11 +13,11 @@ And that is how I came up with `ngBackbone`
 
 ## Motivation
 * Angular inspired live templates via [ngTemplate](https://github.com/dsheiko/ng-template)
-* Separation of declarative (@Component + template) and impreative programming
-* 2-way binding
-* Testable views
-* Control over nested views
-* Asynchronous form validators (e.g. server-side validation)
+* Separation of declarative (@Component + template) and imperative programming
+* [1-way](https://dsheiko.gitbooks.io/ng-backbone/content/data_binding.html) and [2-way](https://dsheiko.gitbooks.io/ng-backbone/content/formview.html) binding
+* [Testable views](https://dsheiko.gitbooks.io/ng-backbone/content/testing_components.html)
+* [Control over nested views](https://dsheiko.gitbooks.io/ng-backbone/content/nesting_components.html)
+* [Asynchronous form validators](https://dsheiko.gitbooks.io/ng-backbone/content/formview.html) (e.g. server-side validation)
 * Debauncable form validators
 * Fluent TypeScript programming experience
 
