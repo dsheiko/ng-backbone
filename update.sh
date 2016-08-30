@@ -7,7 +7,6 @@ npm i ng-template
 
 echo "Copying dependencies to ./src ..."
 cp node_modules/ng-template/src/ngtemplate.ts $cur/src/
-cp node_modules/ng-template/src/ngtemplate.d.ts $cur/src/
 cp -r node_modules/ng-template/src/ng-template $cur/src/
 
 echo "Cleaning up..."

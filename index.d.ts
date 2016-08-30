@@ -1,5 +1,3 @@
-export * from "./src/ngtemplate";
-export * from "./src/core";
 
 class View extends Backbone.NativeView<Backbone.Model> {
   // bounding box

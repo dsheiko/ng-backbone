@@ -1,7 +1,3 @@
-/// <reference path="../node_modules/typescript/lib/lib.d.ts" />
-/// <reference path="./core.d.ts" />
-
-
 // NgBackbone extends Backbone.Nativeview, but if it's not loaded, works also fine
 if ( !( "NativeView" in Backbone ) ) {
   Backbone.NativeView = <any>Backbone.View;

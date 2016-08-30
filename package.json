@@ -3,9 +3,9 @@
   "title": "ngBackbone",
   "description": "A small extension of Backbone.js that unlocks Angular-like programming experience",
   "author": "Dmitry Sheiko",
-  "main": "./src",
+  "main": "./dist/core.js",
   "typings": "./index.d.ts",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "scripts": {
     "start": "http-server . -o",
     "build:demo": "tsc -p demo",

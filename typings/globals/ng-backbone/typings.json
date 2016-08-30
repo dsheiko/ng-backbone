@@ -1,0 +1,11 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "/home/sheiko/Sites/os/ng-backbone/custom-typings/ng-backbone/typings.json",
+    "raw": "file:custom-typings/ng-backbone/typings.json",
+    "main": "ng-backbone.d.ts",
+    "version": "0.0.1",
+    "name": "ng-backbone",
+    "type": "typings"
+  }
+}

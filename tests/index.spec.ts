@@ -1,4 +1,3 @@
-/// <reference path="../src/core.d.ts" />
 import FormStateSpec from "./spec/formstate.spec";
 import ViewInternalSpec from "./spec/view-internal.spec";
 import ViewSpec from "./spec/view.spec";
