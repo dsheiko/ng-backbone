@@ -94,13 +94,15 @@ export class HeroView extends FormView {
 
 # How to
 
+* [Getting Started](./doc/getting-started.md)
+* [Template syntax](./doc/template.md)
 * [@Component Decorator](./doc/view.md)
 * [View Module](./doc/view.md)
   * [View Options](./doc/view/options.md)
   * [Subviews](./doc/view/subviews.md)
   * [Logging Events](./doc/view/logger.md)
 * [FormView Module](./doc/formview.md)
-* [Template syntax](./doc/template.md)
+
 
 ## Contributing
 
@@ -111,16 +113,9 @@ if all you do is review a single Pull Request, you are a maintainer.
 ### How to set up
 
 ```
-npm install typescript -g
 npm install
-typings install
 ```
 
-### How to build
-
-```
-npm run build
-```
 
 ### How to run tests
 

@@ -1,5 +1,4 @@
-
-class View extends Backbone.NativeView<Backbone.Model> {
+export class View extends Backbone.NativeView<Backbone.Model> {
   // bounding box
   el: HTMLElement;
   // models to bind to the template
@@ -8,18 +7,17 @@ class View extends Backbone.NativeView<Backbone.Model> {
   collections: NgBackbone.CollectionMap;
   // array of subviews
   views: NgBackbone.ViewMap;
-  // instance of NgTemplate
-  template: NgTemplate;
+  // instance of any
+  template: any;
   // constructor options getting available across the prototype
-  options: NgBackbone.ViewOptions = {};
+  options: NgBackbone.ViewOptions;
   // template errors/warnings
-  errors: string[] = [];
+  errors: string[];
   // is this view ever rendered
-  isRendered: boolean = false;
+  isRendered: boolean;
   // link to parent view
   parent: View;
 
-  constructor( options: NgBackbone.ViewOptions = {} ): void ;
   /**
    * Abstract method: implement it when you want to plug in straight before el.innerHTML populated
    */
@@ -69,12 +67,12 @@ class View extends Backbone.NativeView<Backbone.Model> {
   /**
    * Remove all the nested view on parent removal
    */
-  remove(): void;
+  remove(): View;
 
 }
 
 
-class FormView extends View {
+export class FormView extends View {
 
   el: HTMLElement;
   models: NgBackbone.ModelMap;
@@ -98,12 +96,12 @@ class FormView extends View {
   reset( groupName: string ): void;
 }
 
-function Component( options: NgBackbone.ComponentOptions ): Function;
+export function Component( options: NgBackbone.ComponentOptions ): Function;
 
-class Collection extends Backbone.Collection<Backbone.Model> {
-  constructor( models?: Backbone.Model[], options?: NgBackbone.DataMap<any>): void;
+export class Collection extends Backbone.Collection<Backbone.Model> {
+
 }
 
-class Model extends Backbone.Model {
-  constructor( attributes?: NgBackbone.DataMap<any>, options?: NgBackbone.DataMap<any>): void;
+export class Model extends Backbone.Model {
+
 }
