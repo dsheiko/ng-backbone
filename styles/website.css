@@ -1,5 +1,5 @@
 /* CSS for website */
-a[href='#fork'] ~ a  {
+a.forkme  {
  width: 149px;
  height: 149px;
  display: block;

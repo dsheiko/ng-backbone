@@ -1,0 +1,432 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <title>Getting Started · GitBook</title>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.0">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="styles/website.css">
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="component.html" />
+    
+    
+    <link rel="prev" href="./" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.2" data-path="getting-started.html">
+            
+                <a href="getting-started.html">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="component.html">
+            
+                <a href="component.html">
+            
+                    
+                    @Component Decorator
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="view-module.html">
+            
+                <a href="view-module.html">
+            
+                    
+                    View Module
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="view-options.html">
+            
+                <a href="view-options.html">
+            
+                    
+                    View Options
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="subviews.html">
+            
+                <a href="subviews.html">
+            
+                    
+                    Subviews
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="logging-events.html">
+            
+                <a href="logging-events.html">
+            
+                    
+                    Logging Events
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="formview-module.html">
+            
+                <a href="formview-module.html">
+            
+                    
+                    FormView Module
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="state-model.html">
+            
+                <a href="state-model.html">
+            
+                    
+                    State Model
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Getting Started</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="getting-started">Getting Started</h1><p>Enter you project directory and create <code>package.json</code></p><pre><code class="lang-javascript">{
+  <span class="hljs-string">&quot;scripts&quot;</span>: {
+    <span class="hljs-string">&quot;build&quot;</span>: <span class="hljs-string">&quot;tsc&quot;</span>,
+    <span class="hljs-string">&quot;typings:install&quot;</span>: <span class="hljs-string">&quot;typings install&quot;</span>
+  },
+  <span class="hljs-string">&quot;dependencies&quot;</span>: {
+    <span class="hljs-string">&quot;backbone&quot;</span>: <span class="hljs-string">&quot;^1.3.3&quot;</span>,
+    <span class="hljs-string">&quot;underscore&quot;</span>: <span class="hljs-string">&quot;^1.8.3&quot;</span>,
+    <span class="hljs-string">&quot;backbone.nativeview&quot;</span>: <span class="hljs-string">&quot;^0.3.3&quot;</span>,
+    <span class="hljs-string">&quot;es6-shim&quot;</span>: <span class="hljs-string">&quot;github:paulmillr/es6-shim&quot;</span>,
+    <span class="hljs-string">&quot;ng-backbone&quot;</span>: <span class="hljs-string">&quot;^0.1.5&quot;</span>,
+    <span class="hljs-string">&quot;systemjs&quot;</span>: <span class="hljs-string">&quot;^0.19.36&quot;</span>,
+    <span class="hljs-string">&quot;typescript&quot;</span>: <span class="hljs-string">&quot;^1.8.10&quot;</span>
+  }
+}</code></pre>
+<p>Install dependencies</p><pre><code>npm install</code></pre>
+<p>Install typings</p><pre><code>npm run typings:install</code></pre>
+<p>Create <code>tsconfig.json</code></p><pre><code class="lang-javascript">{
+  <span class="hljs-string">&quot;compilerOptions&quot;</span>: {
+    <span class="hljs-string">&quot;target&quot;</span>: <span class="hljs-string">&quot;ES5&quot;</span>,
+    <span class="hljs-string">&quot;module&quot;</span>: <span class="hljs-string">&quot;commonjs&quot;</span>,
+    <span class="hljs-string">&quot;moduleResolution&quot;</span>: <span class="hljs-string">&quot;node&quot;</span>,
+    <span class="hljs-string">&quot;sourceMap&quot;</span>: <span class="hljs-literal">false</span>,
+    <span class="hljs-string">&quot;emitDecoratorMetadata&quot;</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-string">&quot;experimentalDecorators&quot;</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-string">&quot;removeComments&quot;</span>: <span class="hljs-literal">false</span>,
+    <span class="hljs-string">&quot;noImplicitAny&quot;</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-string">&quot;outDir&quot;</span>: <span class="hljs-string">&quot;build/&quot;</span>
+  },
+  <span class="hljs-string">&quot;files&quot;</span>: [
+    <span class="hljs-string">&quot;./typings/index.d.ts&quot;</span>,
+    <span class="hljs-string">&quot;./src/app.ts&quot;</span>
+  ]
+}</code></pre>
+<p>Create <code>index.html</code></p><pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">ng-app</span>&gt;</span>Loading ...<span class="hljs-tag">&lt;/<span class="hljs-name">ng-app</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- ES6 shim --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;../node_modules/es6-shim/es6-shim.min.js&quot;</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Backbone --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;../node_modules/underscore/underscore-min.js&quot;</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;../node_modules/backbone/backbone-min.js&quot;</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;../node_modules/backbone.nativeview/backbone.nativeview.js&quot;</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Module loader --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;../node_modules/systemjs/dist/system.src.js&quot;</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="actionscript">
+
+  System.config({
+    paths: {
+        <span class="hljs-string">&quot;*&quot;</span>: <span class="hljs-string">&quot;node_modules/*&quot;</span>
+     },
+    packageConfigPaths: [ <span class="hljs-string">&quot;./node_modules/*/package.json&quot;</span> ],
+    packages: {
+      <span class="hljs-string">&quot;.&quot;</span>: {
+        format: <span class="hljs-string">&quot;cjs&quot;</span>,
+        defaultExtension: <span class="hljs-string">&quot;js&quot;</span>
+      }
+    }
+  });
+  System.import( <span class="hljs-string">&quot;./build/app&quot;</span> );
+
+  </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</code></pre>
+<p>Create first module <code>src/app.ts</code></p><pre><code>import { Component, View } from &quot;ng-backbone&quot;;
+
+@Component({
+  el: &quot;ng-hello&quot;,
+  template: `Hello World!`
+})
+
+class HelloView extends View {
+}
+
+let hello = new HelloView();
+hello.render();</code></pre>
+<p>Build the app:</p><pre><code>npm run build</code></pre>
+<p>Open <code>index.html</code> in a browser and observe  it displays <code>Hello World!</code></p><h1 id="bundled-javascript">Bundled JavaScript</h1><p>Alternatively you bundle all the modules into a single file:</p><pre><code>browserify build/src/app.js -o build/app.bundled.js</code></pre>
+<p>This way you do not need SystemJS section in <code>index.html</code> but simply loading the generated file</p><pre><code>&lt;script type=&quot;text/javascript&quot; src=&quot;build/app.bundled.js&quot;&gt;&lt;/script&gt;</code></pre>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: Introduction">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="component.html" class="navigation navigation-next " aria-label="Next page: @Component Decorator">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Getting Started","level":"1.2","depth":1,"next":{"title":"@Component Decorator","level":"1.3","depth":1,"path":"component.md","ref":"component.md","articles":[]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"getting-started.md","mtime":"2016-08-30T11:36:51.812Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-08-30T11:38:00.471Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
