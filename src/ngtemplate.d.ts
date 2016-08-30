@@ -1,4 +1,4 @@
-declare namespace NgTemplate {
+export declare namespace NgTemplate {
 
   interface Report extends DataMap {
     errors: string[];

@@ -1,4 +1,4 @@
-declare namespace NgBackbone {
+export declare namespace NgBackbone {
 
   interface ModelData {
     id?: string | number;
