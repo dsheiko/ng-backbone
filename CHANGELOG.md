@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.2.2
+* View triggers "render" event, so one can subscribe like this.listenToOnce( this, "render", ...);
+* Now collections may have getters available in template
+
+## 0.2.1
+* upgrated up to ngTemplate 0.1.7 
+
 ## 0.2.0
 * FormView now fully delegates control validation to Form API ValidityState
 * Custom types in FormView get deprecated. FormView treats instead `data-ng-validate` attribute, which accepts multiple validators per control

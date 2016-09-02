@@ -144,6 +144,38 @@ export default function ViewSpec(){
       });
 
     });
+    
+    
+    describe("collection getters", function(){
+      it( "binds getters", function() {
+        class TestCollection extends Collection {
+          getSize(){
+            return this.length;
+          }
+        }
+        @Component({
+          tagName: "ng-component",
+          collections: {
+            foo: new TestCollection([
+              new Model({ bar: 1 }),
+              new Model({ bar: 2 })
+            ])
+          },
+          template: `<ng-el data-ng-text="foo.size">none</ng-el>
+          <ng-li data-ng-for="let i of foo" data-ng-text="i.bar">none</ng-li>`
+        })
+        class TestView extends View {
+        }
+        let view = new TestView(),
+            errors = view.render().errors,
+            el = view.el.querySelector( "ng-el" ),
+            els = Array.from( view.el.querySelectorAll( "ng-li" ) );
+          expect( el.textContent ).toBe( "2" );  
+          expect( els.length ).toBe( 2 );
+          expect( els[ 0 ].textContent ).toBe( "1" );
+          expect( els[ 1 ].textContent ).toBe( "2" );
+      });
+    });
 
 
   });

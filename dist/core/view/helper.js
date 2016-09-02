@@ -4,6 +4,18 @@ var utils_1 = require("../utils");
 var ViewHelper = (function () {
     function ViewHelper() {
     }
+    ViewHelper.getterToScope = function (data) {
+        var re = /^get[A-Z]/;
+        var key, getters = {};
+        for (key in data) {
+            if (re.test(key) && typeof data[key] === "function") {
+                var prop = key.substr(3);
+                prop = prop.substr(0, 1).toLowerCase() + prop.substr(1);
+                getters[prop] = data[key]();
+            }
+        }
+        return getters;
+    };
     /**
      * Converts { foo: Collection, bar: Collection } into
      * { foo: [{},{}], bar: [{},{}] }
@@ -19,6 +31,8 @@ var ViewHelper = (function () {
                 }
                 scope[key].push(data);
             });
+            var getters = ViewHelper.getterToScope(collection);
+            getters && Object.assign(scope[key], getters);
         });
         return scope;
     };

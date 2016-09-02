@@ -4,6 +4,19 @@ import { mapFrom, mapAssign } from "../utils";
 
 export class ViewHelper {
 
+  static getterToScope( data: any ): NgBackbone.DataMap<any> {
+    const re = /^get[A-Z]/;
+    let key: string, 
+        getters: NgBackbone.DataMap<any> = {};
+    for ( key in data ) {
+      if ( re.test( key ) && typeof data[ key ] === "function" ){
+        let prop = key.substr( 3 );
+        prop = prop.substr( 0, 1 ).toLowerCase() + prop.substr( 1 );
+        getters[ prop ] = data[ key ](); 
+      }
+    }    
+    return getters;
+  }
   /**
    * Converts { foo: Collection, bar: Collection } into
    * { foo: [{},{}], bar: [{},{}] }
@@ -19,7 +32,9 @@ export class ViewHelper {
             data.id = model.id;
           }
           ( <any[]> scope[ key ] ).push( data );
-        });
+      });
+      let getters = ViewHelper.getterToScope( collection );  
+      getters && Object.assign( scope[ key ], getters );  
     });
     return scope;
   }

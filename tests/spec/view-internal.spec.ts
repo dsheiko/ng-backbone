@@ -5,7 +5,23 @@ import { mapFrom } from "../../src/core/utils";
 
 export default function ViewInternalSpec(){
   describe("View (internal)", function(){
-
+    
+    describe("#getterToScope", function(){
+      it( "converts flat into scope", function() {
+        let data = {
+          foo: "foo",
+          getFoo(){
+            return this.foo;
+          },
+          getBar(){
+            return "bar";
+          }
+        },
+        scope = ViewHelper.getterToScope( data );
+        expect( scope["foo"] ).toBe( "foo" );
+        expect( scope["bar"] ).toBe( "bar" );
+      });
+    });
     describe("#modelsToScope", function(){
 
       it( "converts flat into scope", function() {

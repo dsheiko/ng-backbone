@@ -73,6 +73,7 @@ var View = (function (_super) {
                 this.options.logger &&
                     this.trigger("log:sync", "synced template on in " + (performance.now() - ms) + " ms", scope, source);
                 this.componentDidUpdate(scope);
+                this.trigger("render");
             }
         }
         catch (err) {

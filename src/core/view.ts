@@ -89,6 +89,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
         this.options.logger &&
           this.trigger( "log:sync", "synced template on in " + ( performance.now() - ms ) + " ms", scope, source );
         this.componentDidUpdate( scope );
+        this.trigger( "render" );
       }
     } catch ( err ) {
       console.error( (<Error>err).message );

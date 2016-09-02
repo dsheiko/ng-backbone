@@ -39,7 +39,7 @@ interface View extends Backbone.NativeView {
 `View` creates an instance of ngTemplate based on specified bounding element and template code. It binds models/collections of the given maps to the template. E.g. models: `{ foo: new Model() }` becomes available in the template scope as `foo`. As soon the model changes (`this.models.get("foo").set("bar", "value")`) the template responds (`foo.bar === "value"`);
 
 ```javascript
-import { Component, View, Model, Collection } from "../ng-backbone/core";
+import { Component, View, Model, Collection } from "ng-backbone";
 
 @Component({
   el: "ng-hero",
@@ -61,6 +61,51 @@ import { Component, View, Model, Collection } from "../ng-backbone/core";
     <dl data-ng-for="let p of powers">
       <dt data-ng-text="p.name"></dt>
     </dl>
+`
+})
+
+export class HeroView extends FormView {
+
+  initialize() {
+    this.render();
+  }
+
+}
+
+```
+We can specify collection getters by adding method named as "getCamelCase". When collection has such methods
+they are invoked for values during passing data to view template:
+
+```javascript
+import { Component, View, Collection } from "ng-backbone";
+
+class PowerCollection extends Collection {
+  getSize(){
+    return this.length;
+  }
+  getFavorite(){
+    return this.filter(( model: any ) => {
+      return model.get( "name" ).startsWith( "F" );
+    });
+  }
+}
+
+@Component({
+  el: "ng-hero",
+  
+  collections: {
+    powers: new PowerCollection([
+      { name: "Superhuman strength" },
+      { name: "Flight" }
+      { name: "Freezing breath" }
+    ])
+  },
+
+  template: `
+    <p><strong data-ng-text="hero.title"></strong> has 
+      <i data-ng-text="powers.size"></i> powers, use but 
+      can use only <i data-ng-text="powers.favorite"></i>
+    </p>
 `
 })
 
