@@ -17,9 +17,10 @@ var model_1 = require("./model");
 var exception_1 = require("./exception");
 var formvalidators_1 = require("./formvalidators");
 var utils_1 = require("./utils");
-var ERR_TYPES = [
+var VALIDITY_STATE = [
+    "badInput", "customError", "stepMismatch", "tooLong",
     "valueMissing", "rangeOverflow", "rangeUnderflow",
-    "typeMismatch", "patternMismatch"], SILENT = { silent: true };
+    "typeMismatch", "patternMismatch", "valueMissing"], SILENT = { silent: true };
 var FormState = (function (_super) {
     __extends(FormState, _super);
     function FormState() {
@@ -46,17 +47,11 @@ var FormState = (function (_super) {
         }
     };
     /**
-     * Check if a given input is a checkbox or radio
-     */
-    FormState.prototype.isCheckboxRadio = function (el) {
-        return el instanceof HTMLInputElement && ["checkbox", "radio"].indexOf(el.type) !== -1;
-    };
-    /**
      * Update `valid` and `validationMessage` according to the current model state
      */
     FormState.prototype.checkValidity = function () {
         var _this = this;
-        var invalid = ERR_TYPES.some(function (key) {
+        var invalid = VALIDITY_STATE.some(function (key) {
             return _this.attributes[key];
         });
         if (!invalid) {
@@ -65,63 +60,31 @@ var FormState = (function (_super) {
         this.set("valid", !invalid);
     };
     /**
-     * Validate <input required/> doesn't have an empty value
+     * Run validators from the list data-ng-validate="foo, bar, baz"
      */
-    FormState.prototype.validateRequired = function (el) {
-        if (!el.hasAttribute("required")) {
-            return;
-        }
-        var value = String(el.value), valid = value.trim().length;
-        this.set("valueMissing", !valid, SILENT);
-        valid || this.set("validationMessage", "This field is mandatory", SILENT);
-    };
-    /**
-     * Validate <input min max /> value in the given range
-     */
-    FormState.prototype.validateRange = function (el) {
-        if (!(el instanceof HTMLInputElement)) {
-            throw TypeError("el must be instance of HTMLInputElement");
-        }
-        if (el.hasAttribute("max")) {
-            var valid = Number(el.value) < Number(el.getAttribute("max"));
-            this.set("rangeOverflow", !valid, SILENT);
-            valid || this.set("validationMessage", "The value is too high", SILENT);
-        }
-        if (el.hasAttribute("min")) {
-            var valid = Number(el.value) > Number(el.getAttribute("min"));
-            this.set("rangeUnderflow", !valid, SILENT);
-            valid || this.set("validationMessage", "The value is too low", SILENT);
-        }
-    };
-    /**
-     * Validate by `pattern`
-     */
-    FormState.prototype.patternMismatch = function (el) {
-        if (!el.hasAttribute("pattern")) {
-            return;
-        }
-        try {
-            var pattern = new RegExp(el.getAttribute("pattern")), valid = pattern.test(el.value);
-            this.set("patternMismatch", !valid, SILENT);
-            valid || this.set("validationMessage", "The value does not match the pattern", SILENT);
-        }
-        catch (err) {
-            throw new exception_1.Exception("Invalid pattern " + el.getAttribute("pattern"));
-        }
-    };
-    FormState.prototype.validateTypeMismatch = function (el) {
+    FormState.prototype.testCustomValidators = function (el) {
         var _this = this;
-        var value = el.value, itype = el.getAttribute("type");
-        if (!(itype in this.formValidators)) {
+        if (!el.dataset["ngValidate"]) {
             return Promise.resolve();
         }
-        return this.formValidators[itype](value)
+        var value = el.value, validators = el.dataset["ngValidate"].trim().split(",");
+        if (!validators) {
+            return Promise.resolve();
+        }
+        var all = validators.map(function (validator) {
+            return _this.formValidators[validator.trim()](value);
+        });
+        return Promise.all(all)
+            .then(function () {
+            el.setCustomValidity("");
+        })
             .catch(function (err) {
             if (err instanceof Error) {
                 throw new exception_1.Exception(err.message);
             }
-            _this.set("typeMismatch", true, SILENT);
+            _this.set("customError", true, SILENT);
             _this.set("validationMessage", err, SILENT);
+            el.setCustomValidity(err);
         });
     };
     FormState.prototype.
@@ -134,14 +97,14 @@ var FormState = (function (_super) {
     };
     FormState.prototype.setState = function (el) {
         var _this = this;
-        if (!this.isCheckboxRadio(el)) {
+        if ("validity" in el) {
             this.set("value", el.value, SILENT);
-            this.validateRequired(el);
-            if (el instanceof HTMLInputElement) {
-                this.validateRange(el);
-            }
-            this.patternMismatch(el);
-            return this.validateTypeMismatch(el)
+            VALIDITY_STATE.forEach(function (method) {
+                var ValidityState = el.validity;
+                _this.set(method, ValidityState[method], SILENT);
+            });
+            this.set("validationMessage", el.validationMessage, SILENT);
+            return this.testCustomValidators(el)
                 .then(function () {
                 _this.checkValidity();
             });
@@ -191,9 +154,14 @@ var ControlState = (function (_super) {
     ControlState.prototype.defaults = function () {
         return {
             "value": "",
-            "valid": true,
             "touched": false,
             "dirty": false,
+            // ValidityState
+            "valid": true,
+            "badInput": false,
+            "customError": false,
+            "stepMismatch": false,
+            "tooLong": false,
             "valueMissing": false,
             "rangeOverflow": false,
             "rangeUnderflow": false,

@@ -16,10 +16,10 @@ interface ControlState extends State {
   valid:    boolean,  // control's value is valid
   touched:  boolean, // control has been manually visited
   dirty:    boolean, // control's value has changed
-  badInput: false, // indicating the user has provided input that the browser is unable to convert.
-  customError: false, // indicating the element's custom validity message has been set to a non-empty string by calling the element's setCustomValidity() method.
-  stepMismatch: false, // indicating the value does not fit the rules determined by the step attribute
-  tooLong: false, // indicating the value exceeds the specified maxlength for HTMLInputElement or HTMLTextAreaElement objects
+  badInput: boolean, // indicating the user has provided input that the browser is unable to convert.
+  customError: boolean, // indicating the element's custom validity message has been set to a non-empty string by calling the element's setCustomValidity() method.
+  stepMismatch: boolean, // indicating the value does not fit the rules determined by the step attribute
+  tooLong: boolean, // indicating the value exceeds the specified maxlength for HTMLInputElement or HTMLTextAreaElement objects
   valueMissing: boolean, // indicating the element has a required attribute, but no value.
   rangeOverflow: boolean, // indicating the value is greater than the maximum specified by the max attribute.
   rangeUnderflow: boolean, // indicating the value is less than the minimum specified by the min attribute.

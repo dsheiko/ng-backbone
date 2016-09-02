@@ -69,8 +69,6 @@ var FormView = (function (_super) {
         if (this.models.has(groupName)) {
             return;
         }
-        // make sure form is not self-validated
-        el.setAttribute("novalidate", "true");
         var model = new formstate_1.GroupState({ formValidators: this.formValidators });
         this.models.set(FormView.getKey(groupName, "group"), model);
         this.stopListening(model);
