@@ -282,17 +282,29 @@ Within every found group it collects all the available controls <code>input[name
   <span class="hljs-comment">// emulate user input for unit-testing</span>
   testInput( pointer: string, value: any ): <span class="hljs-built_in">Promise</span>&lt;any&gt;;
 }</code></pre>
-<h2 id="form-validation">Form Validation</h2><p><code>FormView</code> subscribes for &quot;input&quot;, &quot;change&quot; and &quot;focus&quot; events on the found controls. Whenever an event fires it updates the <code>ControlState</code>. If the state model reports that <code>valid</code> or <code>touched</code> property changed, <code>FormView</code> updates the <code>GroupState</code>.</p><p><code>FormView</code> contains following built-in validators:</p><ul><li><code>valueMissing</code> - if the control has <code>required</code> attribute and an empty value, <code>ControlState.valueMissing</code> is set <code>false</code>
-</li>
-<li><code>patternMismatch</code> - if the control has <code>pattern</code> attribute and a value that does not match the specified pattern, <code>ControlState.patternMismatch</code> is set <code>false</code>
-</li>
-<li><code>rangeOverflow</code> - if the control has <code>max</code> attribute and a value greater than specified in the attribute, <code>ControlState.rangeOverflow</code> is set <code>false</code>
-</li>
-<li><code>rangeUnderflow</code> - if the control has <code>min</code> attribute and a value less than specified in the attribute, <code>ControlState.rangeUnderflow</code> is set <code>false</code>
-</li>
-<li><code>typeMismatch</code> - if the control has type <code>email</code>, <code>tel</code> or <code>url</code> and a value that does not match the corresponding type, <code>ControlState.typeMismatch</code> is set <code>false</code>
+<ul><li><a href="form/state.md">State Model</a>
 </li></ul>
-<p>If any of validations fails <code>ControlState.validationMessage</code> receives the corresponding error message.</p><p>Examples:</p><pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;name&quot;</span>  <span class="hljs-attr">required</span> /&gt;</span>
+<h2 id="form-validation">Form Validation</h2><p><code>FormView</code> subscribes for &quot;input&quot;, &quot;change&quot; and &quot;focus&quot; events on the found controls. Whenever an event fires it updates the <code>ControlState</code>
+based on actual <a href="https://www.w3.org/TR/html5/forms.html#the-constraint-validation-api" target="_blank">element ValidityState</a> plus validity state of specified custom validators.
+If the state model reports that <code>valid</code> or <code>touched</code> property changed, <code>FormView</code> updates the <code>GroupState</code>.</p><p><code>FormView</code> contains following built-in validators:</p><ul><li><code>badInput</code> - <code>true</code> if the user has provided input that the browser is unable to convert.
+</li>
+<li><code>customError</code> - <code>true</code>  if the element has been set custom validity message (e.g. by as custom validator)
+</li>
+<li><code>stepMismatch</code> - <code>true</code> if the control has <code>step</code> (type=number) attribute and its value does not fit the rules determined by the step attribute
+</li>
+<li><code>tooLong</code> -  <code>true</code> if the control has <code>maxLength</code> attribute and its value exceeds the specified maxlength
+</li>
+<li><code>valueMissing</code> - <code>true</code>  if the control has <code>required</code> attribute and an empty value
+</li>
+<li><code>patternMismatch</code> - <code>true</code>  if the control has <code>pattern</code> attribute and a value that does not match the specified pattern
+</li>
+<li><code>rangeOverflow</code> - <code>true</code>  if the control has <code>max</code> (type=number) attribute and a value greater than specified in the attribute
+</li>
+<li><code>rangeUnderflow</code> - <code>true</code>  if the control has <code>min</code> (type=number) attribute and a value less than specified in the attribute
+</li>
+<li><code>typeMismatch</code> - <code>true</code>  if the control has type <code>email</code>, <code>tel</code> or <code>url</code> and a value that does not match the corresponding type
+</li></ul>
+<p>If any of validations fails <code>ControlState.validationMessage</code> receives the corresponding error message.</p><blockquote><p>NOTE: Some user agents (e.g. PhantomJS) doesn&apos;t update <code>el.validationMessage</code>, therefore in such case it cannot be updated in the <code>ControlState</code>.</p></blockquote><p>Examples:</p><pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;name&quot;</span>  <span class="hljs-attr">required</span> /&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">data-ng-if</span>=<span class="hljs-string">&quot;hero.name.valueMissing&quot;</span>&gt;</span>
   Name is required
 <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
@@ -311,7 +323,7 @@ Within every found group it collects all the available controls <code>input[name
     <span class="hljs-string">&quot;submit form&quot;</span>: <span class="hljs-string">&quot;onSubmitForm&quot;</span>
   },
   template: <span class="hljs-string">`
-    &lt;form data-ng-group=&quot;hero&quot; novalidate&gt;
+    &lt;form data-ng-group=&quot;hero&quot; &gt;
 
     &lt;label for=&quot;name&quot;&gt;Name
       &lt;input name=&quot;name&quot; type=&quot;text&quot; required &gt;
@@ -357,7 +369,7 @@ Within every found group it collects all the available controls <code>input[name
 @Component({
   el: <span class="hljs-string">&quot;ng-hero&quot;</span>,
   template: <span class="hljs-string">`
-    &lt;form data-ng-group=&quot;hero&quot; novalidate&gt;
+    &lt;form data-ng-group=&quot;hero&quot; &gt;
       &lt;div class=&quot;alert alert-danger&quot; data-ng-if=&quot;hero.group.dirty &amp;&amp; !hero.group.valid&quot;&gt;
         &lt;p data-ng-for=&quot;let dto of hero.group.validationMessages&quot;&gt;
           &lt;b data-ng-text=&quot;dto.control&quot;&gt;&lt;/b&gt;: &lt;i data-ng-text=&quot;dto.message&quot;&gt;&lt;/i&gt;
@@ -374,7 +386,7 @@ Within every found group it collects all the available controls <code>input[name
 
 <span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HeroView</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">FormView</span> </span>{
 }</code></pre>
-<h2 id="custom-type-validation">Custom Type Validation</h2><p>You can set up your own custom type validators like that:</p><pre><code class="lang-javascript">@Component({
+<h2 id="custom-type-validation">Custom Type Validation</h2><p>You can attach to a control one or many custom validators by using <code>data-ng-validate</code> attribute:</p><pre><code class="lang-javascript">@Component({
   el: <span class="hljs-string">&quot;ng-hero&quot;</span>,
   formValidators: {
     hexcolor( value: string ): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-keyword">void</span>&gt; {
@@ -386,14 +398,15 @@ Within every found group it collects all the available controls <code>input[name
       }
   },
   template: <span class="hljs-string">`
-    &lt;form data-ng-group=&quot;hero&quot; novalidate&gt;
-      &lt;input name=&quot;color&quot; type=&quot;hexcolor&quot; /&gt;
+    &lt;form data-ng-group=&quot;hero&quot; &gt;
+      &lt;input name=&quot;color&quot; data-ng-validate=&quot;hexcolor&quot; /&gt;
     &lt;/form&gt;
 
 `</span>
 })
 </code></pre>
-<p>Every validator is a callback that returns a Promise. If validation passes the Promised resolves. Otherwise it rejects with error message passed as an argument</p><h2 id="remote-type-validation">Remote Type Validation</h2><p>You can also have a validation that happens on the server.</p><pre><code class="lang-javascript">
+<p>Multiple validators can be specified separated by a comma:</p><pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;color&quot;</span> <span class="hljs-attr">data-ng-validate</span>=<span class="hljs-string">&quot;foo, bar, baz&quot;</span> /&gt;</span></code></pre>
+<p>Every validator is a callback that returns a Promise. If validation passes the Promised resolves. Otherwise it rejects with error message passed as an argument</p><h2 id="remote-validation">Remote Validation</h2><p>You can also have a validation that happens on the server.</p><pre><code class="lang-javascript">
 <span class="hljs-keyword">import</span> { Component, FormView, FormValidators, Debounce } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;ng-backbone/core&quot;</span>;
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CustomValidators</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">FormValidators</span> </span>{
@@ -407,8 +420,8 @@ Within every found group it collects all the available controls <code>input[name
   el: <span class="hljs-string">&quot;ng-hero&quot;</span>,
   formValidators: CustomValidators,
   template: <span class="hljs-string">`
-    &lt;form data-ng-group=&quot;hero&quot; novalidate&gt;
-      &lt;input name=&quot;color&quot; type=&quot;hexcolor&quot; /&gt;
+    &lt;form data-ng-group=&quot;hero&quot; &gt;
+      &lt;input name=&quot;color&quot; data-ng-validate=&quot;hexcolor&quot; /&gt;
     &lt;/form&gt;
 
 `</span>
@@ -457,7 +470,7 @@ Within every found group it collects all the available controls <code>input[name
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"FormView Module","level":"1.5","depth":1,"next":{"title":"State Model","level":"1.5.1","depth":2,"path":"state-model.md","ref":"state-model.md","articles":[]},"previous":{"title":"Logging Events","level":"1.4.3","depth":2,"path":"logging-events.md","ref":"logging-events.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"formview-module.md","mtime":"2016-08-30T11:36:51.812Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-08-30T11:38:00.471Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"FormView Module","level":"1.5","depth":1,"next":{"title":"State Model","level":"1.5.1","depth":2,"path":"state-model.md","ref":"state-model.md","articles":[]},"previous":{"title":"Logging Events","level":"1.4.3","depth":2,"path":"logging-events.md","ref":"logging-events.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"formview-module.md","mtime":"2016-09-02T10:51:07.181Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-09-02T10:51:44.190Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
