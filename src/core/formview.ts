@@ -64,8 +64,6 @@ export class FormView extends View {
     if ( this.models.has( groupName ) ) {
       return;
     }
-    // make sure form is not self-validated
-    el.setAttribute( "novalidate", "true" );
     let model = <GroupState> new GroupState({ formValidators:  this.formValidators });
     this.models.set(  FormView.getKey( groupName, "group" ),  model );
     this.stopListening( model );
@@ -146,15 +144,15 @@ export class FormView extends View {
    * helpere to test states control/group on input
    */
   testInput( pointer: string, value: any ): Promise<any> {
-    let groupName: string, 
+    let groupName: string,
         controlName: string;
     [ groupName, controlName ] = pointer.split( "." );
-    
+
     let el = <HTMLInputElement>this.el.querySelector(
         `[data-ng-group="${groupName}"] [name="${controlName}"]` );
     if ( !el ) {
         throw new Error( `Pointer ${pointer} is invalid` );
-    }    
+    }
     el.value = value;
     let model = <ControlState> this.models.get( pointer );
     return model.setState( el )

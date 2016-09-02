@@ -109,10 +109,7 @@ export default function FormViewSpec(){
           .then(() => {
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "valueMissing" ) ).toBe( true );
-            expect( control.get( "validationMessage" ).length ).toBeTruthy();
             expect( group.get( "valid" ) ).toBe( false );
-            expect( group.get( "validationMessage" ).length ).toBeTruthy();
-            expect( group.get( "validationMessages" ).length ).toBeTruthy();
             done();
           });
       });
@@ -121,7 +118,7 @@ export default function FormViewSpec(){
         @Component({
           tagName: "ng-component",
           template: `<form data-ng-group="foo">
-          <input name="bar" max="10" />
+          <input name="bar" type="number" max="10" />
           </form>`
         })
         class TestView extends FormView {
@@ -136,10 +133,7 @@ export default function FormViewSpec(){
           .then(() => {
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "rangeOverflow" ) ).toBe( true );
-            expect( control.get( "validationMessage" ).length ).toBeTruthy();
             expect( group.get( "valid" ) ).toBe( false );
-            expect( group.get( "validationMessage" ).length ).toBeTruthy();
-            expect( group.get( "validationMessages" ).length ).toBeTruthy();
             done();
           });
       });
@@ -163,10 +157,7 @@ export default function FormViewSpec(){
           .then(() => {
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "patternMismatch" ) ).toBe( true );
-            expect( control.get( "validationMessage" ).length ).toBeTruthy();
             expect( group.get( "valid" ) ).toBe( false );
-            expect( group.get( "validationMessage" ).length ).toBeTruthy();
-            expect( group.get( "validationMessages" ).length ).toBeTruthy();
             done();
           });
       });
@@ -190,10 +181,7 @@ export default function FormViewSpec(){
           .then(() => {
             expect( control.get( "valid" ) ).toBe( false );
             expect( control.get( "typeMismatch" ) ).toBe( true );
-            expect( control.get( "validationMessage" ).length ).toBeTruthy();
             expect( group.get( "valid" ) ).toBe( false );
-            expect( group.get( "validationMessage" ).length ).toBeTruthy();
-            expect( group.get( "validationMessages" ).length ).toBeTruthy();
             done();
           });
       });

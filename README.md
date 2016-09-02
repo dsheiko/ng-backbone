@@ -1,4 +1,4 @@
-# ngBackbone 1.0 RC1
+# ngBackbone 1.0 RC2
 
 [![NPM](https://nodei.co/npm/ng-backbone.png)](https://nodei.co/npm/ng-backbone/)
 
@@ -25,8 +25,10 @@ And that is how I came up with `ngBackbone`
 ## What does it do?
 
 `ngBackbone` extends the base with:
-* View module + @Component decorator that provide 1-way binding and control over nested views
-* FormView module that gives 2-way binding
+
+* @Component decorator encapsulates declarative from imperative part of the view
+* View module binds specified models/collections to the view template (makes the template reacting on data events)
+* FormView creates state models for controls per a specified group and binds them to input/change event. FormView keeps these models in sync with [element ValidityState](https://www.w3.org/TR/html5/forms.html#the-constraint-validation-api) and can run custom validators on input events.
 
 
 `Ng.Backbone` does not depend on jQuery or Underscore, meaning you can use on an optimized build of Backbone. For example,

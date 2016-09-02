@@ -10,174 +10,14 @@ export default function FormStateSpec(){
     });
 
 
-
-    describe("#isCheckboxRadio", function(){
-      beforeEach(function(){
-        this.input = document.createElement( "input" );
-      });
-      it( "returns true for checkbox", function() {
-        this.input.type = "checkbox";
-        expect( ControlState.prototype.isCheckboxRadio( this.input ) ).toBe( true );
-      });
-      it( "returns true for radio", function() {
-        this.input.type = "radio";
-        expect( ControlState.prototype.isCheckboxRadio( this.input ) ).toBe( true );
-      });
-      it( "returns true for text", function() {
-        this.input.type = "text";
-        expect( ControlState.prototype.isCheckboxRadio( this.input ) ).toBe( false );
-      });
-    });
-
-
-
-
-    describe("#validateRequired", function(){
-      beforeEach(function(){
-        this.input = document.createElement( "input" );
-        this.state = new ControlState();
-      });
-
-      it( "sets valueMissing true for empty required", function() {
-        this.input.value = "";
-        this.input.setAttribute( "required", true );
-        this.state.validateRequired( this.input );
-        expect( this.state.get( "valueMissing" ) ).toBe( true );
-      });
-
-      it( "sets valueMissing false for empty not-required", function() {
-        this.input.value = "";
-        this.state.validateRequired( this.input );
-        expect( this.state.get( "valueMissing" ) ).toBe( false );
-      });
-
-      it( "sets valueMissing false for not-empty required", function() {
-        this.input.value = "not-empty";
-        this.input.setAttribute( "required", true );
-        this.state.validateRequired( this.input );
-        expect( this.state.get( "valueMissing" ) ).toBe( false );
-      });
-
-      it( "fires change event", function( done ) {
-        this.input.value = "";
-        this.input.setAttribute( "required", true );
-
-        this.state.on( "change", function( state:any ){
-          expect( state.get( "valueMissing" ) ).toBe( true );
-          done();
-        });
-        this.state.validateRequired( this.input );
-        this.state.checkValidity();
-      });
-
-    });
-
-
-    describe("#validateRange", function(){
-      beforeEach(function(){
-        this.input = document.createElement( "input" );
-        this.state = new ControlState();
-      });
-
-      it( "sets rangeUnderflow true for underflow value", function() {
-        this.input.value = 1;
-        this.input.setAttribute( "min", "10" );
-
-        this.state.validateRange( this.input );
-        expect( this.state.get( "rangeUnderflow" ) ).toBe( true );
-        expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
-      });
-
-      it( "sets rangeOverflow true for overflow value", function() {
-        this.input.value = 100;
-        this.input.setAttribute( "max", "10" );
-        this.state.validateRange( this.input );
-        expect( this.state.get( "rangeOverflow" ) ).toBe( true );
-        expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
-      });
-
-      it( "resets rangeUnderflow/rangeOverflow for value in the range", function() {
-        this.input.value = 10;
-        this.input.setAttribute( "min", "1" );
-        this.input.setAttribute( "max", "100" );
-        this.state.validateRange( this.input );
-        expect( this.state.get( "rangeUnderflow" ) ).toBe( false );
-        expect( this.state.get( "rangeOverflow" ) ).toBe( false );
-        expect( this.state.get( "validationMessage" ).length ).toBeFalsy();
-      });
-
-
-      it( "fires change event", function( done ) {
-        this.input.value = 1;
-        this.input.setAttribute( "min", "10" );
-        this.state.on( "change", function( state:any ){
-          expect( state.get( "rangeUnderflow" ) ).toBe( true );
-          done();
-        });
-        this.state.validateRange( this.input );
-        this.state.checkValidity();
-      });
-
-    });
-
-
-    describe("#patternMismatch", function(){
-      beforeEach(function(){
-        this.input = document.createElement( "input" );
-        this.state = new ControlState();
-      });
-
-      it( "sets patternMismatch true for a value that does not match pattern", function() {
-        this.input.value = "invalid";
-        this.input.setAttribute( "pattern", "[A-Z]{3}[0-9]{4}" );
-
-        this.state.patternMismatch( this.input );
-        expect( this.state.get( "patternMismatch" ) ).toBe( true );
-        expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
-      });
-    });
-
-    describe("#validateTypeMismatch", function(){
+    describe("#testCustomValidators", function(){
       beforeEach(function(){
         this.input = document.createElement( "input" );
         this.input.value = "invalid";
         this.state = new ControlState();
       });
 
-      describe("email", function(){
-        it( "validates", function() {
-          this.input.setAttribute( "type", "email" );
-          this.state.validateTypeMismatch( this.input )
-            .then(() => {
-              expect( this.state.get( "typeMismatch" ) ).toBe( true );
-             expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
-            });
-        });
-      });
-
-      describe("url", function(){
-        it( "validates", function() {
-          this.input.setAttribute( "type", "url" );
-          this.state.validateTypeMismatch( this.input )
-            .then(() => {
-              expect( this.state.get( "typeMismatch" ) ).toBe( true );
-             expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
-            });
-        });
-      });
-
-      describe("tel", function(){
-        it( "validates", function() {
-          this.input.setAttribute( "type", "tel" );
-          this.state.validateTypeMismatch( this.input )
-            .then(() => {
-              expect( this.state.get( "typeMismatch" ) ).toBe( true );
-             expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
-            });
-        });
-      });
-
-      describe("custom type (injected as object literal)", function(){
+      describe("custom validators (injected as object literal)", function(){
         it( "validates", function() {
           this.state = new ControlState({
             formValidators: {
@@ -190,17 +30,38 @@ export default function FormStateSpec(){
               }
             }
           });
-          this.input.setAttribute( "type", "foo" );
-          this.state.validateTypeMismatch( this.input )
+          this.input.dataset.ngValidate = "foo";
+          this.state.testCustomValidators( this.input )
             .then(() => {
-              expect( this.state.get( "typeMismatch" ) ).toBe( true );
+              expect( this.state.get( "customError" ) ).toBe( true );
+             expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
+            });
+        });
+      });
+
+      describe("custom validators (multiple)", function(){
+        it( "validates", function() {
+          this.state = new ControlState({
+            formValidators: {
+              foo( value: string ): Promise<void> {
+                return Promise.resolve();
+              },
+              bar( value: string ): Promise<void> {
+                return Promise.reject( "Invalid value" );
+              }
+            }
+          });
+          this.input.dataset.ngValidate = "foo, bar";
+          this.state.testCustomValidators( this.input )
+            .then(() => {
+              expect( this.state.get( "customError" ) ).toBe( true );
              expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
             });
         });
       });
 
 
-      describe("custom type (injected as class)", function(){
+      describe("custom validators (injected as class)", function(){
         it( "validates", function() {
 
           class CustomValidators extends FormValidators {
@@ -216,16 +77,16 @@ export default function FormStateSpec(){
           this.state = new ControlState({
             formValidators: CustomValidators
           });
-          this.input.setAttribute( "type", "foo" );
-          this.state.validateTypeMismatch( this.input )
+          this.input.dataset.ngValidate = "foo";
+          this.state.testCustomValidators( this.input )
             .then(() => {
-              expect( this.state.get( "typeMismatch" ) ).toBe( true );
+              expect( this.state.get( "customError" ) ).toBe( true );
              expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
             });
         });
       });
 
-      describe("custom type debounced", function(){
+      describe("custom validators debounced", function(){
         it( "validates", function() {
 
           class CustomValidators extends FormValidators {
@@ -242,10 +103,10 @@ export default function FormStateSpec(){
           this.state = new ControlState({
             formValidators: CustomValidators
           });
-          this.input.setAttribute( "type", "foo" );
-          this.state.validateTypeMismatch( this.input )
+           this.input.dataset.ngValidate = "foo";
+          this.state.testCustomValidators( this.input )
             .then(() => {
-              expect( this.state.get( "typeMismatch" ) ).toBe( true );
+              expect( this.state.get( "customError" ) ).toBe( true );
              expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
             });
         });
@@ -264,15 +125,28 @@ export default function FormStateSpec(){
         this.state = new ControlState();
       });
 
-      it( "populates state", function( done ) {
+      it( "populates state on required", function( done ) {
         this.input.value = "";
         this.input.setAttribute( "required", true );
-
         this.state.on( "change", () => {
           expect( this.state.get( "value" ) ).toBe( this.input.value );
           expect( this.state.get( "valueMissing" ) ).toBe( true );
           expect( this.state.get( "valid" ) ).toBe( false );
-          expect( this.state.get( "validationMessage" ).length ).toBeTruthy();
+          // PhantomJS/Opera doesn't fill in validationMessage
+          done();
+        });
+        this.state.setState( this.input );
+      });
+
+      it( "populates state on type=email", function( done ) {
+        this.input.setAttribute( "type", "email" );
+        this.input.value = "invalid";
+
+        this.state.on( "change", () => {
+          expect( this.state.get( "value" ) ).toBe( this.input.value );
+          expect( this.state.get( "typeMismatch" ) ).toBe( true );
+          expect( this.state.get( "valid" ) ).toBe( false );
+          // PhantomJS/Opera doesn't fill in validationMessage
           done();
         });
         this.state.setState( this.input );

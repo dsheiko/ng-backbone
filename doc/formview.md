@@ -33,17 +33,24 @@ interface FormView extends View {
 
 ## Form Validation
 
-`FormView` subscribes for "input", "change" and "focus" events on the found controls. Whenever an event fires it updates the `ControlState`. If the state model reports that `valid` or `touched` property changed, `FormView` updates the `GroupState`.
+`FormView` subscribes for "input", "change" and "focus" events on the found controls. Whenever an event fires it updates the `ControlState`
+based on actual [element ValidityState](https://www.w3.org/TR/html5/forms.html#the-constraint-validation-api) plus validity state of specified custom validators.
+If the state model reports that `valid` or `touched` property changed, `FormView` updates the `GroupState`.
 
 `FormView` contains following built-in validators:
 
-* `valueMissing` - if the control has `required` attribute and an empty value, `ControlState.valueMissing` is set `false`
-* `patternMismatch` - if the control has `pattern` attribute and a value that does not match the specified pattern, `ControlState.patternMismatch` is set `false`
-* `rangeOverflow` - if the control has `max` attribute and a value greater than specified in the attribute, `ControlState.rangeOverflow` is set `false`
-* `rangeUnderflow` - if the control has `min` attribute and a value less than specified in the attribute, `ControlState.rangeUnderflow` is set `false`
-* `typeMismatch` - if the control has type `email`, `tel` or `url` and a value that does not match the corresponding type, `ControlState.typeMismatch` is set `false`
+* `badInput` - `true` if the user has provided input that the browser is unable to convert.
+* `customError` - `true`  if the element has been set custom validity message (e.g. by as custom validator)
+* `stepMismatch` - `true` if the control has `step` (type=number) attribute and its value does not fit the rules determined by the step attribute
+* `tooLong` -  `true` if the control has `maxLength` attribute and its value exceeds the specified maxlength
+* `valueMissing` - `true`  if the control has `required` attribute and an empty value
+* `patternMismatch` - `true`  if the control has `pattern` attribute and a value that does not match the specified pattern
+* `rangeOverflow` - `true`  if the control has `max` (type=number) attribute and a value greater than specified in the attribute
+* `rangeUnderflow` - `true`  if the control has `min` (type=number) attribute and a value less than specified in the attribute
+* `typeMismatch` - `true`  if the control has type `email`, `tel` or `url` and a value that does not match the corresponding type
 
 If any of validations fails `ControlState.validationMessage` receives the corresponding error message.
+> NOTE: Some user agents (e.g. PhantomJS) doesn't update `el.validationMessage`, therefore in such case it cannot be updated in the `ControlState`.
 
 Examples:
 
@@ -72,7 +79,7 @@ import { Component, FormView } from "ng-backbone/core";
     "submit form": "onSubmitForm"
   },
   template: `
-    <form data-ng-group="hero" novalidate>
+    <form data-ng-group="hero" >
 
     <label for="name">Name
       <input name="name" type="text" required >
@@ -122,7 +129,7 @@ import { Component, FormView } from "../ng-backbone/core";
 @Component({
   el: "ng-hero",
   template: `
-    <form data-ng-group="hero" novalidate>
+    <form data-ng-group="hero" >
       <div class="alert alert-danger" data-ng-if="hero.group.dirty && !hero.group.valid">
         <p data-ng-for="let dto of hero.group.validationMessages">
           <b data-ng-text="dto.control"></b>: <i data-ng-text="dto.message"></i>
@@ -144,7 +151,7 @@ export class HeroView extends FormView {
 
 ## Custom Type Validation
 
-You can set up your own custom type validators like that:
+You can attach to a control one or many custom validators by using `data-ng-validate` attribute:
 
 ```javascript
 @Component({
@@ -159,8 +166,8 @@ You can set up your own custom type validators like that:
       }
   },
   template: `
-    <form data-ng-group="hero" novalidate>
-      <input name="color" type="hexcolor" />
+    <form data-ng-group="hero" >
+      <input name="color" data-ng-validate="hexcolor" />
     </form>
 
 `
@@ -168,10 +175,17 @@ You can set up your own custom type validators like that:
 
 ```
 
+Multiple validators can be specified separated by a comma:
+```html
+<input name="color" data-ng-validate="foo, bar, baz" />
+```
+
+
+
 Every validator is a callback that returns a Promise. If validation passes the Promised resolves. Otherwise it rejects with error message passed as an argument
 
 
-## Remote Type Validation
+## Remote Validation
 
 You can also have a validation that happens on the server.
 
@@ -190,8 +204,8 @@ class CustomValidators extends FormValidators {
   el: "ng-hero",
   formValidators: CustomValidators,
   template: `
-    <form data-ng-group="hero" novalidate>
-      <input name="color" type="hexcolor" />
+    <form data-ng-group="hero" >
+      <input name="color" data-ng-validate="hexcolor" />
     </form>
 
 `

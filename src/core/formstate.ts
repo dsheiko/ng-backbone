@@ -4,9 +4,10 @@ import { FormValidators } from "./formvalidators";
 import { Debounce } from "./utils";
 
 
-const ERR_TYPES = [
+const VALIDITY_STATE = [
+        "badInput", "customError", "stepMismatch", "tooLong",
         "valueMissing", "rangeOverflow", "rangeUnderflow",
-        "typeMismatch", "patternMismatch" ],
+        "typeMismatch", "patternMismatch", "valueMissing" ],
 
       SILENT = { silent: true };
 
@@ -38,18 +39,12 @@ export class FormState extends Model {
       }
   }
 
-  /**
-   * Check if a given input is a checkbox or radio
-   */
-  isCheckboxRadio( el: HTMLElement ) {
-    return el instanceof HTMLInputElement && [ "checkbox", "radio" ].indexOf( el.type ) !== -1;
-  }
 
   /**
    * Update `valid` and `validationMessage` according to the current model state
    */
   checkValidity(){
-    let invalid = ERR_TYPES.some(( key: string ) => {
+    let invalid = VALIDITY_STATE.some(( key: string ) => {
       return this.attributes[ key ];
     });
     if ( !invalid ) {
@@ -57,71 +52,34 @@ export class FormState extends Model {
     }
     this.set( "valid", !invalid );
   }
-
   /**
-   * Validate <input required/> doesn't have an empty value
+   * Run validators from the list data-ng-validate="foo, bar, baz"
    */
-  validateRequired( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ){
-    if ( !el.hasAttribute( "required" ) ) {
-      return;
-    }
-    let value: string = String( el.value ),
-        valid = value.trim().length;
-
-
-    this.set( "valueMissing", !valid, SILENT );
-    valid || this.set( "validationMessage", "This field is mandatory", SILENT );
-  }
-
-  /**
-   * Validate <input min max /> value in the given range
-   */
-  validateRange( el: HTMLInputElement ){
-    if ( !( el instanceof HTMLInputElement ) ) {
-      throw TypeError( "el must be instance of HTMLInputElement" );
-    }
-    if ( el.hasAttribute( "max" ) ) {
-      let valid = Number( el.value ) < Number( el.getAttribute( "max" ) );
-      this.set( "rangeOverflow", !valid, SILENT );
-      valid || this.set( "validationMessage", "The value is too high", SILENT );
-    }
-    if ( el.hasAttribute( "min" ) ) {
-      let valid = Number( el.value ) > Number( el.getAttribute( "min" ) );
-      this.set( "rangeUnderflow",  !valid, SILENT );
-      valid || this.set( "validationMessage", "The value is too low", SILENT );
-    }
-  }
-
-  /**
-   * Validate by `pattern`
-   */
-  patternMismatch( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ) {
-    if ( !el.hasAttribute( "pattern" ) ) {
-      return;
-    }
-    try {
-      let pattern = new RegExp( el.getAttribute( "pattern" ) ),
-          valid = pattern.test( el.value );
-      this.set( "patternMismatch", !valid, SILENT );
-      valid || this.set( "validationMessage", "The value does not match the pattern", SILENT );
-    } catch ( err ) {
-      throw new Exception( "Invalid pattern " + el.getAttribute( "pattern" ) );
-    }
-  }
-
-  validateTypeMismatch( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ): Promise<void> {
-    let value = el.value,
-        itype = el.getAttribute( "type" );
-    if ( !( itype in this.formValidators ) ) {
+  testCustomValidators( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ): Promise<any> {
+    if ( !el.dataset[ "ngValidate" ] ) {
       return Promise.resolve();
     }
-    return this.formValidators[ itype ]( value )
-      .catch (( err: string|Error ) => {
+    let value = el.value,
+        validators = el.dataset[ "ngValidate" ].trim().split( "," );
+
+    if ( !validators ) {
+      return Promise.resolve();
+    }
+    let all = validators.map(( validator: string ) => {
+      return this.formValidators[ validator.trim() ]( value );
+    });
+
+    return Promise.all( all )
+      .then( () => {
+        el.setCustomValidity( "" );
+      })
+      .catch (( err: string | Error ) => {
         if (  err instanceof Error ) {
           throw new Exception( err.message );
         }
-        this.set( "typeMismatch", true, SILENT );
+        this.set( "customError", true, SILENT );
         this.set( "validationMessage", err, SILENT );
+        el.setCustomValidity( <string>err );
       });
   }
 
@@ -135,17 +93,21 @@ export class FormState extends Model {
   }
 
   setState( el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement ): Promise<void>{
-    if ( !this.isCheckboxRadio( el ) ) {
+    if ( "validity" in el ) {
        this.set( "value", el.value, SILENT );
-       this.validateRequired( el );
-       if ( el instanceof HTMLInputElement ) {
-         this.validateRange( el );
-       }
-       this.patternMismatch( el );
-       return this.validateTypeMismatch( el )
+
+       VALIDITY_STATE.forEach(( method: string ) => {
+         let ValidityState = <any>el.validity;
+         this.set( method, ValidityState[ method ], SILENT );
+       });
+
+       this.set( "validationMessage", el.validationMessage, SILENT );
+
+       return this.testCustomValidators( el )
          .then(() => {
            this.checkValidity();
          });
+
      } else {
        this.set( "value", ( <HTMLInputElement>el ).checked, SILENT );
        this.checkValidity();
@@ -177,10 +139,15 @@ export class ControlState extends FormState {
   defaults() {
     return <NgBackbone.ControlStateAttrs>{
       "value":    "",
-      "valid":    true,  // Control's value is valid
       "touched":  false, // Control has been visited
       "dirty":    false, // Control's value has changed
 
+       // ValidityState
+      "valid":    true,  // Control's value is valid
+      "badInput": false, // indicating the user has provided input that the browser is unable to convert
+      "customError": false, // from setCustomValidity() / custom validators
+      "stepMismatch": false, // indicating the value does not fit the rules determined by the step attribute
+      "tooLong": false, // ndicating the value exceeds the specified maxlength for HTMLInputElement/HTMLTextAreaElement
       "valueMissing": false, // indicating the element has a required attribute, but no value.
       "rangeOverflow": false, // indicating the value is greater than the maximum specified by the max attribute.
       "rangeUnderflow": false, // indicating the value is less than the minimum specified by the min attribute.
