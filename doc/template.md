@@ -40,6 +40,14 @@ We use `NgProp` to modify element's properties
 <button data-ng-prop="'disabled', isDisabled"></button>
 ```
 
+### NgAttr
+
+We use `NgAttr` to modify element's attributes
+
+```html
+<input data-ng-prop="'required', isRequired">
+```
+
 
 ### NgData
 
