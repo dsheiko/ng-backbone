@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## 0.2.2
-* View triggers "render" event, so one can subscribe like this.listenToOnce( this, "render", ...);
+* View triggers "will-update" an "did-update" events, so one can subscribe like this.listenToOnce( this, "..", ...);
 * Now collections may have getters available in template
 
 ## 0.2.1
