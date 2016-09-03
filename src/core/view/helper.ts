@@ -3,7 +3,9 @@ import { NgTemplate } from "../../ngtemplate";
 import { mapFrom, mapAssign } from "../utils";
 
 export class ViewHelper {
-
+  /**
+   * Translate { getFoo(), getBar() } into { foo: "value", bar: "value" }
+   */
   static getterToScope( data: any ): NgBackbone.DataMap<any> {
     const re = /^get[A-Z]/;
     let key: string, 

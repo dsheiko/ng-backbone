@@ -52,7 +52,6 @@ declare namespace NgBackbone {
 
   }
   interface Collection extends Backbone.Collection<Backbone.Model> {
-    orderBy( key: string ): Collection;
   }
 
   interface ModelMap extends  Map<string, Backbone.Model> {

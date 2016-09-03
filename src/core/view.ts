@@ -81,7 +81,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
 
     try {
       if ( this.shouldComponentUpdate( scope ) ) {
-        this.trigger( "will-update" );
+        this.trigger( "will-update", scope );
         this.componentWillUpdate( scope );
         this.errors = this.template.sync( scope ).report()[ "errors" ];
         this.options.logger && this.errors.forEach(( msg: string ) => {
@@ -90,7 +90,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
         this.options.logger &&
           this.trigger( "log:sync", "synced template on in " + ( performance.now() - ms ) + " ms", scope, source );
         this.componentDidUpdate( scope );
-        this.trigger( "did-update" );
+        this.trigger( "did-update", scope );
       }
     } catch ( err ) {
       console.error( (<Error>err).message );

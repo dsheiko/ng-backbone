@@ -1,10 +1,11 @@
 {
   "resolution": "main",
   "tree": {
-    "src": "/home/sheiko/Sites/os/ng-backbone/custom-typings/exoskeleton/typings.json",
+    "src": "/home/dsheiko/Sites/ng-backbone/custom-typings/exoskeleton/typings.json",
     "raw": "file:custom-typings/exoskeleton/typings.json",
     "main": "exoskeleton.d.ts",
     "version": "0.0.1",
+    "global": false,
     "name": "exoskeleton",
     "type": "typings"
   }

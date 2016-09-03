@@ -5,6 +5,13 @@ class MockCollection extends Collection {
   fetch( options?: Backbone.ModelFetchOptions ): JQueryXHR {
     return <JQueryXHR>null;
   }
+  getSelectedNum(){
+    return 0;
+  }
+  
+  getOrder(){
+    return "name";
+  }
 
   orderBy( key: string ): Collection {
     this.comparator = key;
@@ -37,17 +44,20 @@ export default function HeroListSpec(){
 
     it( "renders into view all the models of the specified collection ", function() {
       this.view.render();
-      let items = this.view.el.querySelectorAll( "tr.list__tool-row" );
+      let items = this.view.$( "tr.list__tool-row" );
       expect( items.length ).toBe( this.view.collections.get( "heroes" ).length );
     });
 
-    it( "sorts the table by a given key", function() {
-      this.view
-        .render()
+    it( "sorts the table by a given key", function( done ) {
+      this.view.render();
+      this.view.once( "did-update", () => {
+        let first = this.view.$( "tr.list__tool-row" ).item( 0 );
+        expect( first.textContent ).toMatch( "power1" );
+        done();
+      })
+      this.view.collections.get( "heroes" )
         .orderBy( "power" );
-
-      let first = this.view.el.querySelector( "tr.list__tool-row" );
-      expect( first.textContent ).toMatch( "power3" );
+     
     });
 
   });

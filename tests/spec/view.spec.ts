@@ -31,6 +31,37 @@ export default function ViewSpec(){
         expect( view.el.classList.contains( "ng-class" ) ).toBeTruthy();
       });
     });
+    
+    describe("View events", function(){
+      beforeEach(function(){
+        @Component({
+          tagName: "ng-component",
+          models: {
+            foo: new Model({ bar: "bar" })
+          },
+          template: "<ng-el></ng-el>"
+        })
+        class TestView extends View {
+        }
+        this.view = new TestView();        
+      });
+      
+      it( "fires will-update", function( done ) {
+        this.view.once( "will-update", ( scope: any ) => {
+          expect( "foo" in scope ).toBeTruthy();
+          done();
+        });
+        this.view.render();
+      });
+      it( "fires did-update", function( done ) {
+        this.view.once( "did-update", ( scope: any ) => {
+          expect( "foo" in scope ).toBeTruthy();
+          done();
+        });
+        this.view.render();
+      });
+
+    });
 
     describe("@Component + View + Models", function(){
       it( "binds specified models", function() {

@@ -40,7 +40,7 @@ export default function HeroSpec(){
        this.view.models
         .get( "hero.power" )
         .set({ "dirty": true, "valid": false });
-       let btn = this.view.el.querySelector( "button[type=submit]" );
+       let btn = this.view.$( "button[type=submit]" ).item( 0 );
        expect( btn.disabled ).toBeTruthy();
     });
 
@@ -56,14 +56,14 @@ export default function HeroSpec(){
        this.view.models
         .get( "hero.name" )
         .set({ "dirty": true, "valid": false });
-       let btn = this.view.el.querySelector( "button[type=submit]" );
+       let btn = this.view.$( "button[type=submit]" ).item( 0 );
        expect( btn.disabled ).toBeTruthy();
     });
 
     it( "shows no error and enable submit when form is valid", function() {
-       let power = this.view.el.querySelector( "select[name=power]" ),
-           name = this.view.el.querySelector( "input[name=name]" ),
-           btn = this.view.el.querySelector( "button[type=submit]" );
+       let power = this.view.$( "select[name=power]" ).item( 0 ),
+           name = this.view.$( "input[name=name]" ).item( 0 ),
+           btn = this.view.$( "button[type=submit]" ).item( 0 );
 
        power.value = "foo";
        name.value = "bar";
