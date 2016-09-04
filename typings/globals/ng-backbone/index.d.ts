@@ -106,18 +106,21 @@ declare namespace NgBackbone {
     formValidators?: { [key: string]: Function; };
     logger?: LoggerOption;
     template?: string;
+    templateUrl?: string;
     parent?: View;
   }
 
   interface ComponentDto {
     models: Models;
     collections: Collections;
-    template: string;
+    template?: string;
+    templateUrl?: string;
     views?: ViewCtorMap;
   }
 
   interface ComponentOptions {
-    template: string;
+    template?: string;
+    templateUrl?: string;
     models?: Models;
     collections?: Collections;
     views?: Views;

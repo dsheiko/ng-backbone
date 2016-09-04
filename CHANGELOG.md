@@ -1,8 +1,9 @@
 # CHANGELOG
 
 ## 0.2.2
-* View triggers "will-update" an "did-update" events, so one can subscribe like this.listenToOnce( this, "..", ...);
+* View triggers component-will-update/component-did-update/component-will-mount/component-did-mount events, so one can subscribe like this.listenToOnce( this, "..", ...);
 * Now collections may have getters available in template
+* Now template can be asynchronously loaded. See parameter `templateUrl` into view/component options
 
 ## 0.2.1
 * upgrated up to ngTemplate 0.1.7 

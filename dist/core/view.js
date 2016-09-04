@@ -61,10 +61,15 @@ var View = (function (_super) {
         var _this = this;
         var ms = performance.now();
         var scope = {};
+        // When template is not ready yet - e.g. loading via XHR
+        if (!this.template) {
+            return;
+        }
         this.models && Object.assign(scope, helper_1.ViewHelper.modelsToScope(this.models));
         this.collections && Object.assign(scope, helper_1.ViewHelper.collectionsToScope(this.collections));
         try {
             if (this.shouldComponentUpdate(scope)) {
+                this.trigger("component-will-update", scope);
                 this.componentWillUpdate(scope);
                 this.errors = this.template.sync(scope).report()["errors"];
                 this.options.logger && this.errors.forEach(function (msg) {
@@ -73,7 +78,7 @@ var View = (function (_super) {
                 this.options.logger &&
                     this.trigger("log:sync", "synced template on in " + (performance.now() - ms) + " ms", scope, source);
                 this.componentDidUpdate(scope);
-                this.trigger("render");
+                this.trigger("component-did-update", scope);
             }
         }
         catch (err) {

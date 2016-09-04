@@ -9,6 +9,7 @@ export function Component( options: NgBackbone.ComponentOptions ): Function {
         collections: options.collections,
         views: mapFrom( options.views ),
         template: options.template,
+        templateUrl: options.templateUrl,
       },
       el: options.el || null,
       events: options.events || null,

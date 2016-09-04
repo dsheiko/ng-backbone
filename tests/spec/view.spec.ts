@@ -30,6 +30,25 @@ export default function ViewSpec(){
         expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
         expect( view.el.classList.contains( "ng-class" ) ).toBeTruthy();
       });
+      
+      it( "loads template from a remote source", function( done ) {
+        let ajax = Backbone.ajax;
+        Backbone.ajax = <any> function( options: any ): any { 
+          options.success( "<ng-el></ng-el>" );
+        };
+        @Component({
+          tagName: "ng-component",
+          templateUrl: "/tests/fixture/ng-el.html"
+        })
+        class TestView extends View {
+          componentDidMount(){
+            expect( this.el.querySelector( "ng-el" ) ).toBeTruthy();
+            done(); 
+          }
+        }
+        let view = new TestView();
+        Backbone.ajax = ajax;
+      });
     });
     
     describe("View events", function(){
@@ -46,15 +65,15 @@ export default function ViewSpec(){
         this.view = new TestView();        
       });
       
-      it( "fires will-update", function( done ) {
-        this.view.once( "will-update", ( scope: any ) => {
+      it( "fires component-will-update", function( done ) {
+        this.view.once( "component-will-update", ( scope: any ) => {
           expect( "foo" in scope ).toBeTruthy();
           done();
         });
         this.view.render();
       });
-      it( "fires did-update", function( done ) {
-        this.view.once( "did-update", ( scope: any ) => {
+      it( "fires component-did-update", function( done ) {
+        this.view.once( "component-did-update", ( scope: any ) => {
           expect( "foo" in scope ).toBeTruthy();
           done();
         });

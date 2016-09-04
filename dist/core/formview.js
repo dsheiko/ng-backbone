@@ -128,7 +128,7 @@ var FormView = (function (_super) {
         this.delegate("change", sel, onChange);
         this.delegate("input", sel, onChange);
         this.delegate("focus", sel, function () {
-            inputModel.onInputFocus();
+            inputModel.get("touched") || inputModel.onInputFocus();
         });
     };
     FormView.prototype._onControlModelChange = function (groupName, model) {

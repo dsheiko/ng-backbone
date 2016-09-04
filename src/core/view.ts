@@ -76,12 +76,16 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   render( source?: NgBackbone.Model | NgBackbone.Collection ): any {
     let ms =  performance.now();
     let scope: NgBackbone.DataMap<any> = {};
+    // When template is not ready yet - e.g. loading via XHR
+    if ( !this.template ) {
+      return;
+    }
     this.models && Object.assign( scope, ViewHelper.modelsToScope( this.models ) );
     this.collections && Object.assign( scope, ViewHelper.collectionsToScope( this.collections ) );
 
     try {
       if ( this.shouldComponentUpdate( scope ) ) {
-        this.trigger( "will-update", scope );
+        this.trigger( "component-will-update", scope );
         this.componentWillUpdate( scope );
         this.errors = this.template.sync( scope ).report()[ "errors" ];
         this.options.logger && this.errors.forEach(( msg: string ) => {
@@ -90,7 +94,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
         this.options.logger &&
           this.trigger( "log:sync", "synced template on in " + ( performance.now() - ms ) + " ms", scope, source );
         this.componentDidUpdate( scope );
-        this.trigger( "did-update", scope );
+        this.trigger( "component-did-update", scope );
       }
     } catch ( err ) {
       console.error( (<Error>err).message );

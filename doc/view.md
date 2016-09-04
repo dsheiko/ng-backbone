@@ -38,8 +38,10 @@ interface View extends Backbone.NativeView {
 ```
 ## Events
 
-* `will-update` - fires straight before bounding el populated from the template
-* `did-update` - fires straight after bounding el populated from the template
+* `component-will-update` - fires straight before bounding el populated from the template
+* `component-did-update` - fires straight after bounding el populated from the template
+* `component-will-mount` - fires straight before bounding el populated from the template
+* `component-did-mount` - fires straight after bounding el populated from the template
 
 
 `View` creates an instance of ngTemplate based on specified bounding element and template code. It binds models/collections of the given maps to the template. E.g. models: `{ foo: new Model() }` becomes available in the template scope as `foo`. As soon the model changes (`this.models.get("foo").set("bar", "value")`) the template responds (`foo.bar === "value"`);

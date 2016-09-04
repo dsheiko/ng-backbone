@@ -4,6 +4,9 @@ var utils_1 = require("../utils");
 var ViewHelper = (function () {
     function ViewHelper() {
     }
+    /**
+     * Translate { getFoo(), getBar() } into { foo: "value", bar: "value" }
+     */
     ViewHelper.getterToScope = function (data) {
         var re = /^get[A-Z]/;
         var key, getters = {};
@@ -97,8 +100,46 @@ var ViewHelper = (function () {
             models: {},
             collections: {},
             views: utils_1.mapFrom({}),
-            template: null
+            template: null,
+            templateUrl: null
         };
+    };
+    ViewHelper.initializeTemplate = function (view, template) {
+        // process Component's payload
+        view.template = new ngtemplate_1.NgTemplate(view.el, template, {
+            willMount: function () {
+                view.trigger("component-will-mount");
+                view.componentWillMount();
+            },
+            didMount: function () {
+                view.componentDidMount();
+                view.trigger("component-did-mount");
+            }
+        });
+    };
+    ViewHelper.asyncInitializeTemplate = function (view, options) {
+        var template = view._component.template, templateUrl = view._component.templateUrl;
+        // shared template
+        if ("template" in options && view.options.template) {
+            template = view.options.template;
+        }
+        if ("templateUrl" in options && view.options.templateUrl) {
+            templateUrl = view.options.templateUrl;
+        }
+        if (!templateUrl) {
+            ViewHelper.initializeTemplate(view, template);
+            return;
+        }
+        Backbone.ajax({
+            url: templateUrl,
+            error: function (err) {
+                throw new Error("Cannot reach " + templateUrl);
+            },
+            success: function (tpl) {
+                ViewHelper.initializeTemplate(view, tpl);
+                view.render();
+            }
+        });
     };
     /**
      * collections/models passed in options, take them
@@ -108,17 +149,8 @@ var ViewHelper = (function () {
         if (!("_component" in view)) {
             ViewHelper.resetComponentDto(view);
         }
-        var template = view._component.template;
-        // shared template
-        if ("template" in options && view.options.template) {
-            template = view.options.template;
-        }
-        // process Component's payload
-        view.template = new ngtemplate_1.NgTemplate(view.el, template, {
-            willMount: view.componentWillMount.bind(view),
-            didMount: view.componentDidMount.bind(view)
-        }),
-            view.models = utils_1.mapFrom(view._component.models);
+        ViewHelper.asyncInitializeTemplate(view, view.options);
+        view.models = utils_1.mapFrom(view._component.models);
         view.collections = utils_1.mapFrom(view._component.collections);
         view.views = utils_1.mapFrom({});
         if ("collections" in options) {

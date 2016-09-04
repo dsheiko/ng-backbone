@@ -99,10 +99,50 @@ export class ViewHelper {
         models: {},
         collections: {},
         views: mapFrom({}),
-        template: null
+        template: null,
+        templateUrl: null
       };
   }
-
+  static initializeTemplate( view: View, template: string ) {
+    // process Component's payload
+    view.template = new NgTemplate( view.el, template, {
+      willMount(){
+        view.trigger( "component-will-mount" );
+        view.componentWillMount();
+      },
+      didMount(){ 
+        view.componentDidMount(); 
+        view.trigger( "component-did-mount" );
+      }
+    });
+  }
+  
+  static asyncInitializeTemplate( view: View, options: NgBackbone.ViewOptions ): void {
+    let template = view._component.template,
+        templateUrl = view._component.templateUrl;
+    // shared template
+    if ( "template" in options && view.options.template ) {
+      template = view.options.template;
+    }
+    if ( "templateUrl" in options && view.options.templateUrl ) {
+      templateUrl = view.options.templateUrl;
+    }
+   
+    if ( !templateUrl ) {
+      ViewHelper.initializeTemplate( view, template );
+      return;
+    }
+    Backbone.ajax({ 
+      url: templateUrl,
+      error( err ){
+        throw new Error( `Cannot reach ${templateUrl}` );
+      }, 
+      success( tpl ) {
+        ViewHelper.initializeTemplate( view, tpl );
+        view.render();
+      } 
+    });
+  }
   /**
    * collections/models passed in options, take them
    */
@@ -111,17 +151,8 @@ export class ViewHelper {
     if ( !( "_component" in view ) ) {
       ViewHelper.resetComponentDto( view );
     }
-
-    let template = view._component.template;
-    // shared template
-    if ( "template" in options && view.options.template ) {
-      template = view.options.template;
-    }
-    // process Component's payload
-    view.template = new NgTemplate( view.el, template, {
-      willMount: view.componentWillMount.bind( view ),
-      didMount: view.componentDidMount.bind( view )
-    }),
+    
+    ViewHelper.asyncInitializeTemplate( view, view.options );
 
     view.models = mapFrom( view._component.models );
     view.collections = mapFrom( view._component.collections );

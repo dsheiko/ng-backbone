@@ -7,6 +7,7 @@ function Component(options) {
             collections: options.collections,
             views: utils_1.mapFrom(options.views),
             template: options.template,
+            templateUrl: options.templateUrl,
         },
         el: options.el || null,
         events: options.events || null,
