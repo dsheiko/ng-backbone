@@ -1,5 +1,5 @@
 {
-  "name": "ng-backbone",
+  "name": "ngBackbone",
   "description": "A small extension of Backbone.js that unlocks Angular-like programming experience",
   "main": "./dist/core.js",
   "authors": [
