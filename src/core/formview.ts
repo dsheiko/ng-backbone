@@ -131,7 +131,7 @@ export class FormView extends View {
      this.delegate( "change", sel, onChange );
      this.delegate( "input", sel, onChange );
      this.delegate( "focus", sel, () => {
-       inputModel.onInputFocus();
+       inputModel.get( "touched" ) || inputModel.onInputFocus();
      });
 
   }
