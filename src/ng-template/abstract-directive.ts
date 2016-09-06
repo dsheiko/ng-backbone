@@ -8,8 +8,11 @@ export class AbstractDirective {
 
   initNodes( el: HTMLElement, identifier: string, cb: Function ): NgTemplate.DirectiveNode[]{
     let datakey: string = this.getDataKey( identifier ),
-        selector: string = this.getSelector( identifier );
-    return Array.from( el.querySelectorAll( selector ) ).map(( el: HTMLElement ) => {
+        selector: string = this.getSelector( identifier ),
+        targets = <HTMLElement[]>( el.matches( selector )
+          ? [ el ] : Array.from( el.querySelectorAll( selector ) ) );
+
+    return targets.map(( el: HTMLElement ) => {
       let expr = el.dataset[ datakey ];
       delete el.dataset[ datakey ];
       return cb( el, expr, compile, new Cache() );

@@ -59,8 +59,7 @@ var View = (function (_super) {
      */
     View.prototype.render = function (source) {
         var _this = this;
-        var ms = performance.now();
-        var scope = {};
+        var ms = performance.now(), focusEl, scope = {};
         // When template is not ready yet - e.g. loading via XHR
         if (!this.template) {
             return;
@@ -71,7 +70,10 @@ var View = (function (_super) {
             if (this.shouldComponentUpdate(scope)) {
                 this.trigger("component-will-update", scope);
                 this.componentWillUpdate(scope);
+                focusEl = this.el.querySelector(":focus");
+                console.info("focus >>>", focusEl, scope, source);
                 this.errors = this.template.sync(scope).report()["errors"];
+                focusEl && focusEl.focus();
                 this.options.logger && this.errors.forEach(function (msg) {
                     _this.trigger("log:template", msg);
                 });

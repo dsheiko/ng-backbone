@@ -5,7 +5,6 @@
     "raw": "github:dsheiko/ng-template/custom-typings/ng-template/typings.json",
     "main": "ng-template.d.ts",
     "version": "0.0.1",
-    "global": false,
     "name": "ng-template",
     "type": "typings"
   }

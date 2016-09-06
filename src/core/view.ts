@@ -74,8 +74,9 @@ export class View extends Backbone.NativeView<Backbone.Model> {
    * Render first and then sync the template
    */
   render( source?: NgBackbone.Model | NgBackbone.Collection ): any {
-    let ms =  performance.now();
-    let scope: NgBackbone.DataMap<any> = {};
+    let ms =  performance.now(),
+        focusEl: HTMLElement,
+        scope: NgBackbone.DataMap<any> = {};
     // When template is not ready yet - e.g. loading via XHR
     if ( !this.template ) {
       return;
@@ -87,7 +88,9 @@ export class View extends Backbone.NativeView<Backbone.Model> {
       if ( this.shouldComponentUpdate( scope ) ) {
         this.trigger( "component-will-update", scope );
         this.componentWillUpdate( scope );
+        focusEl = this.el.querySelector( ":focus" ) as HTMLElement;
         this.errors = this.template.sync( scope ).report()[ "errors" ];
+        focusEl && focusEl.focus();
         this.options.logger && this.errors.forEach(( msg: string ) => {
           this.trigger( "log:template", msg );
         });

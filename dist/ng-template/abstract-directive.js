@@ -5,8 +5,9 @@ var AbstractDirective = (function () {
     function AbstractDirective(el, reporter) {
     }
     AbstractDirective.prototype.initNodes = function (el, identifier, cb) {
-        var datakey = this.getDataKey(identifier), selector = this.getSelector(identifier);
-        return Array.from(el.querySelectorAll(selector)).map(function (el) {
+        var datakey = this.getDataKey(identifier), selector = this.getSelector(identifier), targets = (el.matches(selector)
+            ? [el] : Array.from(el.querySelectorAll(selector)));
+        return targets.map(function (el) {
             var expr = el.dataset[datakey];
             delete el.dataset[datakey];
             return cb(el, expr, expression_1.compile, new cache_1.Cache());

@@ -56,6 +56,20 @@ var ViewHelper = (function () {
         });
         return scope;
     };
+    ViewHelper.renderDebaunced = function (view) {
+        return function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            // Slightly debounced for repeating calls like collection.sync/sort
+            clearTimeout(view._debounceTimer);
+            view._debounceTimer = setTimeout(function () {
+                view._debounceTimer = null;
+                view.render.apply(view, args);
+            }, 50);
+        };
+    };
     /**
      * Bind specified models to the template
      */
@@ -63,7 +77,7 @@ var ViewHelper = (function () {
         view.models.forEach(function (model) {
             view.stopListening(model);
             view.options.logger && view.trigger("log:listen", "subscribes for `change`", model);
-            view.listenTo(model, "change", view.render);
+            view.listenTo(model, "change", ViewHelper.renderDebaunced(view));
         });
     };
     /**
@@ -73,18 +87,7 @@ var ViewHelper = (function () {
         view.collections.forEach(function (collection) {
             view.stopListening(collection);
             view.options.logger && view.trigger("log:listen", "subscribes for `change destroy sync sort add`", collection);
-            view.listenTo(collection, "change destroy sync sort add", function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i - 0] = arguments[_i];
-                }
-                // Slightly debounced for repeating calls like collection.sync/sort
-                clearTimeout(view._debounceTimer);
-                view._debounceTimer = setTimeout(function () {
-                    view._debounceTimer = null;
-                    view.render.apply(view, args);
-                }, 50);
-            });
+            view.listenTo(collection, "change destroy sync sort add", ViewHelper.renderDebaunced(view));
         });
     };
     /**

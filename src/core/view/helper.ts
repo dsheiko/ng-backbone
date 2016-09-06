@@ -8,15 +8,15 @@ export class ViewHelper {
    */
   static getterToScope( data: any ): NgBackbone.DataMap<any> {
     const re = /^get[A-Z]/;
-    let key: string, 
+    let key: string,
         getters: NgBackbone.DataMap<any> = {};
     for ( key in data ) {
       if ( re.test( key ) && typeof data[ key ] === "function" ){
         let prop = key.substr( 3 );
         prop = prop.substr( 0, 1 ).toLowerCase() + prop.substr( 1 );
-        getters[ prop ] = data[ key ](); 
+        getters[ prop ] = data[ key ]();
       }
-    }    
+    }
     return getters;
   }
   /**
@@ -35,8 +35,8 @@ export class ViewHelper {
           }
           ( <any[]> scope[ key ] ).push( data );
       });
-      let getters = ViewHelper.getterToScope( collection );  
-      getters && Object.assign( scope[ key ], getters );  
+      let getters = ViewHelper.getterToScope( collection );
+      getters && Object.assign( scope[ key ], getters );
     });
     return scope;
   }
@@ -57,6 +57,18 @@ export class ViewHelper {
     });
     return scope;
   }
+
+  static renderDebaunced( view: View ) {
+    return function( ...args: any[] ) {
+      // Slightly debounced for repeating calls like collection.sync/sort
+      clearTimeout( view._debounceTimer );
+      view._debounceTimer = <any>setTimeout(() => {
+        view._debounceTimer = null;
+        view.render.apply( view, args );
+      }, 50 );
+    };
+  }
+
   /**
    * Bind specified models to the template
    */
@@ -64,7 +76,7 @@ export class ViewHelper {
       view.models.forEach(( model: Backbone.Model ): void => {
         view.stopListening( model );
         view.options.logger && view.trigger( "log:listen", "subscribes for `change`", model );
-        view.listenTo( model, "change", view.render );
+        view.listenTo( model, "change", ViewHelper.renderDebaunced( view ) );
       });
   }
   /**
@@ -74,14 +86,7 @@ export class ViewHelper {
     view.collections.forEach(( collection: Backbone.Collection<Backbone.Model> ) => {
       view.stopListening( collection );
       view.options.logger && view.trigger( "log:listen", "subscribes for `change destroy sync sort add`", collection );
-      view.listenTo( collection, "change destroy sync sort add", ( ...args: any[] ) => {
-        // Slightly debounced for repeating calls like collection.sync/sort
-        clearTimeout( view._debounceTimer );
-        view._debounceTimer = <any>setTimeout(() => {
-          view._debounceTimer = null;
-          view.render.apply( view, args );
-        }, 50 );
-      });
+      view.listenTo( collection, "change destroy sync sort add", ViewHelper.renderDebaunced( view ) );
     });
   }
 
@@ -110,13 +115,13 @@ export class ViewHelper {
         view.trigger( "component-will-mount" );
         view.componentWillMount();
       },
-      didMount(){ 
-        view.componentDidMount(); 
+      didMount(){
+        view.componentDidMount();
         view.trigger( "component-did-mount" );
       }
     });
   }
-  
+
   static asyncInitializeTemplate( view: View, options: NgBackbone.ViewOptions ): void {
     let template = view._component.template,
         templateUrl = view._component.templateUrl;
@@ -127,20 +132,20 @@ export class ViewHelper {
     if ( "templateUrl" in options && view.options.templateUrl ) {
       templateUrl = view.options.templateUrl;
     }
-   
+
     if ( !templateUrl ) {
       ViewHelper.initializeTemplate( view, template );
       return;
     }
-    Backbone.ajax({ 
+    Backbone.ajax({
       url: templateUrl,
       error( err ){
         throw new Error( `Cannot reach ${templateUrl}` );
-      }, 
+      },
       success( tpl ) {
         ViewHelper.initializeTemplate( view, tpl );
         view.render();
-      } 
+      }
     });
   }
   /**
@@ -151,7 +156,7 @@ export class ViewHelper {
     if ( !( "_component" in view ) ) {
       ViewHelper.resetComponentDto( view );
     }
-    
+
     ViewHelper.asyncInitializeTemplate( view, view.options );
 
     view.models = mapFrom( view._component.models );

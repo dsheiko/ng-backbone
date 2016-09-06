@@ -66,3 +66,21 @@ export class NgTemplate {
     return this;
   }
 }
+
+// element.matches polyfill
+// @link https://developer.mozilla.org/en/docs/Web/API/Element/matches
+if ( !Element.prototype.matches ) {
+  let eProto = <any>Element.prototype;
+  Element.prototype.matches =
+    eProto.matchesSelector ||
+    eProto.mozMatchesSelector ||
+    eProto.msMatchesSelector ||
+    eProto.oMatchesSelector ||
+    eProto.webkitMatchesSelector ||
+    function( s: string ) {
+      var matches = ( this.document || this.ownerDocument ).querySelectorAll( s ),
+          i = matches.length;
+      while ( --i >= 0 && matches.item( i ) !== this ) {}
+      return i > -1;
+    };
+}
