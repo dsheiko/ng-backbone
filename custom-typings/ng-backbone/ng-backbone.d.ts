@@ -6,6 +6,11 @@ declare namespace NgBackbone {
     forEach(
       cb: ( value: View[], index: string, map: Map<string, View[]> ) => void,
       thisArg?: any ): void;
+    forEachView(
+      cb: ( value:View,
+          index: number,
+          key: string,
+          map: Map<string,View[]> ) => void ): void;
     get( key: string, inx?: number ): View;
     getAll( key: string ): View[];
     has( key: string ): boolean;

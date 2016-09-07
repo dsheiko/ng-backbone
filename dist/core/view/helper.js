@@ -1,13 +1,15 @@
 "use strict";
 var ngtemplate_1 = require("../../ngtemplate");
 var utils_1 = require("../utils");
+var map_1 = require("./map");
 var ViewHelper = (function () {
     function ViewHelper(view) {
         var _this = this;
         this.view = view;
-        this.view.listenTo(this.view, "component-did-mount", function () {
-            _this.initSubViews(_this.view.__ngbComponent.views);
+        this.view.listenTo(this.view, "component-did-update", function () {
+            _this.view.__ngbComponent.views.size && _this.initSubViews(_this.view.__ngbComponent.views);
         });
+        this.view.views = new map_1.ViewMap();
     }
     /**
      * Translate { getFoo(), getBar() } into { foo: "value", bar: "value" }
@@ -44,7 +46,6 @@ var ViewHelper = (function () {
         this.asyncInitializeTemplate(this.view.options);
         this.view.models = utils_1.mapFrom(this.view.__ngbComponent.models);
         this.view.collections = utils_1.mapFrom(this.view.__ngbComponent.collections);
-        this.view.views = utils_1.mapFrom({});
         if ("collections" in options) {
             utils_1.mapAssign(this.view.collections, options.collections);
         }
@@ -179,39 +180,62 @@ var ViewHelper = (function () {
             }
         });
     };
+    ViewHelper.prototype.filterSubViews = function () {
+        this.view.views.forEach(function (views) {
+            views.forEach(function (view) {
+                //view.el
+            });
+        });
+    };
     /**
     * Initialize subview
     */
     ViewHelper.prototype.initSubViews = function (viewCtorMap) {
         var _this = this;
         viewCtorMap.forEach(function (Ctor, key) {
-            var dto, instance;
+            var dto, views;
             if (typeof Ctor === "function") {
-                instance = _this.createSubView(Ctor);
+                // populate views by specified Constructor
+                views = _this.createSubViews(Ctor);
             }
             else {
+                // populate views by pair Constructor/Options
                 dto = Ctor;
-                instance = _this.createSubView(dto[0], dto[1]);
+                views = _this.createSubViews(dto[0], dto[1]);
             }
-            _this.view.views.set(key, instance);
+            if (!views.length) {
+                return;
+            }
+            if (_this.view.views.has(key)) {
+                _this.view.views.set(key, _this.view.views.getAll(key).concat(views));
+                return;
+            }
+            _this.view.views.set(key, views);
         });
     };
     /**
-     * Factory: create a subview
+     * Factory: create a subview per element found by the selector
      */
-    ViewHelper.prototype.createSubView = function (ViewCtor, options) {
+    ViewHelper.prototype.createSubViews = function (ViewCtor, options) {
+        var _this = this;
         if (options === void 0) { options = {}; }
-        var el = this.findSubViewEl(ViewCtor.prototype["el"]);
-        return new ViewCtor(Object.assign(options, { el: el, parent: this.view }));
+        var views = [], els = this.findMatchingElements(ViewCtor.prototype["el"]);
+        els.forEach(function (el) {
+            if (_this.view.views.hasElement(el)) {
+                return null;
+            }
+            views.push(new ViewCtor(Object.assign(options, { el: el, parent: _this.view })));
+        });
+        return views;
     };
     /**
-     * Find inner el
+     * Find all matching elements into DOM
      */
-    ViewHelper.prototype.findSubViewEl = function (selector) {
+    ViewHelper.prototype.findMatchingElements = function (selector) {
         if (typeof selector !== "string") {
             throw new SyntaxError("Invalid options.el type, must be a string");
         }
-        return this.view.el.querySelector(selector);
+        return Array.from(this.view.el.querySelectorAll(selector));
     };
     return ViewHelper;
 }());

@@ -2,7 +2,7 @@ export class ViewMap implements NgBackbone.ViewMap {
   private map: Map<string, NgBackbone.View[]>;
 
   constructor() {
-    this.map= new Map() as Map<string, NgBackbone.View[]>;
+    this.map = new Map() as Map<string, NgBackbone.View[]>;
   }
 
   clear(): void {
@@ -17,6 +17,18 @@ export class ViewMap implements NgBackbone.ViewMap {
     cb: ( value: NgBackbone.View[], index: string, map: Map<string, NgBackbone.View[]> ) => void,
     thisArg?: any ): void {
     return this.map.forEach( cb, thisArg );
+  }
+
+  forEachView(
+    cb: ( value: NgBackbone.View,
+          index: number,
+          key: string,
+          map: Map<string, NgBackbone.View[]> ) => void ): void {
+    return this.map.forEach(( views: NgBackbone.View[], key: string ) => {
+      views.forEach(( value: NgBackbone.View, index: number ) => {
+        cb.call( this, value, index, key, this.map );
+      });
+    });
   }
 
   get( key: string, inx: number = 0 ): NgBackbone.View {

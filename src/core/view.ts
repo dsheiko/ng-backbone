@@ -133,9 +133,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
    * Remove all the nested view on parent removal
    */
   remove() {
-    this.views.forEach(( views: NgBackbone.View[] ) => {
-      views.forEach(( view: NgBackbone.View ) => view.remove() );
-    });
+    this.views.forEachView(( view: NgBackbone.View ) => view.remove() );
     return Backbone.NativeView.prototype.remove.call( this );
   }
 

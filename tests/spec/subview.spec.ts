@@ -129,6 +129,42 @@ export default function SubviewSpec(){
 
       });
 
+      it( "removes orphan views", function( done ) {
+        let model = new Model(),
+            items = new Collection([ model, new Model() ]);
+        @Component({
+          el: "ng-child",
+          template: "<ng-el></ng-el>"
+        })
+        class TestChildView extends View {
+          initialize(){
+            this.render();
+          }
+        }
+        @Component({
+          tagName: "ng-component",
+          template: "<ng-child data-ng-for=\"let item of items\"></ng-child>",
+          collections: {
+            items: items
+          },
+          views: {
+            foo: TestChildView
+          }
+        })
+        class TestView extends View {
+        }
+
+        let view = new TestView();
+        view.render();
+        expect( view.views.getAll( "foo" ).length ).toBe( 2 );
+
+        items.remove([ model ]);
+        view.on( "component-did-update", () => {
+          expect( view.views.getAll( "foo" ).length ).toBe( 1 );
+          done();
+        });
+      });
+
     });
 
     describe("View with nested views as @Component.views = [[Ctor, options]]", function(){

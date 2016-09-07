@@ -22,6 +22,15 @@ var ViewMap = (function () {
     ViewMap.prototype.has = function (key) {
         return this.map.has(key);
     };
+    ViewMap.prototype.hasElement = function (el) {
+        var toggle = false;
+        this.map.forEach(function (views) {
+            if (views.find(function (view) { return view.el === el; })) {
+                toggle = true;
+            }
+        });
+        return toggle;
+    };
     ViewMap.prototype.set = function (key, value) {
         return this.map.set(key, value);
     };

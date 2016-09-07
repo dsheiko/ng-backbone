@@ -1,5 +1,5 @@
 export class View extends Backbone.NativeView<Backbone.Model> {
-  // bounding box
+// bounding box
   el: HTMLElement;
   // models to bind to the template
   models: NgBackbone.ModelMap;
@@ -7,17 +7,20 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   collections: NgBackbone.CollectionMap;
   // array of subviews
   views: NgBackbone.ViewMap;
-  // instance of any
+  // instance of NgTemplate
   template: any;
   // constructor options getting available across the prototype
   options: NgBackbone.ViewOptions;
   // template errors/warnings
-  errors: string[];
+  errors: string[][];
   // is this view ever rendered
-  isRendered: boolean;
+  didComponentMount: boolean;
   // link to parent view
-  parent: View;
+  parent: NgBackbone.View;
+  // @Component payload for this class
+  __ngbComponent: NgBackbone.ComponentDto;
 
+  constructor( options?: NgBackbone.ViewOptions );
   /**
    * Abstract method: implement it when you want to plug in straight before el.innerHTML populated
    */
@@ -29,7 +32,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   /**
    * Abstract method: implement it when you want to control manually if the template requires re-sync
    */
-  shouldComponentUpdate( nextScope: NgBackbone.DataMap<any>, isRendered: boolean ): boolean;
+  shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean;
   /**
    * Abstract method: implement it when you need preparation before an template sync occurs
    */
@@ -43,11 +46,6 @@ export class View extends Backbone.NativeView<Backbone.Model> {
    * Render first and then sync the template
    */
   render( source?: NgBackbone.Model | NgBackbone.Collection ): any;
-
-  /**
-   * Handler that called once after view first rendered
-   */
-  onceOnRender(): void;
 
 
   /**

@@ -87,8 +87,8 @@ export class ViewHelper {
     this.view.collections.forEach(( collection: Backbone.Collection<Backbone.Model> ) => {
       this.view.stopListening( collection );
       this.view.options.logger &&
-        this.view.trigger( "log:listen", "subscribes for `change destroy sync sort add`", collection );
-      this.view.listenTo( collection, "change destroy sync sort add", this.debounceRender.bind( this ) );
+        this.view.trigger( "log:listen", "subscribes for `change destroy sync sort add remove`", collection );
+      this.view.listenTo( collection, "change destroy sync sort add remove", this.debounceRender.bind( this ) );
     });
   }
   /**
@@ -193,19 +193,30 @@ export class ViewHelper {
       }
     });
   }
-
-  private filterSubViews(){
-    this.view.views.forEach(( views: NgBackbone.View[] ) => {
-      views.forEach(( view: NgBackbone.View ) => {
-        //view.el
-      })
-    })
+  /**
+   * When after parent DOM update any bound node disappear, let's ditch the orphan views
+   */
+  private cleanupOrphanSubViews(){
+    this.view.views.forEachView((
+          view: NgBackbone.View,
+          inx: number,
+          key: string,
+          map: Map<string, NgBackbone.View[]> ) => {
+      if ( ! view.el.parentNode ) {
+        let views = map.get( key );
+        view.remove();
+        delete views[ inx ];
+        map.set( key, views
+          .filter(( value: any ) => typeof value !== "undefined" ) );
+      }
+    });
   }
 
    /**
    * Initialize subview
    */
   private initSubViews( viewCtorMap: NgBackbone.ViewCtorMap ): void {
+    this.cleanupOrphanSubViews();
     viewCtorMap.forEach(( Ctor: any, key: string ) => {
       let dto: NgBackbone.ViewCtorOptions,
           views: NgBackbone.View[];

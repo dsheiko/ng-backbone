@@ -80,6 +80,23 @@ export default function ViewMapSpec(){
       });
     });
 
+    describe("#forEachView", function(){
+      it( "iterate the map", function() {
+        let foo = new View(),
+            bar = new View(),
+            baz = new View(),
+            keys: string[] = [];
+        this.map.set( "foo", [ foo ] );
+        this.map.set( "bar", [ bar, baz ] );
+        this.map.forEachView(( view: View ) => {
+          view.id = "id";
+        });
+        expect( foo.id ).toContain( "id" );
+        expect( bar.id ).toContain( "id" );
+        expect( baz.id ).toContain( "id" );
+      });
+    });
+
     describe("#hasElement", function(){
       it( "finds one", function() {
         let foo = new View(),
