@@ -42,14 +42,14 @@ export class ViewHelper {
    */
   initializeOptions( options: NgBackbone.ViewOptions ) {
     // When @Component isn't defined
-    if ( !( "_component" in this.view ) ) {
+    if ( !( "__ngbComponent" in this.view ) ) {
       this.resetComponentDto();
     }
 
     this.asyncInitializeTemplate( this.view.options );
 
-    this.view.models = mapFrom( this.view._component.models );
-    this.view.collections = mapFrom( this.view._component.collections );
+    this.view.models = mapFrom( this.view.__ngbComponent.models );
+    this.view.collections = mapFrom( this.view.__ngbComponent.collections );
     this.view.views = mapFrom({});
 
 
@@ -61,7 +61,7 @@ export class ViewHelper {
     }
 
     if ( "this.views" in options ) {
-      mapAssign( this.view._component.views, options.views );
+      mapAssign( this.view.__ngbComponent.views, options.views );
     }
   }
 
@@ -139,7 +139,7 @@ export class ViewHelper {
   }
 
   private resetComponentDto() {
-      this.view._component = {
+      this.view.__ngbComponent = {
         models: {},
         collections: {},
         views: mapFrom({}),
@@ -149,8 +149,8 @@ export class ViewHelper {
   }
 
   private asyncInitializeTemplate( options: NgBackbone.ViewOptions ): void {
-    let template = this.view._component.template,
-        templateUrl = this.view._component.templateUrl;
+    let template = this.view.__ngbComponent.template,
+        templateUrl = this.view.__ngbComponent.templateUrl;
     // shared template
     if ( "template" in options && this.view.options.template ) {
       template = this.view.options.template;

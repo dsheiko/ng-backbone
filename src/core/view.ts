@@ -21,28 +21,28 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   // link to parent view
   parent: View;
   // @Component payload for this class
-  _component: NgBackbone.ComponentDto;
+  __ngbComponent: NgBackbone.ComponentDto;
   // receives `initialize` of extending class to perform lazy load trick
-  _initialize: Function;
+  __ngbInitialize: Function;
 
-  private __helper: ViewHelper;
+  private __ngbHelper: ViewHelper;
 
   constructor( options: NgBackbone.ViewOptions = {} ) {
     super( options );
 
-    this.__helper = new ViewHelper( this );
+    this.__ngbHelper = new ViewHelper( this );
 
     Object.assign( this.options, options );
     if ( options.parent ) {
       this.parent = <View>options.parent;
     }
     // If we want to listen to log events
-    options.logger && this.__helper.subscribeLogger( options.logger );
-    this.__helper.initializeOptions( options );
-    this.models.size && this.__helper.bindModels();
-    this.collections && this.__helper.bindCollections();
+    options.logger && this.__ngbHelper.subscribeLogger( options.logger );
+    this.__ngbHelper.initializeOptions( options );
+    this.models.size && this.__ngbHelper.bindModels();
+    this.collections && this.__ngbHelper.bindCollections();
     // Call earlier cached this.initialize
-    this._initialize && this._initialize( options );
+    this.__ngbInitialize && this.__ngbInitialize( options );
   }
   /**
    * Abstract method: implement it when you want to plug in straight before el.innerHTML populated
@@ -116,7 +116,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
    * Handler that called once after view first rendered
    */
   onceOnRender(){
-    this.__helper.initSubViews( this._component.views );
+    this.__ngbHelper.initSubViews( this.__ngbComponent.views );
   }
 
 

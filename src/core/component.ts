@@ -4,7 +4,7 @@ import { mapFrom } from "./utils";
 export function Component( options: NgBackbone.ComponentOptions ): Function {
 
   let mixin = {
-      _component: {
+      __ngbComponent: {
         models: options.models,
         collections: options.collections,
         views: mapFrom( options.views ),
@@ -23,9 +23,9 @@ export function Component( options: NgBackbone.ComponentOptions ): Function {
 
     Object.assign( target.prototype, mixin );
     // This way we trick invokation of this.initialize after constructor
-    // Keeping in mind that @Component belongs to View that knows about this._initialize
+    // Keeping in mind that @Component belongs to View that knows about this.__ngbInitialize
     if ( "initialize" in target.prototype ) {
-      [ target.prototype[ "_initialize" ], target.prototype[ "initialize" ] ] =
+      [ target.prototype[ "__ngbInitialize" ], target.prototype[ "initialize" ] ] =
         [ target.prototype[ "initialize" ], () => {} ];
     }
   };
