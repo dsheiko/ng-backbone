@@ -7,6 +7,9 @@ export class ViewHelper {
   private debounceTimer: number;
 
   constructor( private view: View ) {
+    this.view.listenTo( this.view, "component-did-mount", () => {
+      this.initSubViews( this.view.__ngbComponent.views );
+    });
   }
 
   /**
@@ -183,6 +186,7 @@ export class ViewHelper {
         this.view.componentWillMount();
       },
       didMount: () => {
+        this.view.didComponentMount = true;
         this.view.componentDidMount();
         this.view.trigger( "component-did-mount" );
       }

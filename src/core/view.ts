@@ -17,7 +17,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   // template errors/warnings
   errors: string[] = [];
   // is this view ever rendered
-  isRendered: boolean = false;
+  didComponentMount: boolean = false;
   // link to parent view
   parent: View;
   // @Component payload for this class
@@ -59,7 +59,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   /**
    * Abstract method: implement it when you want to control manually if the template requires re-sync
    */
-  shouldComponentUpdate( nextScope: NgBackbone.DataMap<any>, isRendered: boolean ): boolean {
+  shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean {
     return true;
   }
   /**
@@ -88,7 +88,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     this.collections && Object.assign( scope, ViewHelper.collectionsToScope( this.collections ) );
 
     try {
-      if ( this.shouldComponentUpdate( scope, this.isRendered ) ) {
+      if ( this.shouldComponentUpdate( scope ) ) {
         this.trigger( "component-will-update", scope );
         this.componentWillUpdate( scope );
         focusEl = this.el.querySelector( ":focus" ) as HTMLElement;
@@ -105,18 +105,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     } catch ( err ) {
       console.error( (<Error>err).message );
     }
-    if ( !this.isRendered ) {
-      this.onceOnRender();
-    }
-    this.isRendered = true;
     return this;
-  }
-
-  /**
-   * Handler that called once after view first rendered
-   */
-  onceOnRender(){
-    this.__ngbHelper.initSubViews( this.__ngbComponent.views );
   }
 
 
