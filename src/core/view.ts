@@ -25,19 +25,22 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   // receives `initialize` of extending class to perform lazy load trick
   _initialize: Function;
 
-  _debounceTimer: number;
+  private __helper: ViewHelper;
 
   constructor( options: NgBackbone.ViewOptions = {} ) {
     super( options );
+
+    this.__helper = new ViewHelper( this );
+
     Object.assign( this.options, options );
     if ( options.parent ) {
       this.parent = <View>options.parent;
     }
     // If we want to listen to log events
-    options.logger && ViewHelper.subscribeLogger( this, options.logger );
-    ViewHelper.initializeOptions( this, options );
-    this.models.size && ViewHelper.bindModels( this );
-    this.collections && ViewHelper.bindCollections( this );
+    options.logger && this.__helper.subscribeLogger( options.logger );
+    this.__helper.initializeOptions( options );
+    this.models.size && this.__helper.bindModels();
+    this.collections && this.__helper.bindCollections();
     // Call earlier cached this.initialize
     this._initialize && this._initialize( options );
   }
@@ -56,7 +59,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   /**
    * Abstract method: implement it when you want to control manually if the template requires re-sync
    */
-  shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean {
+  shouldComponentUpdate( nextScope: NgBackbone.DataMap<any>, isRendered: boolean ): boolean {
     return true;
   }
   /**
@@ -85,7 +88,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
     this.collections && Object.assign( scope, ViewHelper.collectionsToScope( this.collections ) );
 
     try {
-      if ( this.shouldComponentUpdate( scope ) ) {
+      if ( this.shouldComponentUpdate( scope, this.isRendered ) ) {
         this.trigger( "component-will-update", scope );
         this.componentWillUpdate( scope );
         focusEl = this.el.querySelector( ":focus" ) as HTMLElement;
@@ -113,7 +116,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
    * Handler that called once after view first rendered
    */
   onceOnRender(){
-    ViewHelper.initSubViews( this, this._component.views );
+    this.__helper.initSubViews( this._component.views );
   }
 
 

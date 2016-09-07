@@ -29,7 +29,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   /**
    * Abstract method: implement it when you want to control manually if the template requires re-sync
    */
-  shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean;
+  shouldComponentUpdate( nextScope: NgBackbone.DataMap<any>, isRendered: boolean ): boolean;
   /**
    * Abstract method: implement it when you need preparation before an template sync occurs
    */

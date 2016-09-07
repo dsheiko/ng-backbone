@@ -30,10 +30,10 @@ export default function ViewSpec(){
         expect( view.el.querySelector( "ng-el" ) ).toBeTruthy();
         expect( view.el.classList.contains( "ng-class" ) ).toBeTruthy();
       });
-      
+
       it( "loads template from a remote source", function( done ) {
         let ajax = Backbone.ajax;
-        Backbone.ajax = <any> function( options: any ): any { 
+        Backbone.ajax = <any> function( options: any ): any {
           options.success( "<ng-el></ng-el>" );
         };
         @Component({
@@ -43,14 +43,14 @@ export default function ViewSpec(){
         class TestView extends View {
           componentDidMount(){
             expect( this.el.querySelector( "ng-el" ) ).toBeTruthy();
-            done(); 
+            done();
           }
         }
         let view = new TestView();
         Backbone.ajax = ajax;
       });
     });
-    
+
     describe("View events", function(){
       beforeEach(function(){
         @Component({
@@ -62,9 +62,9 @@ export default function ViewSpec(){
         })
         class TestView extends View {
         }
-        this.view = new TestView();        
+        this.view = new TestView();
       });
-      
+
       it( "fires component-will-update", function( done ) {
         this.view.once( "component-will-update", ( scope: any ) => {
           expect( "foo" in scope ).toBeTruthy();
@@ -139,7 +139,7 @@ export default function ViewSpec(){
           componentDidMount(): void {
             called.push( "componentDidMount" );
           }
-          shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean {
+          shouldComponentUpdate( nextScope: NgBackbone.DataMap<any>, isRendered: boolean ): boolean {
             called.push( "shouldComponentUpdate" );
             return true;
           }
@@ -173,7 +173,7 @@ export default function ViewSpec(){
           componentDidMount(): void {
             called.push( "componentDidMount" );
           }
-          shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean {
+          shouldComponentUpdate( nextScope: NgBackbone.DataMap<any>, isRendered: boolean ): boolean {
             called.push( "shouldComponentUpdate" );
             return false;
           }
@@ -194,8 +194,8 @@ export default function ViewSpec(){
       });
 
     });
-    
-    
+
+
     describe("collection getters", function(){
       it( "binds getters", function() {
         class TestCollection extends Collection {
@@ -220,7 +220,7 @@ export default function ViewSpec(){
             errors = view.render().errors,
             el = view.el.querySelector( "ng-el" ),
             els = Array.from( view.el.querySelectorAll( "ng-li" ) );
-          expect( el.textContent ).toBe( "2" );  
+          expect( el.textContent ).toBe( "2" );
           expect( els.length ).toBe( 2 );
           expect( els[ 0 ].textContent ).toBe( "1" );
           expect( els[ 1 ].textContent ).toBe( "2" );

@@ -3,6 +3,12 @@ import { NgTemplate } from "../../ngtemplate";
 import { mapFrom, mapAssign } from "../utils";
 
 export class ViewHelper {
+
+  private debounceTimer: number;
+
+  constructor( private view: View ) {
+  }
+
   /**
    * Translate { getFoo(), getBar() } into { foo: "value", bar: "value" }
    */
@@ -19,6 +25,80 @@ export class ViewHelper {
     }
     return getters;
   }
+
+
+  /**
+   * Subscribe logger handlers from options
+   */
+  subscribeLogger( logger: NgBackbone.LoggerOption ): void {
+    Object.keys( logger ).forEach(( events: string ) => {
+      this.view.listenTo( this.view, events, logger[ events ] );
+    });
+  }
+
+
+  /**
+   * collections/models passed in options, take them
+   */
+  initializeOptions( options: NgBackbone.ViewOptions ) {
+    // When @Component isn't defined
+    if ( !( "_component" in this.view ) ) {
+      this.resetComponentDto();
+    }
+
+    this.asyncInitializeTemplate( this.view.options );
+
+    this.view.models = mapFrom( this.view._component.models );
+    this.view.collections = mapFrom( this.view._component.collections );
+    this.view.views = mapFrom({});
+
+
+    if ( "collections" in options ) {
+      mapAssign( this.view.collections, options.collections );
+    }
+    if ( "models" in options ) {
+      mapAssign( this.view.models, options.models );
+    }
+
+    if ( "this.views" in options ) {
+      mapAssign( this.view._component.views, options.views );
+    }
+  }
+
+
+  /**
+   * Bind specified models to the template
+   */
+  bindModels(){
+      this.view.models.forEach(( model: Backbone.Model ): void => {
+        this.view.stopListening( model );
+        this.view.options.logger && this.view.trigger( "log:listen", "subscribes for `change`", model );
+        this.view.listenTo( model, "change", this.debounceRender.bind( this ) );
+      });
+  }
+  /**
+   * Bind specified collections to the template
+   */
+  bindCollections(){
+    this.view.collections.forEach(( collection: Backbone.Collection<Backbone.Model> ) => {
+      this.view.stopListening( collection );
+      this.view.options.logger &&
+        this.view.trigger( "log:listen", "subscribes for `change destroy sync sort add`", collection );
+      this.view.listenTo( collection, "change destroy sync sort add", this.debounceRender.bind( this ) );
+    });
+  }
+  /**
+   * Slightly debounced for repeating calls like collection.sync/sort
+   */
+  debounceRender( ...args: any[] ) {
+    clearTimeout( this.debounceTimer );
+    this.debounceTimer = <any>setTimeout(() => {
+      this.debounceTimer = null;
+      this.view.render.apply( this.view, args );
+    }, 50 );
+  }
+
+
   /**
    * Converts { foo: Collection, bar: Collection } into
    * { foo: [{},{}], bar: [{},{}] }
@@ -58,49 +138,8 @@ export class ViewHelper {
     return scope;
   }
 
-  static renderDebaunced( view: View ) {
-    return function( ...args: any[] ) {
-      // Slightly debounced for repeating calls like collection.sync/sort
-      clearTimeout( view._debounceTimer );
-      view._debounceTimer = <any>setTimeout(() => {
-        view._debounceTimer = null;
-        view.render.apply( view, args );
-      }, 50 );
-    };
-  }
-
-  /**
-   * Bind specified models to the template
-   */
-  static bindModels( view: View ){
-      view.models.forEach(( model: Backbone.Model ): void => {
-        view.stopListening( model );
-        view.options.logger && view.trigger( "log:listen", "subscribes for `change`", model );
-        view.listenTo( model, "change", ViewHelper.renderDebaunced( view ) );
-      });
-  }
-  /**
-   * Bind specified collections to the template
-   */
-  static bindCollections( view: View ){
-    view.collections.forEach(( collection: Backbone.Collection<Backbone.Model> ) => {
-      view.stopListening( collection );
-      view.options.logger && view.trigger( "log:listen", "subscribes for `change destroy sync sort add`", collection );
-      view.listenTo( collection, "change destroy sync sort add", ViewHelper.renderDebaunced( view ) );
-    });
-  }
-
-  /**
-   * Subscribe logger handlers from options
-   */
-  static subscribeLogger( view: View, logger: NgBackbone.LoggerOption ): void {
-    Object.keys( logger ).forEach(( events: string ) => {
-      view.listenTo( view, events, logger[ events ] );
-    });
-  }
-
-  private static resetComponentDto( view: View ) {
-      view._component = {
+  private resetComponentDto() {
+      this.view._component = {
         models: {},
         collections: {},
         views: mapFrom({}),
@@ -108,33 +147,20 @@ export class ViewHelper {
         templateUrl: null
       };
   }
-  static initializeTemplate( view: View, template: string ) {
-    // process Component's payload
-    view.template = new NgTemplate( view.el, template, {
-      willMount(){
-        view.trigger( "component-will-mount" );
-        view.componentWillMount();
-      },
-      didMount(){
-        view.componentDidMount();
-        view.trigger( "component-did-mount" );
-      }
-    });
-  }
 
-  static asyncInitializeTemplate( view: View, options: NgBackbone.ViewOptions ): void {
-    let template = view._component.template,
-        templateUrl = view._component.templateUrl;
+  private asyncInitializeTemplate( options: NgBackbone.ViewOptions ): void {
+    let template = this.view._component.template,
+        templateUrl = this.view._component.templateUrl;
     // shared template
-    if ( "template" in options && view.options.template ) {
-      template = view.options.template;
+    if ( "template" in options && this.view.options.template ) {
+      template = this.view.options.template;
     }
-    if ( "templateUrl" in options && view.options.templateUrl ) {
-      templateUrl = view.options.templateUrl;
+    if ( "templateUrl" in options && this.view.options.templateUrl ) {
+      templateUrl = this.view.options.templateUrl;
     }
 
     if ( !templateUrl ) {
-      ViewHelper.initializeTemplate( view, template );
+      this.initializeTemplate( template );
       return;
     }
     Backbone.ajax({
@@ -142,71 +168,59 @@ export class ViewHelper {
       error( err ){
         throw new Error( `Cannot reach ${templateUrl}` );
       },
-      success( tpl ) {
-        ViewHelper.initializeTemplate( view, tpl );
-        view.render();
+      success: ( tpl ) => {
+        this.initializeTemplate( tpl );
+        this.view.render();
       }
     });
   }
-  /**
-   * collections/models passed in options, take them
-   */
-  static initializeOptions( view: View, options: NgBackbone.ViewOptions ) {
-    // When @Component isn't defined
-    if ( !( "_component" in view ) ) {
-      ViewHelper.resetComponentDto( view );
-    }
 
-    ViewHelper.asyncInitializeTemplate( view, view.options );
-
-    view.models = mapFrom( view._component.models );
-    view.collections = mapFrom( view._component.collections );
-    view.views = mapFrom({});
-
-
-    if ( "collections" in options ) {
-      mapAssign( view.collections, options.collections );
-    }
-    if ( "models" in options ) {
-      mapAssign( view.models, options.models );
-    }
-
-    if ( "views" in options ) {
-      mapAssign( view._component.views, options.views );
-    }
+  private initializeTemplate( template: string ) {
+    // process Component's payload
+    this.view.template = new NgTemplate( this.view.el, template, {
+      willMount: () => {
+        this.view.trigger( "component-will-mount" );
+        this.view.componentWillMount();
+      },
+      didMount: () => {
+        this.view.componentDidMount();
+        this.view.trigger( "component-did-mount" );
+      }
+    });
   }
+
 
    /**
    * Initialize subview
    */
-  static initSubViews( view: View, viewCtorMap: NgBackbone.ViewCtorMap ){
+  initSubViews( viewCtorMap: NgBackbone.ViewCtorMap ){
     viewCtorMap.forEach(( Ctor: any, key: string ) => {
       let dto: NgBackbone.ViewCtorOptions,
           instance: View;
       if ( typeof Ctor === "function" ) {
-        instance = ViewHelper.createSubView( view, <ViewConstructor>Ctor );
+        instance = this.createSubView( <ViewConstructor>Ctor );
       } else {
         dto = <NgBackbone.ViewCtorOptions>Ctor;
-        instance = ViewHelper.createSubView( view, <ViewConstructor>dto[ 0 ], <NgBackbone.ViewOptions>dto[ 1 ] );
+        instance = this.createSubView( <ViewConstructor>dto[ 0 ], <NgBackbone.ViewOptions>dto[ 1 ] );
       }
-      view.views.set( key, instance );
+      this.view.views.set( key, instance );
     });
   }
   /**
    * Factory: create a subview
    */
-  private static createSubView( view: View, ViewCtor: ViewConstructor, options: NgBackbone.ViewOptions = {}): View {
-    let el = ViewHelper.findSubViewEl( view, ViewCtor.prototype[ "el" ] );
-    return new ViewCtor( Object.assign( options, { el: el, parent: view }) );
+  private createSubView( ViewCtor: ViewConstructor, options: NgBackbone.ViewOptions = {}): View {
+    let el = this.findSubViewEl( ViewCtor.prototype[ "el" ] );
+    return new ViewCtor( Object.assign( options, { el: el, parent: this.view }) );
   }
   /**
    * Find inner el
    */
-  private static findSubViewEl( view: View, selector: string ){
+  private findSubViewEl( selector: string ){
     if ( typeof selector !== "string" ) {
       throw new SyntaxError( "Invalid options.el type, must be a string" );
     }
-    return view.el.querySelector( selector );
+    return this.view.el.querySelector( selector );
   }
 
 }

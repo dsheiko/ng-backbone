@@ -41,7 +41,7 @@ var View = (function (_super) {
     /**
      * Abstract method: implement it when you want to control manually if the template requires re-sync
      */
-    View.prototype.shouldComponentUpdate = function (nextScope) {
+    View.prototype.shouldComponentUpdate = function (nextScope, isRendered) {
         return true;
     };
     /**
@@ -67,11 +67,10 @@ var View = (function (_super) {
         this.models && Object.assign(scope, helper_1.ViewHelper.modelsToScope(this.models));
         this.collections && Object.assign(scope, helper_1.ViewHelper.collectionsToScope(this.collections));
         try {
-            if (this.shouldComponentUpdate(scope)) {
+            if (this.shouldComponentUpdate(scope, this.isRendered)) {
                 this.trigger("component-will-update", scope);
                 this.componentWillUpdate(scope);
                 focusEl = this.el.querySelector(":focus");
-                console.info("focus >>>", focusEl, scope, source);
                 this.errors = this.template.sync(scope).report()["errors"];
                 focusEl && focusEl.focus();
                 this.options.logger && this.errors.forEach(function (msg) {
