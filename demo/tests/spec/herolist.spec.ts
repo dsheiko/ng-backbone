@@ -8,7 +8,7 @@ class MockCollection extends Collection {
   getSelectedNum(){
     return 0;
   }
-  
+
   getOrder(){
     return "name";
   }
@@ -50,14 +50,14 @@ export default function HeroListSpec(){
 
     it( "sorts the table by a given key", function( done ) {
       this.view.render();
-      this.view.once( "did-update", () => {
+      this.view.once( "component-did-update", () => {
         let first = this.view.$( "tr.list__tool-row" ).item( 0 );
         expect( first.textContent ).toMatch( "power1" );
         done();
       })
       this.view.collections.get( "heroes" )
         .orderBy( "power" );
-     
+
     });
 
   });

@@ -15,18 +15,19 @@ var View = (function (_super) {
         // template errors/warnings
         this.errors = [];
         // is this view ever rendered
-        this.isRendered = false;
+        this.didComponentMount = false;
+        this.__ngbHelper = new helper_1.ViewHelper(this);
         Object.assign(this.options, options);
         if (options.parent) {
             this.parent = options.parent;
         }
         // If we want to listen to log events
-        options.logger && helper_1.ViewHelper.subscribeLogger(this, options.logger);
-        helper_1.ViewHelper.initializeOptions(this, options);
-        this.models.size && helper_1.ViewHelper.bindModels(this);
-        this.collections && helper_1.ViewHelper.bindCollections(this);
+        options.logger && this.__ngbHelper.subscribeLogger(options.logger);
+        this.__ngbHelper.initializeOptions(options);
+        this.models.size && this.__ngbHelper.bindModels();
+        this.collections && this.__ngbHelper.bindCollections();
         // Call earlier cached this.initialize
-        this._initialize && this._initialize(options);
+        this.__ngbInitialize && this.__ngbInitialize(options);
     }
     /**
      * Abstract method: implement it when you want to plug in straight before el.innerHTML populated
@@ -41,7 +42,7 @@ var View = (function (_super) {
     /**
      * Abstract method: implement it when you want to control manually if the template requires re-sync
      */
-    View.prototype.shouldComponentUpdate = function (nextScope, isRendered) {
+    View.prototype.shouldComponentUpdate = function (nextScope) {
         return true;
     };
     /**
@@ -67,7 +68,7 @@ var View = (function (_super) {
         this.models && Object.assign(scope, helper_1.ViewHelper.modelsToScope(this.models));
         this.collections && Object.assign(scope, helper_1.ViewHelper.collectionsToScope(this.collections));
         try {
-            if (this.shouldComponentUpdate(scope, this.isRendered)) {
+            if (this.shouldComponentUpdate(scope)) {
                 this.trigger("component-will-update", scope);
                 this.componentWillUpdate(scope);
                 focusEl = this.el.querySelector(":focus");
@@ -85,17 +86,7 @@ var View = (function (_super) {
         catch (err) {
             console.error(err.message);
         }
-        if (!this.isRendered) {
-            this.onceOnRender();
-        }
-        this.isRendered = true;
         return this;
-    };
-    /**
-     * Handler that called once after view first rendered
-     */
-    View.prototype.onceOnRender = function () {
-        helper_1.ViewHelper.initSubViews(this, this._component.views);
     };
     /**
     * Enhance listenTo to process maps
@@ -119,8 +110,8 @@ var View = (function (_super) {
      * Remove all the nested view on parent removal
      */
     View.prototype.remove = function () {
-        this.views.forEach(function (view) {
-            view.remove();
+        this.views.forEach(function (views) {
+            views.forEach(function (view) { return view.remove(); });
         });
         return Backbone.NativeView.prototype.remove.call(this);
     };

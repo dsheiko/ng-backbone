@@ -2,6 +2,20 @@
 // Source: custom-typings/ng-backbone/ng-backbone.d.ts
 declare namespace NgBackbone {
 
+  interface ViewMap {
+    clear(): void;
+    delete( key: string ): boolean;
+    forEach(
+      cb: ( value: View[], index: string, map: Map<string, View[]> ) => void,
+      thisArg?: any ): void;
+    get( key: string, inx?: number ): View;
+    getAll( key: string ): View[];
+    has( key: string ): boolean;
+    hasElement( el: HTMLElement ): boolean;
+    set( key: string, value?: View[] ): Map<string, View[]>;
+    size: number;
+  }
+
   interface ModelData {
     id?: string | number;
     [key: string]: any;
@@ -74,6 +88,18 @@ declare namespace NgBackbone {
     collections: CollectionMap;
     views: ViewMap;
     parent?: View;
+    __ngbComponent: ComponentDto;
+    options?: ViewOptions;
+    el: HTMLElement;
+    template: NgTemplate.NgTemplate;
+    errors?: string[];
+    didComponentMount: boolean;
+    componentWillMount(): void;
+    componentDidMount(): void ;
+    shouldComponentUpdate( nextScope: DataMap<any> ): boolean;
+    componentWillUpdate( nextScope: DataMap<any> ): void;
+    componentDidUpdate( prevScope: DataMap<any> ): void;
+    render( source?: Model | Collection ): any;
   }
 
   interface ViewCtorOptions {
@@ -85,9 +111,6 @@ declare namespace NgBackbone {
   }
 
   interface ViewCtorMap extends Map<string, Function | ViewCtorOptions> {
-  }
-
-  interface ViewMap extends Map<string, View> {
   }
 
 

@@ -5,6 +5,25 @@
 ```javascript
 interface View extends Backbone.NativeView {
 
+  // bounding element
+  el: HTMLElement;
+  // models to bind to the template
+  models: NgBackbone.ModelMap;
+  // collections to bind to the template
+  collections: NgBackbone.CollectionMap;
+  // array of subviews
+  views: ViewMap;
+  // instance of NgTemplate
+  template: NgTemplate.NgTemplate;
+  // constructor options getting available across the prototype
+  options?: NgBackbone.ViewOptions;
+  // template errors/warnings
+  errors?: string[];
+  // is this view ever rendered
+  didComponentMount: boolean;
+  // link to parent view in subview
+  parent: NgBackbone.View;
+
   // constructor accepts extended map of options - see 'View Options' section
   constructor(options?: ngBackbone.ViewOptions);
 
@@ -100,7 +119,7 @@ class PowerCollection extends Collection {
 
 @Component({
   el: "ng-hero",
-  
+
   collections: {
     powers: new PowerCollection([
       { name: "Superhuman strength" },
@@ -110,8 +129,8 @@ class PowerCollection extends Collection {
   },
 
   template: `
-    <p><strong data-ng-text="hero.title"></strong> has 
-      <i data-ng-text="powers.size"></i> powers, use but 
+    <p><strong data-ng-text="hero.title"></strong> has
+      <i data-ng-text="powers.size"></i> powers, use but
       can use only <i data-ng-text="powers.favorite"></i>
     </p>
 `

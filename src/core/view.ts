@@ -1,5 +1,6 @@
 import { NgTemplate } from "../ngtemplate";
 import { ViewHelper } from "./view/helper";
+import { ViewMap } from "./view/map";
 
 export class View extends Backbone.NativeView<Backbone.Model> {
   // bounding box
@@ -9,7 +10,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   // collections to bind to the template
   collections: NgBackbone.CollectionMap;
   // array of subviews
-  views: NgBackbone.ViewMap;
+  views: ViewMap;
   // instance of NgTemplate
   template: NgTemplate;
   // constructor options getting available across the prototype
@@ -19,7 +20,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   // is this view ever rendered
   didComponentMount: boolean = false;
   // link to parent view
-  parent: View;
+  parent: NgBackbone.View;
   // @Component payload for this class
   __ngbComponent: NgBackbone.ComponentDto;
   // receives `initialize` of extending class to perform lazy load trick
@@ -34,7 +35,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
 
     Object.assign( this.options, options );
     if ( options.parent ) {
-      this.parent = <View>options.parent;
+      this.parent = <NgBackbone.View>options.parent;
     }
     // If we want to listen to log events
     options.logger && this.__ngbHelper.subscribeLogger( options.logger );
@@ -132,8 +133,8 @@ export class View extends Backbone.NativeView<Backbone.Model> {
    * Remove all the nested view on parent removal
    */
   remove() {
-    this.views.forEach(( view: View ) => {
-      view.remove();
+    this.views.forEach(( views: NgBackbone.View[] ) => {
+      views.forEach(( view: NgBackbone.View ) => view.remove() );
     });
     return Backbone.NativeView.prototype.remove.call( this );
   }

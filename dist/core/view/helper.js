@@ -2,7 +2,12 @@
 var ngtemplate_1 = require("../../ngtemplate");
 var utils_1 = require("../utils");
 var ViewHelper = (function () {
-    function ViewHelper() {
+    function ViewHelper(view) {
+        var _this = this;
+        this.view = view;
+        this.view.listenTo(this.view, "component-did-mount", function () {
+            _this.initSubViews(_this.view.__ngbComponent.views);
+        });
     }
     /**
      * Translate { getFoo(), getBar() } into { foo: "value", bar: "value" }
@@ -18,6 +23,75 @@ var ViewHelper = (function () {
             }
         }
         return getters;
+    };
+    /**
+     * Subscribe logger handlers from options
+     */
+    ViewHelper.prototype.subscribeLogger = function (logger) {
+        var _this = this;
+        Object.keys(logger).forEach(function (events) {
+            _this.view.listenTo(_this.view, events, logger[events]);
+        });
+    };
+    /**
+     * collections/models passed in options, take them
+     */
+    ViewHelper.prototype.initializeOptions = function (options) {
+        // When @Component isn't defined
+        if (!("__ngbComponent" in this.view)) {
+            this.resetComponentDto();
+        }
+        this.asyncInitializeTemplate(this.view.options);
+        this.view.models = utils_1.mapFrom(this.view.__ngbComponent.models);
+        this.view.collections = utils_1.mapFrom(this.view.__ngbComponent.collections);
+        this.view.views = utils_1.mapFrom({});
+        if ("collections" in options) {
+            utils_1.mapAssign(this.view.collections, options.collections);
+        }
+        if ("models" in options) {
+            utils_1.mapAssign(this.view.models, options.models);
+        }
+        if ("this.views" in options) {
+            utils_1.mapAssign(this.view.__ngbComponent.views, options.views);
+        }
+    };
+    /**
+     * Bind specified models to the template
+     */
+    ViewHelper.prototype.bindModels = function () {
+        var _this = this;
+        this.view.models.forEach(function (model) {
+            _this.view.stopListening(model);
+            _this.view.options.logger && _this.view.trigger("log:listen", "subscribes for `change`", model);
+            _this.view.listenTo(model, "change", _this.debounceRender.bind(_this));
+        });
+    };
+    /**
+     * Bind specified collections to the template
+     */
+    ViewHelper.prototype.bindCollections = function () {
+        var _this = this;
+        this.view.collections.forEach(function (collection) {
+            _this.view.stopListening(collection);
+            _this.view.options.logger &&
+                _this.view.trigger("log:listen", "subscribes for `change destroy sync sort add`", collection);
+            _this.view.listenTo(collection, "change destroy sync sort add", _this.debounceRender.bind(_this));
+        });
+    };
+    /**
+     * Slightly debounced for repeating calls like collection.sync/sort
+     */
+    ViewHelper.prototype.debounceRender = function () {
+        var _this = this;
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i - 0] = arguments[_i];
+        }
+        clearTimeout(this.debounceTimer);
+        this.debounceTimer = setTimeout(function () {
+            _this.debounceTimer = null;
+            _this.view.render.apply(_this.view, args);
+        }, 50);
     };
     /**
      * Converts { foo: Collection, bar: Collection } into
@@ -56,50 +130,8 @@ var ViewHelper = (function () {
         });
         return scope;
     };
-    ViewHelper.renderDebaunced = function (view) {
-        return function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i - 0] = arguments[_i];
-            }
-            // Slightly debounced for repeating calls like collection.sync/sort
-            clearTimeout(view._debounceTimer);
-            view._debounceTimer = setTimeout(function () {
-                view._debounceTimer = null;
-                view.render.apply(view, args);
-            }, 50);
-        };
-    };
-    /**
-     * Bind specified models to the template
-     */
-    ViewHelper.bindModels = function (view) {
-        view.models.forEach(function (model) {
-            view.stopListening(model);
-            view.options.logger && view.trigger("log:listen", "subscribes for `change`", model);
-            view.listenTo(model, "change", ViewHelper.renderDebaunced(view));
-        });
-    };
-    /**
-     * Bind specified collections to the template
-     */
-    ViewHelper.bindCollections = function (view) {
-        view.collections.forEach(function (collection) {
-            view.stopListening(collection);
-            view.options.logger && view.trigger("log:listen", "subscribes for `change destroy sync sort add`", collection);
-            view.listenTo(collection, "change destroy sync sort add", ViewHelper.renderDebaunced(view));
-        });
-    };
-    /**
-     * Subscribe logger handlers from options
-     */
-    ViewHelper.subscribeLogger = function (view, logger) {
-        Object.keys(logger).forEach(function (events) {
-            view.listenTo(view, events, logger[events]);
-        });
-    };
-    ViewHelper.resetComponentDto = function (view) {
-        view._component = {
+    ViewHelper.prototype.resetComponentDto = function () {
+        this.view.__ngbComponent = {
             models: {},
             collections: {},
             views: utils_1.mapFrom({}),
@@ -107,30 +139,18 @@ var ViewHelper = (function () {
             templateUrl: null
         };
     };
-    ViewHelper.initializeTemplate = function (view, template) {
-        // process Component's payload
-        view.template = new ngtemplate_1.NgTemplate(view.el, template, {
-            willMount: function () {
-                view.trigger("component-will-mount");
-                view.componentWillMount();
-            },
-            didMount: function () {
-                view.componentDidMount();
-                view.trigger("component-did-mount");
-            }
-        });
-    };
-    ViewHelper.asyncInitializeTemplate = function (view, options) {
-        var template = view._component.template, templateUrl = view._component.templateUrl;
+    ViewHelper.prototype.asyncInitializeTemplate = function (options) {
+        var _this = this;
+        var template = this.view.__ngbComponent.template, templateUrl = this.view.__ngbComponent.templateUrl;
         // shared template
-        if ("template" in options && view.options.template) {
-            template = view.options.template;
+        if ("template" in options && this.view.options.template) {
+            template = this.view.options.template;
         }
-        if ("templateUrl" in options && view.options.templateUrl) {
-            templateUrl = view.options.templateUrl;
+        if ("templateUrl" in options && this.view.options.templateUrl) {
+            templateUrl = this.view.options.templateUrl;
         }
         if (!templateUrl) {
-            ViewHelper.initializeTemplate(view, template);
+            this.initializeTemplate(template);
             return;
         }
         Backbone.ajax({
@@ -139,65 +159,59 @@ var ViewHelper = (function () {
                 throw new Error("Cannot reach " + templateUrl);
             },
             success: function (tpl) {
-                ViewHelper.initializeTemplate(view, tpl);
-                view.render();
+                _this.initializeTemplate(tpl);
+                _this.view.render();
+            }
+        });
+    };
+    ViewHelper.prototype.initializeTemplate = function (template) {
+        var _this = this;
+        // process Component's payload
+        this.view.template = new ngtemplate_1.NgTemplate(this.view.el, template, {
+            willMount: function () {
+                _this.view.trigger("component-will-mount");
+                _this.view.componentWillMount();
+            },
+            didMount: function () {
+                _this.view.didComponentMount = true;
+                _this.view.componentDidMount();
+                _this.view.trigger("component-did-mount");
             }
         });
     };
     /**
-     * collections/models passed in options, take them
-     */
-    ViewHelper.initializeOptions = function (view, options) {
-        // When @Component isn't defined
-        if (!("_component" in view)) {
-            ViewHelper.resetComponentDto(view);
-        }
-        ViewHelper.asyncInitializeTemplate(view, view.options);
-        view.models = utils_1.mapFrom(view._component.models);
-        view.collections = utils_1.mapFrom(view._component.collections);
-        view.views = utils_1.mapFrom({});
-        if ("collections" in options) {
-            utils_1.mapAssign(view.collections, options.collections);
-        }
-        if ("models" in options) {
-            utils_1.mapAssign(view.models, options.models);
-        }
-        if ("views" in options) {
-            utils_1.mapAssign(view._component.views, options.views);
-        }
-    };
-    /**
     * Initialize subview
     */
-    ViewHelper.initSubViews = function (view, viewCtorMap) {
+    ViewHelper.prototype.initSubViews = function (viewCtorMap) {
+        var _this = this;
         viewCtorMap.forEach(function (Ctor, key) {
             var dto, instance;
             if (typeof Ctor === "function") {
-                instance = ViewHelper.createSubView(view, Ctor);
+                instance = _this.createSubView(Ctor);
             }
             else {
                 dto = Ctor;
-                instance = ViewHelper.createSubView(view, dto[0], dto[1]);
+                instance = _this.createSubView(dto[0], dto[1]);
             }
-            view.views.set(key, instance);
+            _this.view.views.set(key, instance);
         });
     };
     /**
      * Factory: create a subview
      */
-    ViewHelper.createSubView = function (view, ViewCtor, options) {
+    ViewHelper.prototype.createSubView = function (ViewCtor, options) {
         if (options === void 0) { options = {}; }
-        var el = ViewHelper.findSubViewEl(view, ViewCtor.prototype["el"]);
-        return new ViewCtor(Object.assign(options, { el: el, parent: view }));
+        var el = this.findSubViewEl(ViewCtor.prototype["el"]);
+        return new ViewCtor(Object.assign(options, { el: el, parent: this.view }));
     };
     /**
      * Find inner el
      */
-    ViewHelper.findSubViewEl = function (view, selector) {
+    ViewHelper.prototype.findSubViewEl = function (selector) {
         if (typeof selector !== "string") {
             throw new SyntaxError("Invalid options.el type, must be a string");
         }
-        return view.el.querySelector(selector);
+        return this.view.el.querySelector(selector);
     };
     return ViewHelper;
 }());

@@ -139,7 +139,7 @@ export default function ViewSpec(){
           componentDidMount(): void {
             called.push( "componentDidMount" );
           }
-          shouldComponentUpdate( nextScope: NgBackbone.DataMap<any>, isRendered: boolean ): boolean {
+          shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean {
             called.push( "shouldComponentUpdate" );
             return true;
           }
@@ -173,7 +173,7 @@ export default function ViewSpec(){
           componentDidMount(): void {
             called.push( "componentDidMount" );
           }
-          shouldComponentUpdate( nextScope: NgBackbone.DataMap<any>, isRendered: boolean ): boolean {
+          shouldComponentUpdate( nextScope: NgBackbone.DataMap<any> ): boolean {
             called.push( "shouldComponentUpdate" );
             return false;
           }

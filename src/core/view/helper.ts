@@ -1,15 +1,16 @@
-import { View } from "../view";
 import { NgTemplate } from "../../ngtemplate";
 import { mapFrom, mapAssign } from "../utils";
+import { ViewMap } from "./map";
 
 export class ViewHelper {
 
   private debounceTimer: number;
 
-  constructor( private view: View ) {
-    this.view.listenTo( this.view, "component-did-mount", () => {
-      this.initSubViews( this.view.__ngbComponent.views );
+  constructor( private view: NgBackbone.View ) {
+    this.view.listenTo( this.view, "component-did-update", () => {
+      this.view.__ngbComponent.views.size && this.initSubViews( this.view.__ngbComponent.views );
     });
+    this.view.views = new ViewMap();
   }
 
   /**
@@ -53,7 +54,7 @@ export class ViewHelper {
 
     this.view.models = mapFrom( this.view.__ngbComponent.models );
     this.view.collections = mapFrom( this.view.__ngbComponent.collections );
-    this.view.views = mapFrom({});
+
 
 
     if ( "collections" in options ) {
@@ -193,42 +194,69 @@ export class ViewHelper {
     });
   }
 
+  private filterSubViews(){
+    this.view.views.forEach(( views: NgBackbone.View[] ) => {
+      views.forEach(( view: NgBackbone.View ) => {
+        //view.el
+      })
+    })
+  }
 
    /**
    * Initialize subview
    */
-  initSubViews( viewCtorMap: NgBackbone.ViewCtorMap ){
+  private initSubViews( viewCtorMap: NgBackbone.ViewCtorMap ): void {
     viewCtorMap.forEach(( Ctor: any, key: string ) => {
       let dto: NgBackbone.ViewCtorOptions,
-          instance: View;
+          views: NgBackbone.View[];
+
       if ( typeof Ctor === "function" ) {
-        instance = this.createSubView( <ViewConstructor>Ctor );
+        // populate views by specified Constructor
+        views = this.createSubViews( <ViewConstructor>Ctor );
       } else {
+        // populate views by pair Constructor/Options
         dto = <NgBackbone.ViewCtorOptions>Ctor;
-        instance = this.createSubView( <ViewConstructor>dto[ 0 ], <NgBackbone.ViewOptions>dto[ 1 ] );
+        views = this.createSubViews( <ViewConstructor>dto[ 0 ], <NgBackbone.ViewOptions>dto[ 1 ] );
       }
-      this.view.views.set( key, instance );
+      if ( !views.length ) {
+        return;
+      }
+      if ( this.view.views.has( key ) ) {
+        this.view.views.set( key, this.view.views.getAll( key ).concat( views ) );
+        return;
+      }
+      this.view.views.set( key, views );
     });
   }
+
   /**
-   * Factory: create a subview
+   * Factory: create a subview per element found by the selector
    */
-  private createSubView( ViewCtor: ViewConstructor, options: NgBackbone.ViewOptions = {}): View {
-    let el = this.findSubViewEl( ViewCtor.prototype[ "el" ] );
-    return new ViewCtor( Object.assign( options, { el: el, parent: this.view }) );
+  private createSubViews( ViewCtor: ViewConstructor, options: NgBackbone.ViewOptions = {}): NgBackbone.View[] {
+    let views: NgBackbone.View[] = [],
+        els = this.findMatchingElements( ViewCtor.prototype[ "el" ] );
+
+    els.forEach(( el: HTMLElement ) => {
+      if ( this.view.views.hasElement( el ) ) {
+        return null;
+      }
+      views.push( new ViewCtor( Object.assign( options, { el: el, parent: this.view }) ) );
+    });
+    return views;
   }
+
   /**
-   * Find inner el
+   * Find all matching elements into DOM
    */
-  private findSubViewEl( selector: string ){
+  private findMatchingElements( selector: string ): HTMLElement[] {
     if ( typeof selector !== "string" ) {
       throw new SyntaxError( "Invalid options.el type, must be a string" );
     }
-    return this.view.el.querySelector( selector );
+    return Array.from( this.view.el.querySelectorAll( selector ) ) as HTMLElement[];
   }
 
 }
 
 interface ViewConstructor {
-    new( options?: NgBackbone.ViewOptions ): View;
+    new( options?: NgBackbone.ViewOptions ): NgBackbone.View;
 }
