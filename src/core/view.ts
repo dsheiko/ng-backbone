@@ -17,7 +17,7 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   options: NgBackbone.ViewOptions = {};
   // template errors/warnings
   errors: string[] = [];
-  // is this view ever rendered
+  // is this view ever mounted
   didComponentMount: boolean = false;
   // link to parent view
   parent: NgBackbone.View;
@@ -100,6 +100,10 @@ export class View extends Backbone.NativeView<Backbone.Model> {
         });
         this.options.logger &&
           this.trigger( "log:sync", "synced template on in " + ( performance.now() - ms ) + " ms", scope, source );
+
+        if ( !this.didComponentMount ) {
+         this.__ngbHelper.onComponentDidMount();
+        }
         this.componentDidUpdate( scope );
         this.trigger( "component-did-update", scope );
       }

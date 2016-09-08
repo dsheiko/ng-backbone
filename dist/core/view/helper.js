@@ -75,8 +75,8 @@ var ViewHelper = (function () {
         this.view.collections.forEach(function (collection) {
             _this.view.stopListening(collection);
             _this.view.options.logger &&
-                _this.view.trigger("log:listen", "subscribes for `change destroy sync sort add`", collection);
-            _this.view.listenTo(collection, "change destroy sync sort add", _this.debounceRender.bind(_this));
+                _this.view.trigger("log:listen", "subscribes for `change destroy sync sort add remove`", collection);
+            _this.view.listenTo(collection, "change destroy sync sort add remove", _this.debounceRender.bind(_this));
         });
     };
     /**
@@ -165,6 +165,11 @@ var ViewHelper = (function () {
             }
         });
     };
+    ViewHelper.prototype.onComponentDidMount = function () {
+        this.view.didComponentMount = true;
+        this.view.componentDidMount();
+        this.view.trigger("component-did-mount");
+    };
     ViewHelper.prototype.initializeTemplate = function (template) {
         var _this = this;
         // process Component's payload
@@ -172,19 +177,21 @@ var ViewHelper = (function () {
             willMount: function () {
                 _this.view.trigger("component-will-mount");
                 _this.view.componentWillMount();
-            },
-            didMount: function () {
-                _this.view.didComponentMount = true;
-                _this.view.componentDidMount();
-                _this.view.trigger("component-did-mount");
             }
         });
     };
-    ViewHelper.prototype.filterSubViews = function () {
-        this.view.views.forEach(function (views) {
-            views.forEach(function (view) {
-                //view.el
-            });
+    /**
+     * When after parent DOM update any bound node disappear, let's ditch the orphan views
+     */
+    ViewHelper.prototype.cleanupOrphanSubViews = function () {
+        this.view.views.forEachView(function (view, inx, key, map) {
+            if (!view.el.parentNode) {
+                var views = map.get(key);
+                view.remove();
+                delete views[inx];
+                map.set(key, views
+                    .filter(function (value) { return typeof value !== "undefined"; }));
+            }
         });
     };
     /**
@@ -192,6 +199,7 @@ var ViewHelper = (function () {
     */
     ViewHelper.prototype.initSubViews = function (viewCtorMap) {
         var _this = this;
+        this.cleanupOrphanSubViews();
         viewCtorMap.forEach(function (Ctor, key) {
             var dto, views;
             if (typeof Ctor === "function") {
@@ -216,13 +224,18 @@ var ViewHelper = (function () {
     /**
      * Factory: create a subview per element found by the selector
      */
-    ViewHelper.prototype.createSubViews = function (ViewCtor, options) {
+    ViewHelper.prototype.createSubViews = function (ViewCtor, payload) {
         var _this = this;
-        if (options === void 0) { options = {}; }
+        if (payload === void 0) { payload = {}; }
         var views = [], els = this.findMatchingElements(ViewCtor.prototype["el"]);
         els.forEach(function (el) {
+            var options = payload;
             if (_this.view.views.hasElement(el)) {
                 return null;
+            }
+            // when options is a function
+            if (typeof payload === "function") {
+                options = payload.call(_this.view, _this.view, el);
             }
             views.push(new ViewCtor(Object.assign(options, { el: el, parent: _this.view })));
         });

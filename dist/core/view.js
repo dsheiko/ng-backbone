@@ -14,7 +14,7 @@ var View = (function (_super) {
         this.options = {};
         // template errors/warnings
         this.errors = [];
-        // is this view ever rendered
+        // is this view ever mounted
         this.didComponentMount = false;
         this.__ngbHelper = new helper_1.ViewHelper(this);
         Object.assign(this.options, options);
@@ -79,6 +79,9 @@ var View = (function (_super) {
                 });
                 this.options.logger &&
                     this.trigger("log:sync", "synced template on in " + (performance.now() - ms) + " ms", scope, source);
+                if (!this.didComponentMount) {
+                    this.__ngbHelper.onComponentDidMount();
+                }
                 this.componentDidUpdate(scope);
                 this.trigger("component-did-update", scope);
             }
@@ -110,9 +113,7 @@ var View = (function (_super) {
      * Remove all the nested view on parent removal
      */
     View.prototype.remove = function () {
-        this.views.forEach(function (views) {
-            views.forEach(function (view) { return view.remove(); });
-        });
+        this.views.forEachView(function (view) { return view.remove(); });
         return Backbone.NativeView.prototype.remove.call(this);
     };
     return View;

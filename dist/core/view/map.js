@@ -12,6 +12,14 @@ var ViewMap = (function () {
     ViewMap.prototype.forEach = function (cb, thisArg) {
         return this.map.forEach(cb, thisArg);
     };
+    ViewMap.prototype.forEachView = function (cb) {
+        var _this = this;
+        return this.map.forEach(function (views, key) {
+            views.forEach(function (value, index) {
+                cb.call(_this, value, index, key, _this.map);
+            });
+        });
+    };
     ViewMap.prototype.get = function (key, inx) {
         if (inx === void 0) { inx = 0; }
         return this.map.get(key)[inx];

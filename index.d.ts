@@ -1,4 +1,4 @@
-export class View extends Backbone.NativeView<Backbone.Model> {
+export class View extends Backbone.View<Backbone.Model> {
 // bounding box
   el: HTMLElement;
   // models to bind to the template
@@ -13,8 +13,10 @@ export class View extends Backbone.NativeView<Backbone.Model> {
   options: NgBackbone.ViewOptions;
   // template errors/warnings
   errors: string[][];
-  // is this view ever rendered
+  // is this view ever mounted
   didComponentMount: boolean;
+  // is this view ever updated
+  didComponentUpdate: boolean;
   // link to parent view
   parent: NgBackbone.View;
   // @Component payload for this class
@@ -103,3 +105,6 @@ export class Collection extends Backbone.Collection<Backbone.Model> {
 export class Model extends Backbone.Model {
 
 }
+
+export function Debounce( wait: number ): Function;
+export function Mixin( mixin: NgBackbone.DataMap<any> ): Function;

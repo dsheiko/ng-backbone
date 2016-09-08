@@ -96,8 +96,9 @@ declare namespace NgBackbone {
     __ngbComponent: ComponentDto;
     options?: ViewOptions;
     el: HTMLElement;
-    template: NgTemplate.NgTemplate;
+    template: any;
     errors?: string[];
+    // is this view ever mounted
     didComponentMount: boolean;
     componentWillMount(): void;
     componentDidMount(): void ;

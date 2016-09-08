@@ -179,17 +179,18 @@ export class ViewHelper {
     });
   }
 
+  onComponentDidMount(){
+    this.view.didComponentMount = true;
+    this.view.componentDidMount();
+    this.view.trigger( "component-did-mount" );
+  }
+
   private initializeTemplate( template: string ) {
     // process Component's payload
     this.view.template = new NgTemplate( this.view.el, template, {
       willMount: () => {
         this.view.trigger( "component-will-mount" );
         this.view.componentWillMount();
-      },
-      didMount: () => {
-        this.view.didComponentMount = true;
-        this.view.componentDidMount();
-        this.view.trigger( "component-did-mount" );
       }
     });
   }
@@ -227,7 +228,7 @@ export class ViewHelper {
       } else {
         // populate views by pair Constructor/Options
         dto = <NgBackbone.ViewCtorOptions>Ctor;
-        views = this.createSubViews( <ViewConstructor>dto[ 0 ], <NgBackbone.ViewOptions>dto[ 1 ] );
+        views = this.createSubViews( <ViewConstructor>dto[ 0 ],  dto[ 1 ] );
       }
       if ( !views.length ) {
         return;
@@ -243,13 +244,18 @@ export class ViewHelper {
   /**
    * Factory: create a subview per element found by the selector
    */
-  private createSubViews( ViewCtor: ViewConstructor, options: NgBackbone.ViewOptions = {}): NgBackbone.View[] {
+  private createSubViews( ViewCtor: ViewConstructor, payload: any = {}): NgBackbone.View[] {
     let views: NgBackbone.View[] = [],
         els = this.findMatchingElements( ViewCtor.prototype[ "el" ] );
 
     els.forEach(( el: HTMLElement ) => {
+      let options = payload;
       if ( this.view.views.hasElement( el ) ) {
         return null;
+      }
+      // when options is a function
+      if ( typeof payload === "function" ) {
+        options = payload.call( this.view, this.view, el );
       }
       views.push( new ViewCtor( Object.assign( options, { el: el, parent: this.view }) ) );
     });
