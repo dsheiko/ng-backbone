@@ -3,7 +3,6 @@
 // Definitions by: Boris Yankov <https://github.com/borisyankov/>, Natan Vivo <https://github.com/nvivo/>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-
 declare namespace Backbone {
 
     interface AddOptions extends Silenceable {
