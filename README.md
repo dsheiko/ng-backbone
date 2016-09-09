@@ -1,4 +1,4 @@
-# ngBackbone 1.0 RC3
+# ngBackbone 1.0
 
 [![NPM](https://nodei.co/npm/ng-backbone.png)](https://nodei.co/npm/ng-backbone/)
 

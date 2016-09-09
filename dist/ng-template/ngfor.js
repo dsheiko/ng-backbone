@@ -9,6 +9,7 @@ var exception_1 = require("./exception");
 var constants_1 = require("./constants");
 var tokenizer_1 = require("./expression/tokenizer");
 var exception_2 = require("./expression/exception");
+var DATA_ID_KEY = "id";
 var counter = 0;
 // <div data-ng:for="let hero of data.heroes" data-ng:text="hero" ></div>
 var NgFor = (function (_super) {
@@ -32,6 +33,7 @@ var NgFor = (function (_super) {
                 parentNode: node.parentNode,
                 outerHTML: outerHTML,
                 id: id,
+                indexable: false,
                 variable: parsed.variable,
                 items: [],
                 cache: cache,
@@ -87,6 +89,13 @@ var NgFor = (function (_super) {
         var child = tag.toUpperCase(), parent = child in map ? map[child] : "div";
         return document.createElement(parent);
     };
+    NgFor.prototype.removeIndexable = function (node, it) {
+        return node.items.filter(function (instance) {
+            return it.find(function (val) {
+                return instance.id === val[DATA_ID_KEY];
+            });
+        });
+    };
     NgFor.prototype.sync = function (data, Ctor) {
         var _this = this;
         this.nodes.forEach(function (node) {
@@ -94,11 +103,13 @@ var NgFor = (function (_super) {
             if (node.cache.match(JSON.stringify(it))) {
                 return false;
             }
-            // reduce
+            // reduce: collection changed, it's a special case
+            // if we have indexes (id) then we go still gacefully, we remove  particular nodes from the list
+            // if not, we updateth list
             if (node.items.length > it.length) {
-                node.items = node.items.slice(0, it.length);
+                node.items = node.indexable ? _this.removeIndexable(node, it) : [];
             }
-            // expand
+            // expand: update every item and add new ones
             if (node.items.length < it.length) {
                 var num = it.length - node.items.length;
                 while (num--) {
@@ -111,6 +122,10 @@ var NgFor = (function (_super) {
                 var item = node.items[inx];
                 data[node.variable] = val;
                 item.sync(data);
+                if (val && typeof val === "object" && DATA_ID_KEY in val) {
+                    item.id = val[DATA_ID_KEY];
+                    node.indexable = true;
+                }
             });
             _this.buildDOM(node);
         });

@@ -15,12 +15,14 @@ import { Reporter } from "./ng-template/reporter";
 const REPEATING_DIR_LIMIT = 9; // 0-9
 
 let DIRECTIVES = [ NgFor, NgSwitch, NgSwitchCase, NgSwitchCaseDefault, NgIf,
-      NgClass, NgData, NgProp, NgAttr, NgEl, NgText ];
+      NgClass, NgData, NgProp, NgAttr, NgEl, NgText ],
+    counter = 0;
 
 export class NgTemplate {
   private directives: NgTemplate.Directive[] = [];
   private reporter: Reporter;
   private isMounted: boolean = false;
+  id: string;
 
   static factory( el: Element, template?: string, options?: NgTemplate.Options ): NgTemplate {
     return new NgTemplate( el, template || null, options );
@@ -35,6 +37,7 @@ export class NgTemplate {
     if ( !this.el ) {
       throw new Exception( "(NgTemplate) Invalid first parameter: must be an existing DOM node" );
     }
+    this.id = "id" + ( ++counter );
     this.reporter = new Reporter();
     this.template || this.init( DIRECTIVES );
   }

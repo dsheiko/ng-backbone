@@ -86,7 +86,6 @@ We use `NgFor` when we need to generate a list of elements (subtrees)
 <i data-ng-for="let row of rows" data-ng-text="row"></i>
 ```
 
-
 ### NgSwitch
 
 We use `NgSwitch` when we need to display on element (subtree) of a set of available options.

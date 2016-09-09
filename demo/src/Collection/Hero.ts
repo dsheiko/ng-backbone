@@ -4,13 +4,11 @@ import { HeroModel } from "../Model/Hero";
 export class HeroCollection extends Collection {
   localStorage = new Backbone.LocalStorage( "heroes" );
   model = HeroModel;
-  
-  getSelectedNum(){
-    return this.filter(( model: HeroModel ) => {
-      return model.get( "selected" );
-    }).length;
+
+  getSelected(): NgBackbone.Model[]{
+    return this.where({ "selected": true });
   }
-  
+
   getOrder(){
     return this.comparator;
   }

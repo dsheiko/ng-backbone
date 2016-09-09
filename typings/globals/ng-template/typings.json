@@ -1,8 +1,8 @@
 {
   "resolution": "main",
   "tree": {
-    "src": "https://raw.githubusercontent.com/dsheiko/ng-template/master/custom-typings/ng-template/typings.json",
-    "raw": "github:dsheiko/ng-template/custom-typings/ng-template/typings.json",
+    "src": "/home/sheiko/Sites/os/ng-template/custom-typings/ng-template/typings.json",
+    "raw": "file:custom-typings/ng-template/typings.json",
     "main": "ng-template.d.ts",
     "version": "0.0.1",
     "name": "ng-template",

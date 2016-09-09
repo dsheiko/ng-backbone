@@ -32,8 +32,8 @@ import { HeroCollection } from "../Collection/Hero";
 </table>
 
 <div class="row">
-  <span><span data-ng-text="heroes.selectedNum">0</span> selected items</span>
-  <button data-bind="remove" class="btn btn-danger" data-ng-if="heroes.selectedNum">Remove selected</button>
+  <span><span data-ng-text="heroes.selected.length">0</span> selected items</span>
+  <button data-bind="remove" class="btn btn-danger" data-ng-if="heroes.selected.length">Remove selected</button>
 </div>
 
 `
@@ -42,12 +42,12 @@ import { HeroCollection } from "../Collection/Hero";
 export class HeroListView extends View {
   el: HTMLElement;
   collections: NgBackbone.CollectionMap;
-  heroes: NgBackbone.Collection;
+  heroes: HeroCollection;
   toggle: boolean = false;
-  
+
 
   initialize() {
-    this.heroes = this.collections.get( "heroes" );
+    this.heroes = this.collections.get( "heroes" ) as HeroCollection;
     this.heroes.fetch();
     this.render();
   }
@@ -67,11 +67,8 @@ export class HeroListView extends View {
   }
 
   onClickRemoveGroup(){
-    this.heroes.forEach(( model: Model ) => {
-      model.get( "selected" ) && model.destroy();
-    });
+    this.heroes.getSelected().forEach( ( model: Model ) => model.destroy() );
   }
-
 
   onClickSort( e:Event ) {
     let el = <HTMLElement>e.target,

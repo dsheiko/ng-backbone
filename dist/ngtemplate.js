@@ -14,7 +14,7 @@ var exception_1 = require("./ng-template/exception");
 var reporter_1 = require("./ng-template/reporter");
 var REPEATING_DIR_LIMIT = 9; // 0-9
 var DIRECTIVES = [ngfor_1.NgFor, ngswitch_1.NgSwitch, ngswitchcase_1.NgSwitchCase, ngswitchcasedefault_1.NgSwitchCaseDefault, ngif_1.NgIf,
-    ngclass_1.NgClass, ngdata_1.NgData, ngprop_1.NgProp, ngattr_1.NgAttr, ngel_1.NgEl, ngtext_1.NgText];
+    ngclass_1.NgClass, ngdata_1.NgData, ngprop_1.NgProp, ngattr_1.NgAttr, ngel_1.NgEl, ngtext_1.NgText], counter = 0;
 var NgTemplate = (function () {
     /**
      * Initialize template for a given Element
@@ -30,6 +30,7 @@ var NgTemplate = (function () {
         if (!this.el) {
             throw new exception_1.Exception("(NgTemplate) Invalid first parameter: must be an existing DOM node");
         }
+        this.id = "id" + (++counter);
         this.reporter = new reporter_1.Reporter();
         this.template || this.init(DIRECTIVES);
     }

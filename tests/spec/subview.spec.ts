@@ -130,8 +130,8 @@ export default function SubviewSpec(){
       });
 
       it( "removes orphan views", function( done ) {
-        let model = new Model(),
-            items = new Collection([ model, new Model() ]);
+        let model = new Model({ id: 1 }),
+            items = new Collection([ model, new Model({ id: 2 }) ]);
         @Component({
           el: "ng-child",
           template: "<ng-el></ng-el>"

@@ -4,6 +4,8 @@ import { ERROR_CODES } from "./constants";
 import { ReferenceToken } from "./expression/tokenizer";
 import { ExpressionException } from "./expression/exception";
 
+const DATA_ID_KEY = "id";
+
 let counter: number = 0;
 // <div data-ng:for="let hero of data.heroes" data-ng:text="hero" ></div>
 
@@ -34,6 +36,7 @@ export class NgFor extends AbstractDirective implements NgTemplate.Directive {
         parentNode: node.parentNode,
         outerHTML: outerHTML,
         id: id,
+        indexable: false,
         variable: parsed.variable,
         items: <Array<NgTemplate.NgTemplate>>[],
         cache: cache,
@@ -97,6 +100,14 @@ export class NgFor extends AbstractDirective implements NgTemplate.Directive {
       return document.createElement( parent );
   }
 
+  removeIndexable( node: NgTemplate.DirectiveNode, it: any[] ): NgTemplate.NgTemplate[] {
+    return node.items.filter(( instance: NgTemplate.NgTemplate ) => {
+      return it.find(( val ) => {
+        return instance.id === val[ DATA_ID_KEY ];
+      });
+    });
+  }
+
   sync( data: NgTemplate.DataMap, Ctor: NgTemplate.NgTemplateCtor ){
     this.nodes.forEach(( node: NgTemplate.DirectiveNode ) => {
 
@@ -104,11 +115,13 @@ export class NgFor extends AbstractDirective implements NgTemplate.Directive {
       if ( node.cache.match( JSON.stringify( it ) ) ) {
         return false;
       }
-      // reduce
+      // reduce: collection changed, it's a special case
+      // if we have indexes (id) then we go still gacefully, we remove  particular nodes from the list
+      // if not, we updateth list
       if ( node.items.length > it.length ) {
-        node.items = node.items.slice( 0, it.length );
+        node.items = node.indexable ? this.removeIndexable( node, it ) : [];
       }
-      // expand
+      // expand: update every item and add new ones
       if ( node.items.length < it.length ) {
         let num = it.length - node.items.length;
         while ( num-- ){
@@ -121,6 +134,10 @@ export class NgFor extends AbstractDirective implements NgTemplate.Directive {
         let item: NgTemplate.NgTemplate = node.items[ inx ];
         data[ node.variable ] = val;
         item.sync( data );
+        if ( val && typeof val === "object" && DATA_ID_KEY in val ) {
+          item.id = val[ DATA_ID_KEY ];
+          node.indexable = true;
+        }
       });
 
       this.buildDOM( node );
