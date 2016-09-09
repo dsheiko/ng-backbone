@@ -31,6 +31,7 @@ var NgAttr = (function (_super) {
             });
         });
     };
+    NgAttr.selector = "ng-attr";
     return NgAttr;
 }(abstract_directive_1.AbstractDirective));
 exports.NgAttr = NgAttr;

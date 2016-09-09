@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.1
+* Auto-focus on mounting first element matching [autofocus]
+* Upgrated up to ngTemplate 0.2.0
+
 ## 0.3.0
 * View now binds subviews gracefully on "component-did-update" event. When parent DOM changes already bound subviews stay untouched while new one get created for newly appeared matching nodes.
 * View gets boolean property `didComponentMount`

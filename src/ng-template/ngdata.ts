@@ -3,7 +3,8 @@ import { AbstractDirective } from "./abstract-directive";
  * <i data-ng-data="'someKey', value"></i>
  */
 export class NgData extends AbstractDirective implements NgTemplate.Directive {
-  nodes: NgTemplate.DirectiveNode[];
+ nodes: NgTemplate.DirectiveNode[];
+ static selector: string  = "ng-data";
 
  constructor( el: HTMLElement, reporter: NgTemplate.Reporter ){
     super( el, reporter );

@@ -63,8 +63,8 @@ var ViewHelper = (function () {
         var _this = this;
         this.view.models.forEach(function (model) {
             _this.view.stopListening(model);
-            _this.view.options.logger && _this.view.trigger("log:listen", "subscribes for `change`", model);
-            _this.view.listenTo(model, "change", _this.debounceRender.bind(_this));
+            _this.view.options.logger && _this.view.trigger("log:listen", "subscribes for `change` `sync`", model);
+            _this.view.listenTo(model, "change sync", _this.debounceRender.bind(_this));
         });
     };
     /**
@@ -169,6 +169,8 @@ var ViewHelper = (function () {
         this.view.didComponentMount = true;
         this.view.componentDidMount();
         this.view.trigger("component-did-mount");
+        var autofocus = this.view.el.querySelector("[autofocus]");
+        autofocus && autofocus.focus();
     };
     ViewHelper.prototype.initializeTemplate = function (template) {
         var _this = this;

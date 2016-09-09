@@ -22,10 +22,16 @@ var ViewMap = (function () {
     };
     ViewMap.prototype.get = function (key, inx) {
         if (inx === void 0) { inx = 0; }
+        if (!this.map.has(key)) {
+            throw new Error("The view map does not have the key " + key);
+        }
+        if (typeof this.map.get(key)[inx] === "undefined") {
+            throw new Error("The view map does not have the index " + inx);
+        }
         return this.map.get(key)[inx];
     };
     ViewMap.prototype.getAll = function (key) {
-        return this.map.get(key);
+        return this.map.get(key) || [];
     };
     ViewMap.prototype.has = function (key) {
         return this.map.has(key);

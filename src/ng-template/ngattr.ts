@@ -4,7 +4,8 @@ import { AbstractDirective } from "./abstract-directive";
  */
 export class NgAttr extends AbstractDirective implements NgTemplate.Directive {
   nodes: NgTemplate.DirectiveNode[];
-
+  static selector: string  = "ng-attr";
+  
   constructor( el: HTMLElement, reporter: NgTemplate.Reporter ){
     super( el, reporter );
     this.nodes =  this.initNodes( el, "ng-attr",

@@ -76,8 +76,8 @@ export class ViewHelper {
   bindModels(){
       this.view.models.forEach(( model: Backbone.Model ): void => {
         this.view.stopListening( model );
-        this.view.options.logger && this.view.trigger( "log:listen", "subscribes for `change`", model );
-        this.view.listenTo( model, "change", this.debounceRender.bind( this ) );
+        this.view.options.logger && this.view.trigger( "log:listen", "subscribes for `change` `sync`", model );
+        this.view.listenTo( model, "change sync", this.debounceRender.bind( this ) );
       });
   }
   /**
@@ -183,6 +183,8 @@ export class ViewHelper {
     this.view.didComponentMount = true;
     this.view.componentDidMount();
     this.view.trigger( "component-did-mount" );
+    let autofocus = this.view.el.querySelector( "[autofocus]" ) as HTMLElement;
+    autofocus && autofocus.focus();
   }
 
   private initializeTemplate( template: string ) {

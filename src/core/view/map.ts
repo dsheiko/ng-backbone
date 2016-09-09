@@ -32,11 +32,17 @@ export class ViewMap implements NgBackbone.ViewMap {
   }
 
   get( key: string, inx: number = 0 ): NgBackbone.View {
+    if ( !this.map.has( key ) ) {
+      throw new Error( "The view map does not have the key " + key );
+    }
+    if ( typeof this.map.get( key )[ inx ] === "undefined" ) {
+      throw new Error( "The view map does not have the index " + inx );
+    }
     return this.map.get( key )[ inx ];
   }
 
   getAll( key: string ): NgBackbone.View[] {
-    return this.map.get( key );
+    return this.map.get( key ) || [];
   }
 
   has( key: string ): boolean{

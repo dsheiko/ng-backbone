@@ -5,9 +5,11 @@ import { AbstractDirective } from "./abstract-directive";
 export class NgClass extends AbstractDirective implements NgTemplate.Directive {
   nodes: NgTemplate.DirectiveNode[];
 
+  static selector: string  = "ng-class";
+
   constructor( el: HTMLElement, reporter: NgTemplate.Reporter ){
     super( el, reporter );
-    this.nodes =  this.initNodes( el, "ng-class",
+    this.nodes =  this.initNodes( el, NgClass.selector,
       ( node: HTMLElement, expr: string, compile: Function, cache: NgTemplate.Cache ) => {
       return {
         el: node,
@@ -20,7 +22,7 @@ export class NgClass extends AbstractDirective implements NgTemplate.Directive {
   sync( data: NgTemplate.DataMap ){
     this.nodes.forEach(( node: NgTemplate.DirectiveNode ) => {
       node.cache.evaluate( node.exp.call( node.el, data ), ( args: any[] ) => {
-        node.el.classList.toggle( args[ 0 ], args[ 1 ] );
+        args[ 0 ] && node.el.classList.toggle( args[ 0 ], Boolean( args[ 1 ] ) );
       });
     });
   }

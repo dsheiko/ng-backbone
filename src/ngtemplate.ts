@@ -12,12 +12,15 @@ import { NgData } from "./ng-template/ngdata";
 import { Exception } from "./ng-template/exception";
 import { Reporter } from "./ng-template/reporter";
 
+const REPEATING_DIR_LIMIT = 9; // 0-9
+
 let DIRECTIVES = [ NgFor, NgSwitch, NgSwitchCase, NgSwitchCaseDefault, NgIf,
       NgClass, NgData, NgProp, NgAttr, NgEl, NgText ];
 
 export class NgTemplate {
   private directives: NgTemplate.Directive[] = [];
   private reporter: Reporter;
+  private isMounted: boolean = false;
 
   static factory( el: Element, template?: string, options?: NgTemplate.Options ): NgTemplate {
     return new NgTemplate( el, template || null, options );
@@ -36,9 +39,38 @@ export class NgTemplate {
     this.template || this.init( DIRECTIVES );
   }
 
-  private init( directives: Function[] ){
-    directives.forEach(( Directive: any ) => {
-      this.directives.push( new Directive( this.el, this.reporter ) );
+  private swapDirectives( el: HTMLElement, selector: string, inx: number ){
+    let rSel = `data-${selector}-${inx}`,
+        oSel = `data-${selector}`,
+        exp =  el.getAttribute( rSel );
+    el.setAttribute( oSel, exp );
+    el.removeAttribute( rSel );
+  }
+
+  private assignRepeatingDirectives( Directive: NgTemplate.DirectiveCtor ): void {
+    let inx = -1;
+    if ( Directive.selector ) {
+      while ( inx++ < REPEATING_DIR_LIMIT ) {
+        let rSel = `[data-${Directive.selector}-${inx}]`,
+            list = Array.from( this.el.querySelectorAll( rSel ) );
+        if ( this.el.matches( rSel ) ) {
+          list.push( this.el );
+        }
+        if ( !list ) {
+          return;
+        }
+        list.forEach(( el: HTMLElement ) => {
+          this.swapDirectives( el, Directive.selector, inx );
+        });
+        this.directives.push( new Directive( this.el as HTMLElement, this.reporter ) );
+      }
+    }
+  }
+
+  private init( directives: NgTemplate.DirectiveCtor[] ){
+    directives.forEach(( Directive: NgTemplate.DirectiveCtor ) => {
+      this.directives.push( new Directive( this.el as HTMLElement, this.reporter ) );
+      this.assignRepeatingDirectives( Directive );
     });
   }
 
@@ -53,11 +85,14 @@ export class NgTemplate {
       this.el.innerHTML = this.template;
       this.init( DIRECTIVES );
       this.template = null;
-      typeof this.options.didMount === "function" && this.options.didMount();
     }
     this.directives.forEach(( d ) => {
       d.sync( data, NgTemplate );
     });
+    if ( !this.isMounted ) {
+      typeof this.options.didMount === "function" && this.options.didMount();
+      this.isMounted = true;
+    }
     return this;
   }
 

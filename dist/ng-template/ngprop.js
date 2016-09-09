@@ -28,6 +28,7 @@ var NgProp = (function (_super) {
             });
         });
     };
+    NgProp.selector = "ng-prop";
     return NgProp;
 }(abstract_directive_1.AbstractDirective));
 exports.NgProp = NgProp;

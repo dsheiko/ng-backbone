@@ -12,6 +12,7 @@ var ngattr_1 = require("./ng-template/ngattr");
 var ngdata_1 = require("./ng-template/ngdata");
 var exception_1 = require("./ng-template/exception");
 var reporter_1 = require("./ng-template/reporter");
+var REPEATING_DIR_LIMIT = 9; // 0-9
 var DIRECTIVES = [ngfor_1.NgFor, ngswitch_1.NgSwitch, ngswitchcase_1.NgSwitchCase, ngswitchcasedefault_1.NgSwitchCaseDefault, ngif_1.NgIf,
     ngclass_1.NgClass, ngdata_1.NgData, ngprop_1.NgProp, ngattr_1.NgAttr, ngel_1.NgEl, ngtext_1.NgText];
 var NgTemplate = (function () {
@@ -25,6 +26,7 @@ var NgTemplate = (function () {
         this.template = template;
         this.options = options;
         this.directives = [];
+        this.isMounted = false;
         if (!this.el) {
             throw new exception_1.Exception("(NgTemplate) Invalid first parameter: must be an existing DOM node");
         }
@@ -34,10 +36,35 @@ var NgTemplate = (function () {
     NgTemplate.factory = function (el, template, options) {
         return new NgTemplate(el, template || null, options);
     };
+    NgTemplate.prototype.swapDirectives = function (el, selector, inx) {
+        var rSel = "data-" + selector + "-" + inx, oSel = "data-" + selector, exp = el.getAttribute(rSel);
+        el.setAttribute(oSel, exp);
+        el.removeAttribute(rSel);
+    };
+    NgTemplate.prototype.assignRepeatingDirectives = function (Directive) {
+        var _this = this;
+        var inx = -1;
+        if (Directive.selector) {
+            while (inx++ < REPEATING_DIR_LIMIT) {
+                var rSel = "[data-" + Directive.selector + "-" + inx + "]", list = Array.from(this.el.querySelectorAll(rSel));
+                if (this.el.matches(rSel)) {
+                    list.push(this.el);
+                }
+                if (!list) {
+                    return;
+                }
+                list.forEach(function (el) {
+                    _this.swapDirectives(el, Directive.selector, inx);
+                });
+                this.directives.push(new Directive(this.el, this.reporter));
+            }
+        }
+    };
     NgTemplate.prototype.init = function (directives) {
         var _this = this;
         directives.forEach(function (Directive) {
             _this.directives.push(new Directive(_this.el, _this.reporter));
+            _this.assignRepeatingDirectives(Directive);
         });
     };
     NgTemplate.prototype.report = function () {
@@ -50,11 +77,14 @@ var NgTemplate = (function () {
             this.el.innerHTML = this.template;
             this.init(DIRECTIVES);
             this.template = null;
-            typeof this.options.didMount === "function" && this.options.didMount();
         }
         this.directives.forEach(function (d) {
             d.sync(data, NgTemplate);
         });
+        if (!this.isMounted) {
+            typeof this.options.didMount === "function" && this.options.didMount();
+            this.isMounted = true;
+        }
         return this;
     };
     NgTemplate.prototype.pipe = function (cb, context) {

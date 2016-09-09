@@ -4,6 +4,7 @@ import { AbstractDirective } from "./abstract-directive";
  */
 export class NgProp extends AbstractDirective implements NgTemplate.Directive {
   nodes: NgTemplate.DirectiveNode[];
+  static selector: string  = "ng-prop";
 
   constructor( el: HTMLElement, reporter: NgTemplate.Reporter ){
     super( el, reporter );

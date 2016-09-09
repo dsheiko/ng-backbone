@@ -28,6 +28,7 @@ var NgData = (function (_super) {
             });
         });
     };
+    NgData.selector = "ng-data";
     return NgData;
 }(abstract_directive_1.AbstractDirective));
 exports.NgData = NgData;

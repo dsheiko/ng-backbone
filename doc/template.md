@@ -23,6 +23,8 @@ data-ng-if="foo && this.checked"
 ## Directives
 We use HTML-compliant `data-ng-*` custom attributes to tell the template how exactly we want to bind the scope data to the element
 
+> NOTE: `data-ng-class`, `data-ng-prop`, `data-ng-attr`, `data-ng-data` can be applied multiple times on an element like `data-ng-class-0`, `data-ng-class-9`
+
 ### NgText
 
 We use `NgText` to modify element's `textNode`
