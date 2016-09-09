@@ -220,6 +220,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.6" data-path="template-syntax.html">
+            
+                <a href="template-syntax.html">
+            
+                    
+                    Template Syntax
+            
+                </a>
+            
+
+            
+        </li>
+    
 
     
 
@@ -265,7 +278,8 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="subviews">Subviews</h1><p>We can make our view to create automatically nested views by specifying a list of view constructors:</p><pre><code class="lang-javascript"> @Component({
+                                <h1 id="subviews">Subviews</h1><p>When subview are specified in <code>@Component</code>, ngBackbone binds them gracefully on &quot;component-did-update&quot; event.</p><blockquote><p>Once successfully bound subview object stays untouched, but whenever new nodes coming up within parent view match a subview selector the new view instance gets created and attached to parent <code>this.views</code> map
+ngBackbone allows subview selector to match mutiple element. In this case it creates a subview per matched element</p></blockquote><p>We can make our view to create automatically nested views by specifying a list of view constructors:</p><pre><code class="lang-javascript"> @Component({
     views: {
       foo: FooView,
       bar: BarView
@@ -277,7 +291,7 @@
       bar: [ BarView, { id: <span class="hljs-string">&quot;bar&quot;</span> }]
     }
   })</code></pre>
-<p>Within parent component child ones are available in views map. You can access the instance of a sub-component as this.views.get( &quot;name&quot; ). Thus we obtain the control over child component from the parent:</p><pre><code class="lang-javascript">@Component({
+<p>Within parent component child ones are available in views map. You can access the instance of a sub-component as <code>this.views.get( &quot;name&quot; )</code>. Thus we obtain the control over child component from the parent:</p><pre><code class="lang-javascript">@Component({
   el: <span class="hljs-string">&quot;ng-hello&quot;</span>,
   events: {
     <span class="hljs-string">&quot;click [data-bind=toggleFoo]&quot;</span> : <span class="hljs-string">&quot;toggleFoo&quot;</span>,
@@ -309,7 +323,45 @@
    <span class="hljs-keyword">this</span>.parent.trigger( <span class="hljs-string">&quot;my-custom-event&quot;</span> )l
   }
 }</code></pre>
-
+<h1 id="maintaining-mount-on-parent-view-change">Maintaining mount on parent view change</h1><p>Let&apos;s say we have an imaginary task. We have to create a list where every item has own view. So as for items the example view may look like:</p><pre><code class="lang-javascript">
+  @Component({
+    el: <span class="hljs-string">&quot;ng-item&quot;</span>,
+    template: <span class="hljs-string">&quot;it&apos;s item&quot;</span>
+  })
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ItemView</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">View</span> </span>{
+    initialize(){
+      <span class="hljs-keyword">this</span>.render();
+    }
+  }</code></pre>
+<p>The parent (list) view has a bound collection named <code>items</code> and a subview named also <code>items</code>. AS you remember we expect subview binding to <code>ng-item</code> element.</p><pre><code class="lang-javascript">  <span class="hljs-keyword">let</span> items = <span class="hljs-keyword">new</span> Collection([ <span class="hljs-keyword">new</span> Model() ]);
+  @Component({
+    tagName: <span class="hljs-string">&quot;ng-list&quot;</span>,
+    template: <span class="hljs-string">&quot;&lt;ng-item data-ng-for=\&quot;let item of items\&quot;&gt;&lt;/ng-item&gt;&quot;</span>,
+    collections: {
+      items: items
+    },
+    views: {
+      items: ItemView
+    }
+  })
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ListView</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">View</span> </span>{
+    initialize(){
+      <span class="hljs-keyword">this</span>.render();
+    }
+  }</code></pre>
+<p>Initially the collection has just a single element and on render we have <code>&lt;ng-list&gt;&lt;ng-item&gt;it&apos;s item&lt;/ng-item&gt;&lt;/ng-list&gt;</code></p><pre><code class="lang-javascript">  <span class="hljs-keyword">let</span> list = <span class="hljs-keyword">new</span> ListView();
+  list.views.getAll( <span class="hljs-string">&quot;foo&quot;</span> ).length; <span class="hljs-comment">// 1</span>
+  list.views.get( <span class="hljs-string">&quot;foo&quot;</span> ); <span class="hljs-comment">// ItemView</span></code></pre>
+<p>With method <code>list.views.getAll( &quot;foo&quot; )</code> we can access the array of bound ItemView instances. Here it consists of one element.
+However let&apos;s see what happens if we change the collection:</p><pre><code class="lang-javascript">  items.add([ <span class="hljs-keyword">new</span> Model() ]);
+  view.on( <span class="hljs-string">&quot;component-did-update&quot;</span>, () =&gt; {
+    list.views.getAll( <span class="hljs-string">&quot;foo&quot;</span> ).length; <span class="hljs-comment">// 2</span>
+    list.views.get( <span class="hljs-string">&quot;foo&quot;</span>, <span class="hljs-number">0</span> ); <span class="hljs-comment">// ItemView</span>
+    list.views.get( <span class="hljs-string">&quot;foo&quot;</span>, <span class="hljs-number">1</span> ); <span class="hljs-comment">// ItemView</span>
+    done();
+  });</code></pre>
+<p>The method <code>list.views.getAll( &quot;foo&quot; )</code> indicates that we have now 2 subview instances matching <code>ng-item</code> element.
+We can access a particular instance like <code>list.views.get( &quot;foo&quot;, index )</code></p>
                                 
                                 </section>
                             
@@ -352,7 +404,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Subviews","level":"1.4.2","depth":2,"next":{"title":"Logging Events","level":"1.4.3","depth":2,"path":"logging-events.md","ref":"logging-events.md","articles":[]},"previous":{"title":"View Options","level":"1.4.1","depth":2,"path":"view-options.md","ref":"view-options.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"subviews.md","mtime":"2016-09-02T10:51:07.201Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-09-02T10:51:44.190Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Subviews","level":"1.4.2","depth":2,"next":{"title":"Logging Events","level":"1.4.3","depth":2,"path":"logging-events.md","ref":"logging-events.md","articles":[]},"previous":{"title":"View Options","level":"1.4.1","depth":2,"path":"view-options.md","ref":"view-options.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"subviews.md","mtime":"2016-09-09T13:29:22.306Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-09-09T13:29:33.200Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

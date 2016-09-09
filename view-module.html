@@ -220,6 +220,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.6" data-path="template-syntax.html">
+            
+                <a href="template-syntax.html">
+            
+                    
+                    Template Syntax
+            
+                </a>
+            
+
+            
+        </li>
+    
 
     
 
@@ -267,6 +280,25 @@
                                 
                                 <h1 id="view-module">View Module</h1><h2 id="interface">Interface</h2><pre><code class="lang-javascript">interface View extends Backbone.NativeView {
 
+  <span class="hljs-comment">// bounding element</span>
+  el: HTMLElement;
+  <span class="hljs-comment">// models to bind to the template</span>
+  models: NgBackbone.ModelMap;
+  <span class="hljs-comment">// collections to bind to the template</span>
+  collections: NgBackbone.CollectionMap;
+  <span class="hljs-comment">// array of subviews</span>
+  views: ViewMap;
+  <span class="hljs-comment">// instance of NgTemplate</span>
+  template: NgTemplate.NgTemplate;
+  <span class="hljs-comment">// constructor options getting available across the prototype</span>
+  options?: NgBackbone.ViewOptions;
+  <span class="hljs-comment">// template errors/warnings</span>
+  errors?: string[];
+  <span class="hljs-comment">// is this view ever rendered</span>
+  didComponentMount: boolean;
+  <span class="hljs-comment">// link to parent view in subview</span>
+  parent: NgBackbone.View;
+
   <span class="hljs-comment">// constructor accepts extended map of options - see &apos;View Options&apos; section</span>
   <span class="hljs-keyword">constructor</span>(options?: ngBackbone.ViewOptions);
 
@@ -297,7 +329,15 @@
   componentDidUpdate( prevScope: NgBackbone.DataMap&lt;any&gt; ): void;
 }
 </code></pre>
-<p><code>View</code> creates an instance of ngTemplate based on specified bounding element and template code. It binds models/collections of the given maps to the template. E.g. models: <code>{ foo: new Model() }</code> becomes available in the template scope as <code>foo</code>. As soon the model changes (<code>this.models.get(&quot;foo&quot;).set(&quot;bar&quot;, &quot;value&quot;)</code>) the template responds (<code>foo.bar === &quot;value&quot;</code>);</p><pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { Component, View, Model, Collection } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;../ng-backbone/core&quot;</span>;
+<h2 id="events">Events</h2><ul><li><code>component-will-update</code> - fires straight before bounding el populated from the template
+</li>
+<li><code>component-did-update</code> - fires straight after bounding el populated from the template
+</li>
+<li><code>component-will-mount</code> - fires straight before bounding el populated from the template
+</li>
+<li><code>component-did-mount</code> - fires straight after bounding el populated from the template
+</li></ul>
+<p><code>View</code> creates an instance of ngTemplate based on specified bounding element and template code. It binds models/collections of the given maps to the template. E.g. models: <code>{ foo: new Model() }</code> becomes available in the template scope as <code>foo</code>. As soon the model changes (<code>this.models.get(&quot;foo&quot;).set(&quot;bar&quot;, &quot;value&quot;)</code>) the template responds (<code>foo.bar === &quot;value&quot;</code>);</p><pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { Component, View, Model, Collection } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;ng-backbone&quot;</span>;
 
 @Component({
   el: <span class="hljs-string">&quot;ng-hero&quot;</span>,
@@ -319,6 +359,47 @@
     &lt;dl data-ng-for=&quot;let p of powers&quot;&gt;
       &lt;dt data-ng-text=&quot;p.name&quot;&gt;&lt;/dt&gt;
     &lt;/dl&gt;
+`</span>
+})
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HeroView</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">FormView</span> </span>{
+
+  initialize() {
+    <span class="hljs-keyword">this</span>.render();
+  }
+
+}
+</code></pre>
+<p>We can specify collection getters by adding method named as &quot;getCamelCase&quot;. When collection has such methods
+they are invoked for values during passing data to view template:</p><pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { Component, View, Collection } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;ng-backbone&quot;</span>;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PowerCollection</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Collection</span> </span>{
+  getSize(){
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.length;
+  }
+  getFavorite(){
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.filter(( model: any ) =&gt; {
+      <span class="hljs-keyword">return</span> model.get( <span class="hljs-string">&quot;name&quot;</span> ).startsWith( <span class="hljs-string">&quot;F&quot;</span> );
+    });
+  }
+}
+
+@Component({
+  el: <span class="hljs-string">&quot;ng-hero&quot;</span>,
+
+  collections: {
+    powers: <span class="hljs-keyword">new</span> PowerCollection([
+      { name: <span class="hljs-string">&quot;Superhuman strength&quot;</span> },
+      { name: <span class="hljs-string">&quot;Flight&quot;</span> }
+      { name: <span class="hljs-string">&quot;Freezing breath&quot;</span> }
+    ])
+  },
+
+  template: <span class="hljs-string">`
+    &lt;p&gt;&lt;strong data-ng-text=&quot;hero.title&quot;&gt;&lt;/strong&gt; has
+      &lt;i data-ng-text=&quot;powers.size&quot;&gt;&lt;/i&gt; powers, use but
+      can use only &lt;i data-ng-text=&quot;powers.favorite&quot;&gt;&lt;/i&gt;
+    &lt;/p&gt;
 `</span>
 })
 
@@ -373,7 +454,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"View Module","level":"1.4","depth":1,"next":{"title":"View Options","level":"1.4.1","depth":2,"path":"view-options.md","ref":"view-options.md","articles":[]},"previous":{"title":"@Component Decorator","level":"1.3","depth":1,"path":"component.md","ref":"component.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"view-module.md","mtime":"2016-09-02T10:51:07.205Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-09-02T10:51:44.190Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"View Module","level":"1.4","depth":1,"next":{"title":"View Options","level":"1.4.1","depth":2,"path":"view-options.md","ref":"view-options.md","articles":[]},"previous":{"title":"@Component Decorator","level":"1.3","depth":1,"path":"component.md","ref":"component.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"view-module.md","mtime":"2016-09-09T13:29:22.310Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-09-09T13:29:33.200Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
