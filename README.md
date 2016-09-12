@@ -94,7 +94,7 @@ export class HeroView extends FormView {
 
 ```
 
-## Find more
+## See more
 * [Live Demo](https://dsheiko.github.io/ng-backbone/demo.html)
 * [TODO MVC ngBackbone Example](https://github.com/dsheiko/todomvc/tree/dsheiko-ng-backbone/examples/ng-backbone)
 
