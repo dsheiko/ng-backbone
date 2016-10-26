@@ -42,7 +42,7 @@ Though `Ng.Backbone` works fine with canonical Backbone bundle (Backbone + jQuer
 
 
 ```javascript
-import { Component, FormView } from "backbone-ng/core";
+import { Component, FormView } from "backbone-ng";
 import { HeroPowers } from "./Collection/HeroPowers";
 
 @Component({
@@ -54,7 +54,7 @@ import { HeroPowers } from "./Collection/HeroPowers";
     powers: new HeroPowers()
   },
   template: `
-    <form data-ng-group="hero" novalidate>
+    <form data-ng-group="hero">
       <div class="form-group">
         <label for="name">Name</label>
         <input id="name" name="name" type="text" class="form-control" required >
@@ -64,25 +64,22 @@ import { HeroPowers } from "./Collection/HeroPowers";
       </div>
       <div class="form-group">
         <label for="power">Hero Power</label>
-        <select id="power" name="power" class="form-control" pattern=".{2}">
-          <option data-ng-for="let p of powers" data-ng-text="p.name" >Nothing here</option>
+        <select id="power" name="power" class="form-control">
+          <option data-ng-for="let aPower of powers" data-ng-text="aPower.name" >Nothing here</option>
         </select>
         <div class="alert alert-danger" data-ng-if="hero.power.dirty && !hero.power.valid">
           Power is required
         </div>
       </div>
-       <button type="submit" class="btn btn-default" data-ng-prop="'disabled', !hero.group.valid">Submit</button>\n\
+       <button type="submit" class="btn btn-default" data-ng-prop="'disabled', !hero.group.valid">Submit</button>
     </form>
 `
 })
 
 export class HeroView extends FormView {
-  el: HTMLElement;
-  models: ngBackbone.ModelMap;
 
   initialize() {
-    this.models.get( "powers" ).fetch();
-    this.render();
+    this.collections.get( "powers" ).fetch();
   }
 
   onSubmitForm( e:Event ){
