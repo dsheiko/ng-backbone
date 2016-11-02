@@ -1,4 +1,4 @@
-![ngBackbone 1.0](./ng-backbone.png)]
+![ngBackbone 1.0](./ng-backbone.png)
 
 [![NPM](https://nodei.co/npm/ng-backbone.png)](https://nodei.co/npm/ng-backbone/)
 
