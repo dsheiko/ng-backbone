@@ -6,7 +6,7 @@
 [![Join the chat at https://gitter.im/dsheiko/ng-backbone](https://badges.gitter.im/dsheiko/ng-backbone.svg)](https://gitter.im/dsheiko/ng-backbone?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-`ngBackbone` is a small extension of [Backbone.js](http://backbonejs.org/) that unlocks Angular-like programming experience
+`ngBackbone` is a framework on top of [Backbone.js](http://backbonejs.org/) that unlocks Angular2-like programming experience
 
 Well, I love old good Backbone for its simplicity and flexibility. However after working with such frameworks as Angular and React, I see that Backbone app requires much more code. Yet I don't want to ditch Backbone and deal with some 20K LOC framework codebase. I just want a minimal modular extension that will improve my programming experience and maintainability of my code.
 And that is how I came up with `ngBackbone`
