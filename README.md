@@ -1,5 +1,7 @@
 ![ngBackbone 1.0](./ng-backbone.png)
 
+[![Join the chat at https://gitter.im/dsheiko/ng-backbone](https://badges.gitter.im/dsheiko/ng-backbone.svg)](https://gitter.im/dsheiko/ng-backbone?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![NPM](https://nodei.co/npm/ng-backbone.png)](https://nodei.co/npm/ng-backbone/)
 
 [![Build Status](https://travis-ci.org/dsheiko/ng-backbone.png)](https://travis-ci.org/dsheiko/ng-backbone)
