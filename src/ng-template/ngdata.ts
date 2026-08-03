@@ -1,30 +1,15 @@
-import { AbstractDirective } from "./abstract-directive";
+import { AbstractArgsDirective } from "./abstract-args-directive";
 /**
  * <i data-ng-data="'someKey', value"></i>
  */
-export class NgData extends AbstractDirective implements NgTemplate.Directive {
- nodes: NgTemplate.DirectiveNode[];
- static selector: string  = "ng-data";
+export class NgData extends AbstractArgsDirective {
+  static selector: string  = "ng-data";
 
- constructor( el: HTMLElement, reporter: NgTemplate.Reporter ){
-    super( el, reporter );
-    this.nodes =  this.initNodes( el, "ng-data",
-      ( node: HTMLElement, expr: string, compile: Function, cache: NgTemplate.Cache ) => {
-      return {
-        el: node,
-        exp: compile( expr, "__toArray", reporter ),
-        cache: cache
-      };
-    });
+  constructor( el: HTMLElement, reporter: NgTemplate.Reporter ){
+    super( el, reporter, "ng-data" );
   }
 
-  sync( data: NgTemplate.DataMap ){
-    this.nodes.forEach(( node: NgTemplate.DirectiveNode ) => {
-      node.cache.evaluate( node.exp.call( node.el, data ), ( args: any[] ) => {
-        let el = <HTMLElement>node.el;
-        el.dataset[ args[ 0 ] ] = args[ 1 ];
-      });
-    });
+  protected apply( el: HTMLElement, args: any[] ): void {
+    el.dataset[ args[ 0 ] ] = args[ 1 ];
   }
 }
-

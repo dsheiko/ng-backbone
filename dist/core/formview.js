@@ -49,8 +49,8 @@ var FormView = (function (_super) {
             });
             // set initial state (.eg. requried contols - are invalid already)
             _this.updateGroupValidatity(groupName);
-            _this.render();
         });
+        this.render();
     };
     /**
      * Return array of form elements (either with all the forms found in the view
@@ -206,7 +206,7 @@ var FormView = (function (_super) {
             .forEach(function (model, key) {
             var tmp, controlName;
             _a = key.split("."), tmp = _a[0], controlName = _a[1];
-            model.get("dirty") && model.set("dirty", true);
+            model.set("dirty", false);
             var _a;
         });
     };

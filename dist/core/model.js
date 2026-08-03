@@ -8,7 +8,6 @@ var Model = (function (_super) {
     __extends(Model, _super);
     function Model(attributes, options) {
         _super.call(this, attributes, options);
-        this.options = options || {};
     }
     return Model;
 }(Backbone.Model));

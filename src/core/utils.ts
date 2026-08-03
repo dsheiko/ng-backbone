@@ -1,4 +1,15 @@
 /**
+ * Debounce a callback bound to a given context, tracking the pending timer on contextKey
+ */
+export function debounce( context: any, contextKey: string, wait: number, callback: Function, args: any[] ): void {
+  clearTimeout( context[ contextKey ] );
+  context[ contextKey ] = <any>setTimeout(() => {
+    context[ contextKey ] = null;
+    callback.apply( context, args );
+  }, wait );
+}
+
+/**
  * Decorator to debounce
  */
 export function Debounce( wait: number ): Function {
@@ -6,13 +17,10 @@ export function Debounce( wait: number ): Function {
     const callback = descriptor.value;
     return <PropertyDescriptor>Object.assign({}, descriptor, {
       value: function(): Promise<any> {
-        const args = Array.from( arguments );
-        clearTimeout( this[ "_debounceTimer" ] );
+        const args = Array.from( arguments ),
+              onFire = ( ...cbArgs: any[] ) => callback.apply( this, cbArgs );
         return new Promise(( resolve ) => {
-          this[ "_debounceTimer" ] = <any>setTimeout(() => {
-            this[ "_debounceTimer" ] = null;
-            resolve( callback.apply( this, args ) );
-          }, wait );
+          debounce( this, "_debounceTimer", wait, ( ...cbArgs: any[] ) => resolve( onFire( ...cbArgs ) ), args );
         });
       }
     });

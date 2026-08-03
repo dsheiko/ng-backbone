@@ -1,13 +1,6 @@
 ![ngBackbone 1.0](./ng-backbone.png)
 
-[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
-
-> WARNING - THIS PROJECT IS NO LONGER MAINTAINED!!!
-
 [![NPM](https://nodei.co/npm/ng-backbone.png)](https://nodei.co/npm/ng-backbone/)
-
-[![Build Status](https://travis-ci.org/dsheiko/ng-backbone.png)](https://travis-ci.org/dsheiko/ng-backbone)
-[![Join the chat at https://gitter.im/dsheiko/ng-backbone](https://badges.gitter.im/dsheiko/ng-backbone.svg)](https://gitter.im/dsheiko/ng-backbone?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 `ngBackbone` is a framework on top of [Backbone.js](http://backbonejs.org/) that unlocks Angular2-like programming experience
@@ -46,7 +39,7 @@ Though `Ng.Backbone` works fine with canonical Backbone bundle (Backbone + jQuer
 
 
 ```javascript
-import { Component, FormView } from "backbone-ng";
+import { Component, FormView } from "ng-backbone";
 import { HeroPowers } from "./Collection/HeroPowers";
 
 @Component({

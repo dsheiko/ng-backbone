@@ -42,8 +42,8 @@ export class FormView extends View {
 
         // set initial state (.eg. requried contols - are invalid already)
         this.updateGroupValidatity( groupName );
-        this.render();
     });
+    this.render();
   }
 
   /**
@@ -223,7 +223,7 @@ export class FormView extends View {
       .forEach(( model: FormState, key: string ) => {
         let tmp: string, controlName: string;
         [ tmp, controlName ] = key.split( "." );
-        model.get( "dirty") && model.set( "dirty", true );
+        model.set( "dirty", false );
       });
   }
 

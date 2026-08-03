@@ -37,13 +37,13 @@ var ViewMap = (function () {
         return this.map.has(key);
     };
     ViewMap.prototype.hasElement = function (el) {
-        var toggle = false;
-        this.map.forEach(function (views) {
-            if (views.find(function (view) { return view.el === el; })) {
-                toggle = true;
+        for (var _i = 0, _a = Array.from(this.map.values()); _i < _a.length; _i++) {
+            var views = _a[_i];
+            if (views.some(function (view) { return view.el === el; })) {
+                return true;
             }
-        });
-        return toggle;
+        }
+        return false;
     };
     ViewMap.prototype.set = function (key, value) {
         return this.map.set(key, value);

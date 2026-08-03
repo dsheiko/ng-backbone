@@ -19,10 +19,9 @@ export class NgSwitch extends AbstractDirective implements NgTemplate.Directive 
 
   sync( data: NgTemplate.DataMap, Ctor: NgTemplate.NgTemplateCtor ){
     this.nodes.forEach(( node: NgTemplate.DirectiveNode ) => {
-      let tpl = new Ctor( node.el, node.outerHTML );
       node.cache.evaluate( node.exp.call( node.el, data ), ( val: any ) => {
         data[ "$" ] = val;
-        tpl.sync( data );
+        new Ctor( node.el, node.outerHTML ).sync( data );
       });
 
     });

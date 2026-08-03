@@ -1,29 +1,15 @@
-import { AbstractDirective } from "./abstract-directive";
+import { AbstractArgsDirective } from "./abstract-args-directive";
 /**
  * <i data-ng-class="'is-hidden', isHidden"></i>
  */
-export class NgClass extends AbstractDirective implements NgTemplate.Directive {
-  nodes: NgTemplate.DirectiveNode[];
-
+export class NgClass extends AbstractArgsDirective {
   static selector: string  = "ng-class";
 
   constructor( el: HTMLElement, reporter: NgTemplate.Reporter ){
-    super( el, reporter );
-    this.nodes =  this.initNodes( el, NgClass.selector,
-      ( node: HTMLElement, expr: string, compile: Function, cache: NgTemplate.Cache ) => {
-      return {
-        el: node,
-        exp: compile( expr, "__toArray", reporter ),
-        cache: cache
-      };
-    });
+    super( el, reporter, NgClass.selector );
   }
 
-  sync( data: NgTemplate.DataMap ){
-    this.nodes.forEach(( node: NgTemplate.DirectiveNode ) => {
-      node.cache.evaluate( node.exp.call( node.el, data ), ( args: any[] ) => {
-        args[ 0 ] && node.el.classList.toggle( args[ 0 ], Boolean( args[ 1 ] ) );
-      });
-    });
+  protected apply( el: HTMLElement, args: any[] ): void {
+    args[ 0 ] && el.classList.toggle( args[ 0 ], Boolean( args[ 1 ] ) );
   }
 }

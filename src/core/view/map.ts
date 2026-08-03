@@ -50,13 +50,12 @@ export class ViewMap implements NgBackbone.ViewMap {
   }
 
   hasElement( el: HTMLElement ): boolean {
-    let toggle = false;
-    this.map.forEach(( views: NgBackbone.View[] ) => {
-      if ( views.find(( view: NgBackbone.View ) => view.el === el ) ){
-        toggle = true;
+    for ( let views of Array.from( this.map.values() ) ) {
+      if ( views.some(( view: NgBackbone.View ) => view.el === el ) ) {
+        return true;
       }
-    });
-    return toggle;
+    }
+    return false;
   }
 
   set( key: string, value?: NgBackbone.View[] ): Map<string, NgBackbone.View[]> {

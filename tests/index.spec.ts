@@ -5,3 +5,6 @@ import "./spec/view.spec";
 import "./spec/subview.spec";
 import "./spec/formview.spec";
 import "./spec/utils.spec";
+import "./spec/tokenizer.spec";
+import "./spec/ngswitch.spec";
+import "./spec/ngdirectives.spec";

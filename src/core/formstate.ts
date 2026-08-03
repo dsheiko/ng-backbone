@@ -7,7 +7,7 @@ import { Debounce } from "./utils";
 const VALIDITY_STATE = [
         "badInput", "customError", "stepMismatch", "tooLong",
         "valueMissing", "rangeOverflow", "rangeUnderflow",
-        "typeMismatch", "patternMismatch", "valueMissing" ],
+        "typeMismatch", "patternMismatch" ],
 
       SILENT = { silent: true };
 
@@ -96,9 +96,9 @@ export class FormState extends Model {
     if ( "validity" in el ) {
        this.set( "value", el.value, SILENT );
 
+       let validityState = <any>el.validity;
        VALIDITY_STATE.forEach(( method: string ) => {
-         let ValidityState = <any>el.validity;
-         this.set( method, ValidityState[ method ], SILENT );
+         this.set( method, validityState[ method ], SILENT );
        });
 
        this.set( "validationMessage", el.validationMessage, SILENT );

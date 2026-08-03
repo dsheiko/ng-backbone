@@ -20,7 +20,7 @@ var utils_1 = require("./utils");
 var VALIDITY_STATE = [
     "badInput", "customError", "stepMismatch", "tooLong",
     "valueMissing", "rangeOverflow", "rangeUnderflow",
-    "typeMismatch", "patternMismatch", "valueMissing"], SILENT = { silent: true };
+    "typeMismatch", "patternMismatch"], SILENT = { silent: true };
 var FormState = (function (_super) {
     __extends(FormState, _super);
     function FormState() {
@@ -99,9 +99,9 @@ var FormState = (function (_super) {
         var _this = this;
         if ("validity" in el) {
             this.set("value", el.value, SILENT);
+            var validityState_1 = el.validity;
             VALIDITY_STATE.forEach(function (method) {
-                var ValidityState = el.validity;
-                _this.set(method, ValidityState[method], SILENT);
+                _this.set(method, validityState_1[method], SILENT);
             });
             this.set("validationMessage", el.validationMessage, SILENT);
             return this.testCustomValidators(el)

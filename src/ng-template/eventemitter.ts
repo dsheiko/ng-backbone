@@ -54,7 +54,7 @@ export class EventEmitter {
      */
     off( ev: string, target: Function ) {
       this.eventQueue = this.eventQueue.filter(function( task ) {
-        return task.event !== ev || task.callback.toString() !== target.toString();
+        return task.event !== ev || task.callback !== target;
       });
       return this;
     }

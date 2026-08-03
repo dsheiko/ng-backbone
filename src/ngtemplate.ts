@@ -59,9 +59,6 @@ export class NgTemplate {
         if ( this.el.matches( rSel ) ) {
           list.push( this.el );
         }
-        if ( !list ) {
-          return;
-        }
         list.forEach(( el: HTMLElement ) => {
           this.swapDirectives( el, Directive.selector, inx );
         });

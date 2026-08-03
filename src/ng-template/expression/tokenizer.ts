@@ -1,5 +1,13 @@
 import { ExpressionException } from "./exception";
 
+const OPERATOR_RE = /^(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)$/,
+      SINGLE_QUOTE_STRING_RE = /^\'[^\']+\'$/i,
+      DOUBLE_QUOTE_STRING_RE = /^\"[^\"]+\"$/i,
+      NUMBER_RE = /^\d+$/,
+      BOOLEAN_RE = /^(true|false)$/i,
+      REFERENCE_RE = /^[a-zA-Z_\$][a-zA-Z0-9\._\$]+$/,
+      NEGOTIATION_RE = /^\!\s*/;
+
 export class Token {
   name: string = "Token";
   constructor( public value: string, public negation: boolean = false ) {
@@ -23,17 +31,14 @@ export class InvalidToken extends Token {
 export class OperatorToken extends Token {
   name: string = "OperatorToken";
   static valid( value: string ){
-    let re = /^(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)$/;
-    return re.test( value );
+    return OPERATOR_RE.test( value );
   }
 }
 
 export class StringToken extends Token {
   name: string = "StringToken";
   static valid( value: string ){
-    let single: RegExp = /^\'[^\']+\'$/i,
-        double: RegExp = /^\"[^\"]+\"$/i;
-    return single.test( value ) || double.test( value );
+    return SINGLE_QUOTE_STRING_RE.test( value ) || DOUBLE_QUOTE_STRING_RE.test( value );
   }
   resolveValue( data: NgTemplate.DataMap ): any {
      let val = this.value;
@@ -44,8 +49,7 @@ export class StringToken extends Token {
 export class NumberToken extends Token {
   name: string = "NumberToken";
   static valid( value: string ){
-    let re: RegExp = /^\d+$/;
-    return re.test( value );
+    return NUMBER_RE.test( value );
   }
   resolveValue( data: NgTemplate.DataMap ): any {
      let val = Number( this.value );
@@ -56,8 +60,7 @@ export class NumberToken extends Token {
 export class BooleanToken extends Token {
   name: string = "BooleanToken";
   static valid( value: string ){
-    let re: RegExp = /^(true|false)$/i;
-    return re.test( value );
+    return BOOLEAN_RE.test( value );
   }
 
   resolveValue( data: NgTemplate.DataMap ): any {
@@ -69,8 +72,7 @@ export class BooleanToken extends Token {
 export class ReferenceToken extends Token {
   name: string = "ReferenceToken";
   static valid( value: string ){
-    let re: RegExp = /^[a-zA-Z_\$][a-zA-Z0-9\._\$]+$/;
-    return value.substr( 0, 5 ) !== "this." && re.test( value );
+    return value.substr( 0, 5 ) !== "this." && REFERENCE_RE.test( value );
   }
 
   static findValue( path: string, data: NgTemplate.DataMap ): any {
@@ -99,8 +101,7 @@ export class ReferenceToken extends Token {
  * Removes leading negotiation
  */
 function removeNegotiation( value: string ){
-  let re: RegExp = /^\!\s*/;
-  return value.replace( re, "" );
+  return value.replace( NEGOTIATION_RE, "" );
 }
 
 export function tokenizer( rawValue: string ): Token {

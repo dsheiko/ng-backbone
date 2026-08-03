@@ -1,5 +1,22 @@
 # CHANGELOG
 
+# 1.0.3
+* Dedup: shared `AbstractArgsDirective` base for ngattr/ngclass/ngdata/ngprop, shared `debounce`
+  utility (replacing two separate implementations), removed dead `options` fields on Model/Collection,
+  removed a duplicate `VALIDITY_STATE` entry, removed an unused import
+* Performance: hoisted regex literals in the expression tokenizer/parser (previously recompiled
+  on every call), single render per `bindGroups()` call instead of one per form group, avoided
+  constructing a redundant `NgSwitch` sub-template when the switch value hasn't changed, faster
+  `hasElement`/`cleanupOrphanSubViews` in the subview map
+* Fixed: `FormView.reset()` now actually clears the `dirty` state (previously a no-op due to a
+  copy-paste bug)
+* Fixed: `EventEmitter.off()` now unsubscribes by function reference instead of comparing
+  stringified function source (which could incorrectly match two different functions with
+  identical source)
+* Fixed: README code example's import path (`backbone-ng` -> `ng-backbone`)
+* Added: unit tests for the expression tokenizer, `NgSwitch`, and the ngattr/ngclass/ngdata/ngprop
+  directive family (previously untested)
+
 # 1.0.0
 * first stable release
 

@@ -2,6 +2,7 @@
 var ngtemplate_1 = require("../../ngtemplate");
 var utils_1 = require("../utils");
 var map_1 = require("./map");
+var GETTER_RE = /^get[A-Z]/;
 var ViewHelper = (function () {
     function ViewHelper(view) {
         var _this = this;
@@ -15,10 +16,9 @@ var ViewHelper = (function () {
      * Translate { getFoo(), getBar() } into { foo: "value", bar: "value" }
      */
     ViewHelper.getterToScope = function (data) {
-        var re = /^get[A-Z]/;
         var key, getters = {};
         for (key in data) {
-            if (re.test(key) && typeof data[key] === "function") {
+            if (GETTER_RE.test(key) && typeof data[key] === "function") {
                 var prop = key.substr(3);
                 prop = prop.substr(0, 1).toLowerCase() + prop.substr(1);
                 getters[prop] = data[key]();
@@ -88,11 +88,7 @@ var ViewHelper = (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        clearTimeout(this.debounceTimer);
-        this.debounceTimer = setTimeout(function () {
-            _this.debounceTimer = null;
-            _this.view.render.apply(_this.view, args);
-        }, 50);
+        utils_1.debounce(this, "debounceTimer", 50, function () { return _this.view.render.apply(_this.view, args); }, []);
     };
     /**
      * Converts { foo: Collection, bar: Collection } into
@@ -188,11 +184,8 @@ var ViewHelper = (function () {
     ViewHelper.prototype.cleanupOrphanSubViews = function () {
         this.view.views.forEachView(function (view, inx, key, map) {
             if (!view.el.parentNode) {
-                var views = map.get(key);
                 view.remove();
-                delete views[inx];
-                map.set(key, views
-                    .filter(function (value) { return typeof value !== "undefined"; }));
+                map.set(key, map.get(key).filter(function (value, valueInx) { return valueInx !== inx; }));
             }
         });
     };

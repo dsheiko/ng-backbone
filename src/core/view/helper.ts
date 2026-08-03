@@ -1,6 +1,8 @@
 import { NgTemplate } from "../../ngtemplate";
-import { mapFrom, mapAssign } from "../utils";
+import { mapFrom, mapAssign, debounce } from "../utils";
 import { ViewMap } from "./map";
+
+const GETTER_RE = /^get[A-Z]/;
 
 export class ViewHelper {
 
@@ -17,11 +19,10 @@ export class ViewHelper {
    * Translate { getFoo(), getBar() } into { foo: "value", bar: "value" }
    */
   static getterToScope( data: any ): NgBackbone.DataMap<any> {
-    const re = /^get[A-Z]/;
     let key: string,
         getters: NgBackbone.DataMap<any> = {};
     for ( key in data ) {
-      if ( re.test( key ) && typeof data[ key ] === "function" ){
+      if ( GETTER_RE.test( key ) && typeof data[ key ] === "function" ){
         let prop = key.substr( 3 );
         prop = prop.substr( 0, 1 ).toLowerCase() + prop.substr( 1 );
         getters[ prop ] = data[ key ]();
@@ -95,11 +96,7 @@ export class ViewHelper {
    * Slightly debounced for repeating calls like collection.sync/sort
    */
   debounceRender( ...args: any[] ) {
-    clearTimeout( this.debounceTimer );
-    this.debounceTimer = <any>setTimeout(() => {
-      this.debounceTimer = null;
-      this.view.render.apply( this.view, args );
-    }, 50 );
+    debounce( this, "debounceTimer", 50, () => this.view.render.apply( this.view, args ), [] );
   }
 
 
@@ -206,11 +203,8 @@ export class ViewHelper {
           key: string,
           map: Map<string, NgBackbone.View[]> ) => {
       if ( ! view.el.parentNode ) {
-        let views = map.get( key );
         view.remove();
-        delete views[ inx ];
-        map.set( key, views
-          .filter(( value: any ) => typeof value !== "undefined" ) );
+        map.set( key, map.get( key ).filter(( value: any, valueInx: number ) => valueInx !== inx ) );
       }
     });
   }

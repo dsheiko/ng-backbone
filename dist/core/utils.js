@@ -1,5 +1,16 @@
 "use strict";
 /**
+ * Debounce a callback bound to a given context, tracking the pending timer on contextKey
+ */
+function debounce(context, contextKey, wait, callback, args) {
+    clearTimeout(context[contextKey]);
+    context[contextKey] = setTimeout(function () {
+        context[contextKey] = null;
+        callback.apply(context, args);
+    }, wait);
+}
+exports.debounce = debounce;
+/**
  * Decorator to debounce
  */
 function Debounce(wait) {
@@ -8,13 +19,21 @@ function Debounce(wait) {
         return Object.assign({}, descriptor, {
             value: function () {
                 var _this = this;
-                var args = Array.from(arguments);
-                clearTimeout(this["_debounceTimer"]);
+                var args = Array.from(arguments), onFire = function () {
+                    var cbArgs = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        cbArgs[_i - 0] = arguments[_i];
+                    }
+                    return callback.apply(_this, cbArgs);
+                };
                 return new Promise(function (resolve) {
-                    _this["_debounceTimer"] = setTimeout(function () {
-                        _this["_debounceTimer"] = null;
-                        resolve(callback.apply(_this, args));
-                    }, wait);
+                    debounce(_this, "_debounceTimer", wait, function () {
+                        var cbArgs = [];
+                        for (var _i = 0; _i < arguments.length; _i++) {
+                            cbArgs[_i - 0] = arguments[_i];
+                        }
+                        return resolve(onFire.apply(void 0, cbArgs));
+                    }, args);
                 });
             }
         });

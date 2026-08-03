@@ -22,10 +22,9 @@ var NgSwitch = (function (_super) {
     }
     NgSwitch.prototype.sync = function (data, Ctor) {
         this.nodes.forEach(function (node) {
-            var tpl = new Ctor(node.el, node.outerHTML);
             node.cache.evaluate(node.exp.call(node.el, data), function (val) {
                 data["$"] = val;
-                tpl.sync(data);
+                new Ctor(node.el, node.outerHTML).sync(data);
             });
         });
     };

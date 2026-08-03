@@ -8,7 +8,6 @@ var Collection = (function (_super) {
     __extends(Collection, _super);
     function Collection(models, options) {
         _super.call(this, models, options);
-        this.options = options || {};
     }
     return Collection;
 }(Backbone.Collection));

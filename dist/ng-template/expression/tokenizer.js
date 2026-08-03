@@ -5,6 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var exception_1 = require("./exception");
+var OPERATOR_RE = /^(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)$/, SINGLE_QUOTE_STRING_RE = /^\'[^\']+\'$/i, DOUBLE_QUOTE_STRING_RE = /^\"[^\"]+\"$/i, NUMBER_RE = /^\d+$/, BOOLEAN_RE = /^(true|false)$/i, REFERENCE_RE = /^[a-zA-Z_\$][a-zA-Z0-9\._\$]+$/, NEGOTIATION_RE = /^\!\s*/;
 var Token = (function () {
     function Token(value, negation) {
         if (negation === void 0) { negation = false; }
@@ -40,8 +41,7 @@ var OperatorToken = (function (_super) {
         this.name = "OperatorToken";
     }
     OperatorToken.valid = function (value) {
-        var re = /^(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)$/;
-        return re.test(value);
+        return OPERATOR_RE.test(value);
     };
     return OperatorToken;
 }(Token));
@@ -53,8 +53,7 @@ var StringToken = (function (_super) {
         this.name = "StringToken";
     }
     StringToken.valid = function (value) {
-        var single = /^\'[^\']+\'$/i, double = /^\"[^\"]+\"$/i;
-        return single.test(value) || double.test(value);
+        return SINGLE_QUOTE_STRING_RE.test(value) || DOUBLE_QUOTE_STRING_RE.test(value);
     };
     StringToken.prototype.resolveValue = function (data) {
         var val = this.value;
@@ -70,8 +69,7 @@ var NumberToken = (function (_super) {
         this.name = "NumberToken";
     }
     NumberToken.valid = function (value) {
-        var re = /^\d+$/;
-        return re.test(value);
+        return NUMBER_RE.test(value);
     };
     NumberToken.prototype.resolveValue = function (data) {
         var val = Number(this.value);
@@ -87,8 +85,7 @@ var BooleanToken = (function (_super) {
         this.name = "BooleanToken";
     }
     BooleanToken.valid = function (value) {
-        var re = /^(true|false)$/i;
-        return re.test(value);
+        return BOOLEAN_RE.test(value);
     };
     BooleanToken.prototype.resolveValue = function (data) {
         var val = this.value.toUpperCase() === "TRUE";
@@ -104,8 +101,7 @@ var ReferenceToken = (function (_super) {
         this.name = "ReferenceToken";
     }
     ReferenceToken.valid = function (value) {
-        var re = /^[a-zA-Z_\$][a-zA-Z0-9\._\$]+$/;
-        return value.substr(0, 5) !== "this." && re.test(value);
+        return value.substr(0, 5) !== "this." && REFERENCE_RE.test(value);
     };
     ReferenceToken.findValue = function (path, data) {
         var value = data;
@@ -131,8 +127,7 @@ exports.ReferenceToken = ReferenceToken;
  * Removes leading negotiation
  */
 function removeNegotiation(value) {
-    var re = /^\!\s*/;
-    return value.replace(re, "");
+    return value.replace(NEGOTIATION_RE, "");
 }
 function tokenizer(rawValue) {
     var value = removeNegotiation(rawValue), negation = rawValue !== value;

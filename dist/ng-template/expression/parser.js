@@ -1,12 +1,12 @@
 "use strict";
 var tokenizer_1 = require("./tokenizer");
+var SPLIT_RE = /(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)/;
 var Parser = (function () {
     function Parser() {
     }
     Parser.split = function (expr) {
-        var re = /(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)/;
         return expr
-            .split(re)
+            .split(SPLIT_RE)
             .map(function (i) { return i.trim(); })
             .filter(function (i) { return Boolean(i); });
     };

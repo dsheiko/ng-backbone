@@ -1,12 +1,12 @@
 import { tokenizer, InvalidToken, Token, StringToken } from "./tokenizer";
 
+const SPLIT_RE = /(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)/;
+
 export class Parser {
 
   static split( expr: string ): string[] {
-    let re = /(\+|\-|\<|\>|===|==|\!==|\!=|\&\&|\|\|)/;
-
     return expr
-      .split( re )
+      .split( SPLIT_RE )
       .map( ( i: string ) => i.trim() )
       .filter( ( i: string ) => Boolean( i ) );
   }
